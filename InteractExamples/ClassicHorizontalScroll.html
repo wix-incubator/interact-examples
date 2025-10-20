@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wix Interact - Horizontal Scroll</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+        :root {
+            /* 100vh for each of the 8 panels to scroll through */
+            --section-height: 800vh;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1a;
+            color: #f0f2f5;
+        }
+
+        /* The tall container that provides the scrollable height */
+        #scroll-container {
+            height: var(--section-height);
+            position: relative;
+        }
+
+        /* This wrapper becomes sticky, creating a fixed "window" */
+        .sticky-wrapper {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        /* This track holds all panels and moves horizontally */
+        #horizontal-track {
+            display: flex;
+            height: 100%;
+            /* 100vw for each of the 8 panels */
+            width: 800vw;
+            will-change: transform; /* Performance hint for the browser */
+        }
+
+        .panel {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .panel h2 {
+            font-size: 3rem;
+            margin: 0;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .panel p {
+            font-size: 1.25rem;
+            max-width: 600px;
+            opacity: 0.8;
+            margin-top: 1rem;
+        }
+        
+        /* Unique background colors for each panel */
+        .panel-one { background-color: #0d1b2a; }
+        .panel-two { background-color: #1b263b; }
+        .panel-three { background-color: #415a77; }
+        .panel-four { background-color: #778da9; color: #1a1a1a; }
+        .panel-five { background-color: #a9bcd0; color: #1a1a1a; }
+        .panel-six { background-color: #7d8491; color: #1a1a1a;}
+        .panel-seven { background-color: #495867; }
+        .panel-eight { background-color: #2e3944; }
+
+    </style>
+</head>
+<body>
+
+    <!-- 
+        The scroll-container is the source of our viewProgress trigger.
+        Its large height creates the scrollable area needed to drive the animation.
+    -->
+    <wix-interact-element data-wix-path="#scroll-container">
+        <section id="scroll-container">
+            <!-- 
+                This wrapper will be set to `position: sticky`, creating a fixed viewport
+                through which we'll see the horizontal track move.
+            -->
+            <div class="sticky-wrapper">
+                <!--
+                    The horizontal-track is the target of our animation. It contains all the panels
+                    and will be transformed on the X-axis based on scroll progress.
+                -->
+                <wix-interact-element data-wix-path="#horizontal-track">
+                    <div id="horizontal-track">
+                        <div class="panel panel-one">
+                            <h2>Panel One</h2>
+                            <p>As you scroll down, the panels will slide horizontally from right to left.</p>
+                        </div>
+                        <div class="panel panel-two">
+                            <h2>Panel Two</h2>
+                            <p>This effect is powered by the @wix/interact library using a viewProgress trigger.</p>
+                        </div>
+                        <div class="panel panel-three">
+                            <h2>Panel Three</h2>
+                            <p>The entire animation is defined declaratively, with no manual scroll event listeners.</p>
+                        </div>
+                        <div class="panel panel-four">
+                            <h2>Panel Four</h2>
+                            <p>The `contain` range is perfect for mapping scroll progress within a sticky section.</p>
+                        </div>
+                        <div class="panel panel-five">
+                            <h2>Panel Five</h2>
+                            <p>Linear easing ensures a direct 1:1 relationship between vertical scroll and horizontal movement.</p>
+                        </div>
+                        <div class="panel panel-six">
+                            <h2>Panel Six</h2>
+                            <p>This technique provides a smooth, performant, and app-like scrolling experience.</p>
+                        </div>
+                        <div class="panel panel-seven">
+                            <h2>Panel Seven</h2>
+                            <p>The animation adapts seamlessly to different viewport sizes.</p>
+                        </div>
+                        <div class="panel panel-eight">
+                            <h2>Panel Eight</h2>
+                            <p>You've reached the end of the horizontal journey. Scrolling further will resume normal vertical behavior.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+            </div>
+        </section>
+    </wix-interact-element>
+
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+
+        // Define the interaction configuration
+        const config = {
+            interactions: [
+                {
+                    // The source element that DRIVES the animation. Its visibility and scroll progress are tracked.
+                    key: '#scroll-container',
+                    // The `viewProgress` trigger ties the animation progress to the scroll position.
+                    trigger: 'viewProgress',
+                    effects: [
+                        {
+                            // The target element that GETS animated.
+                            key: '#horizontal-track',
+                            // A keyframeEffect is used for this custom transform animation.
+                            keyframeEffect: {
+                                name: 'horizontal-scroll',
+                                keyframes: [
+                                    // Start position: track is at the beginning.
+                                    { transform: 'translateX(0vw)' },
+                                    // End position: track has moved 7 panels to the left to show the 8th panel.
+                                    { transform: 'translateX(-700vw)' }
+                                ]
+                            },
+                            // The animation starts when the scroll container begins to be "contained"
+                            // (i.e., when the sticky wrapper sticks to the top).
+                            rangeStart: { name: 'contain', offset: { type: 'percentage', value: 0 } },
+                            // The animation ends when the scroll container is fully scrolled through.
+                            rangeEnd: { name: 'contain', offset: { type: 'percentage', value: 100 } },
+                            // Linear easing creates a direct 1-to-1 mapping between scroll and animation progress.
+                            easing: 'linear',
+                            // `fill: 'both'` ensures the animation state is applied before it starts and after it ends.
+                            fill: 'both'
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // Initialize the interactions
+        Interact.create(config);
+    </script>
+
+</body>
+</html>

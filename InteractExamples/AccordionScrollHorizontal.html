@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Vertical Expanding Image Gallery with @wix/interact</title>
+   <!-- Google Fonts (Inter) -->
+   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+   <!-- Tailwind CSS -->
+   <script src="https://cdn.tailwindcss.com"></script>
+   <style>
+       /* Basic body setup */
+       body {
+           font-family: 'Inter', sans-serif;
+           background-color: #ffffff;
+           /* Added for smoother scrolling experience */
+           overscroll-behavior-y: contain;
+       }
+
+
+       /* Vertical container for rows */
+       .feature-container {
+           display: flex;
+           flex-direction: column;
+           gap: 1.5rem; /* 24px */
+           width: 100%;
+       }
+
+
+       /* Each row styling */
+       .feature-column {
+           width: 100%;
+           /* Initial height set by CSS */
+           height: 20vh;
+           overflow: hidden;
+           position: relative;
+           cursor: pointer;
+           box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+           border-radius: 1rem;
+       }
+
+
+       /* Image styling */
+       .feature-column .feature-image {
+           width: 100%;
+           height: 100%;
+           object-fit: cover;
+       }
+
+
+       /* Text group - initial state for animation */
+       .feature-text-group {
+           position: absolute;
+           bottom: 1.25rem;
+           left: 1.25rem;
+           opacity: 0;
+           transform: translateY(20px);
+           z-index: 10;
+           text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.6);
+           line-height: 1.2;
+           /* Prevents text from being selected during interaction */
+           user-select: none;
+       }
+
+
+       /* Subtitle styling */
+       .feature-bottom-subtitle {
+           font-size: 0.875rem;
+           font-weight: 400;
+           color: rgba(255, 255, 255, 0.9);
+           white-space: nowrap;
+       }
+
+
+       /* Title styling */
+       .feature-bottom-title {
+           font-size: 1.875rem;
+           font-weight: 700;
+           color: white;
+           white-space: nowrap;
+       }
+   </style>
+</head>
+<body class="p-6">
+
+
+   <div class="w-full max-w-4xl mx-auto">
+       <div id="feature-container" class="feature-container">
+           <!-- Rows will be dynamically wrapped by the script -->
+           <div id="column-1" class="feature-column">
+               <div class="feature-text-group">
+                   <p class="feature-bottom-subtitle">Italian Alps</p>
+                   <h2 class="feature-bottom-title">Serene Lakes</h2>
+               </div>
+               <img src="https://images.unsplash.com/photo-1439853949127-fa647821eba0?q=80&w=1974&auto=format&fit=crop"
+                    onerror="this.onerror=null;this.src='https://placehold.co/1200x800/cccccc/ffffff?text=Image+Not+Found';"
+                    alt="A serene lake with mountains in the background" class="feature-image">
+           </div>
+           <div id="column-2" class="feature-column">
+               <div class="feature-text-group">
+                   <p class="feature-bottom-subtitle">Arid Climate</p>
+                   <h2 class="feature-bottom-title">Vast Deserts</h2>
+               </div>
+               <img src="https://images.unsplash.com/photo-1488197047962-b48492212cda?q=80&w=2070&auto=format&fit=crop"
+                    onerror="this.onerror=null;this.src='https://placehold.co/1200x800/cccccc/ffffff?text=Image+Not+Found';"
+                    alt="Sand dunes in a vast desert under a clear sky" class="feature-image">
+           </div>
+           <div id="column-3" class="feature-column">
+               <div class="feature-text-group">
+                   <p class="feature-bottom-subtitle">Tropical Paradise</p>
+                   <h2 class="feature-bottom-title">Lush Rainforests</h2>
+               </div>
+               <img src="https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?q=80&w=1974&auto=format&fit=crop"
+                    onerror="this.onerror=null;this.src='https://placehold.co/1200x800/cccccc/ffffff?text=Image+Not+Found';"
+                    alt="A dense rainforest with sunlight filtering through the canopy" class="feature-image">
+           </div>
+            <div id="column-4" class="feature-column">
+               <div class="feature-text-group">
+                   <p class="feature-bottom-subtitle">Coastal Views</p>
+                   <h2 class="feature-bottom-title">Ocean Cliffs</h2>
+               </div>
+               <img src="https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?q=80&w=1974&auto=format&fit=crop"
+                    onerror="this.onerror=null;this.src='https://placehold.co/1200x800/cccccc/ffffff?text=Image+Not+Found';"
+                    alt="Dramatic ocean cliffs with waves crashing below" class="feature-image">
+           </div>
+       </div>
+   </div>
+
+
+   <script type="module">
+       // Import the Interact library
+       import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+
+
+       document.addEventListener("DOMContentLoaded", () => {
+           const columns = document.querySelectorAll('.feature-column');
+           const columnIds = Array.from(columns).map(col => `#${col.id}`);
+
+
+           // Programmatically wrap each column with the required wix-interact-element
+           columns.forEach(column => {
+               const wrapper = document.createElement('wix-interact-element');
+               wrapper.dataset.wixPath = `#${column.id}`;
+               column.parentNode.insertBefore(wrapper, column);
+               wrapper.appendChild(column);
+           });
+
+
+           // Dynamically generate a single 'hover' interaction for each column
+           // The 'hover' trigger automatically handles both enter and leave states
+           const interactions = columnIds.map(currentId => ({
+               key: currentId,
+               trigger: 'hover',
+               effects: [
+                   // Effect to expand/collapse the column height
+                   {
+                       key: currentId,
+                       keyframeEffect: {
+                           name: `expand-collapse-${currentId}`,
+                           keyframes: [{ height: '20vh' }, { height: '50vh' }],
+                       },
+                       duration: 500,
+                       easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                       fill: 'both' // 'both' ensures start/end states are correctly applied
+                   },
+                   // Effect to show/hide the text content
+                   {
+                       key: `${currentId} .feature-text-group`,
+                       keyframeEffect: {
+                           name: `show-hide-text-${currentId}`,
+                           keyframes: [
+                               { opacity: 0, transform: 'translateY(20px)' },
+                               { opacity: 1, transform: 'translateY(0)' }
+                           ],
+                       },
+                       duration: 400,
+                       delay: 200,
+                       easing: 'ease-out',
+                       fill: 'both'
+                   }
+               ]
+           }));
+          
+           // Create the configuration object
+           const config = { interactions };
+
+
+           // Initialize the interactions
+           Interact.create(config);
+       });
+   </script>
+</body>
+</html>

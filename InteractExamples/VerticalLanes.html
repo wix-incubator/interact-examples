@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Vertical Parallax Image Gallery with @wix/interact</title>
+   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+   <style>
+       /* Basic setup and styling for the page body. */
+       body {
+           margin: 0;
+           padding: 0;
+           font-family: 'Inter', sans-serif;
+           background-color: #f4f1eb; /* A soft, off-white background */
+           overflow: hidden; /* Prevent scrolling */
+       }
+
+
+       /* The main container for the gallery, now arranging columns horizontally. */
+       .gallery-container {
+           display: flex;
+           flex-direction: row;
+           width: 100%;
+           height: 100vh; /* Fit to viewport height */
+       }
+
+
+       /* Styling for the individual columns. */
+       .gallery-column {
+           flex: 1;
+           position: relative;
+           /* Hide vertical overflow within the column */
+           overflow: hidden;
+       }
+
+
+       /* The Animation Wrapper
+        * This container holds the image sets and is the element we animate vertically.
+        */
+       .animation-wrapper {
+           display: flex;
+           flex-direction: column; /* Images are arranged top-to-bottom */
+           width: 100%;
+           height: max-content; /* Wrapper height is determined by its content */
+           will-change: transform; /* Performance hint for the browser */
+       }
+
+
+       /* Inner divs also need to be flex columns */
+       .animation-wrapper > div {
+           display: flex;
+           flex-direction: column;
+           width: 100%;
+       }
+      
+       /* Set initial positions for the downward scrolling columns for a seamless loop */
+       #wrapper-1, #wrapper-3 {
+           transform: translateY(-50%);
+       }
+
+
+       /* Container for image and its title to enable hover effect */
+       .image-container {
+           position: relative;
+           width: 100%;
+           flex-shrink: 0; /* Prevents shrinking inside the flex container */
+           cursor: pointer;
+       }
+
+
+       /* Styling for the images within the columns. */
+       .gallery-image {
+           width: 100%;
+           height: auto; /* Height is determined by aspect ratio */
+           object-fit: cover;
+           padding: 15px;
+           box-sizing: border-box;
+           border-radius: 24px; /* Rounded corners for a softer look */
+           display: block;
+       }
+
+
+       /* Styling for the hover title */
+       .image-title {
+           position: absolute;
+           bottom: 30px;
+           left: 30px;
+           right: 30px;
+           color: white;
+           text-align: center;
+           font-size: 0.875rem;
+           line-height: 1.2;
+           opacity: 0;
+           transition: opacity 0.3s ease;
+           pointer-events: none; /* Allows hover to pass through to the container */
+           z-index: 2;
+       }
+
+
+       /* The gradient overlay as a pseudo-element on the container */
+       .image-container::after {
+           content: '';
+           position: absolute;
+           bottom: 15px;
+           left: 15px;
+           right: 15px;
+           height: 50%; /* Adjust height of gradient */
+           background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+           border-radius: 0 0 9px 9px; /* Match inner radius of the image */
+           opacity: 0;
+           transition: opacity 0.3s ease;
+           pointer-events: none;
+           z-index: 1;
+       }
+
+
+       /* Show title and gradient on hover */
+       .image-container:hover .image-title,
+       .image-container:hover::after {
+           opacity: 1;
+       }
+
+
+       /* Lightbox styles */
+       .lightbox {
+           display: none;
+           position: fixed;
+           z-index: 1000;
+           left: 0;
+           top: 0;
+           width: 100%;
+           height: 100%;
+           background-color: rgba(0, 0, 0, 0.85);
+           justify-content: center;
+           align-items: center;
+           opacity: 0;
+           transition: opacity 0.4s ease;
+       }
+
+
+       .lightbox.active {
+           display: flex;
+           opacity: 1;
+       }
+      
+       .lightbox-container {
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           gap: 1rem; /* Spacing between image and text block */
+           max-width: 90%;
+           max-height: 90%;
+       }
+      
+       .lightbox-text-content {
+           display: flex;
+           flex-direction: column;
+           align-items: center;
+           gap: 0.25rem; /* Tight spacing between title and description */
+       }
+
+
+       .lightbox-content {
+           max-width: 100%;
+           max-height: 70vh;
+           object-fit: contain;
+           border-radius: 12px;
+       }
+      
+       .lightbox-title {
+           font-size: 1.5rem;
+           font-weight: bold;
+           color: white;
+           text-align: center;
+           margin: 0;
+       }
+
+
+       .lightbox-description {
+           font-size: 1rem;
+           color: #ccc;
+           text-align: center;
+           margin: 0;
+           max-width: 60ch;
+       }
+
+
+       .close-btn {
+           position: absolute;
+           top: 20px;
+           right: 35px;
+           color: #fff;
+           font-size: 40px;
+           font-weight: bold;
+           cursor: pointer;
+           transition: color 0.3s ease;
+       }
+
+
+       .close-btn:hover {
+           color: #bbb;
+       }
+
+
+
+
+       /* Responsive design for smaller screens */
+       @media (max-width: 768px) {
+           /* Hiding columns on smaller screens */
+           .gallery-column:nth-child(3), .gallery-column:nth-child(4) {
+               display: none;
+           }
+       }
+   </style>
+</head>
+<body>
+   <div class="gallery-container" id="gallery-container">
+       <div class="gallery-column">
+           <wix-interact-element data-wix-path="#wrapper-1">
+               <div class="animation-wrapper" id="wrapper-1">
+                   <div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/1029615/pexels-photo-1029615.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Spiral Staircase" data-description="An upward view of a stunning, modern spiral staircase, creating a hypnotic pattern." class="gallery-image">
+                           <div class="image-title">Spiral Staircase</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/259962/pexels-photo-259962.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Geometric Facade" data-description="The intricate, repeating geometric patterns of a modern building's facade." class="gallery-image">
+                           <div class="image-title">Geometric Facade</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/190417/pexels-photo-190417.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Atrium View" data-description="Looking down through the multiple levels of a bright, minimalist atrium." class="gallery-image">
+                           <div class="image-title">Atrium View</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/1643384/pexels-photo-1643384.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Modern Interior" data-description="A clean and modern living space with minimalist furniture and design." class="gallery-image">
+                           <div class="image-title">Modern Interior</div>
+                       </div>
+                   </div>
+                    <div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/1029615/pexels-photo-1029615.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Spiral Staircase" data-description="An upward view of a stunning, modern spiral staircase, creating a hypnotic pattern." class="gallery-image">
+                           <div class="image-title">Spiral Staircase</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/259962/pexels-photo-259962.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Geometric Facade" data-description="The intricate, repeating geometric patterns of a modern building's facade." class="gallery-image">
+                           <div class="image-title">Geometric Facade</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/190417/pexels-photo-190417.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Atrium View" data-description="Looking down through the multiple levels of a bright, minimalist atrium." class="gallery-image">
+                           <div class="image-title">Atrium View</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/1643384/pexels-photo-1643384.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Modern Interior" data-description="A clean and modern living space with minimalist furniture and design." class="gallery-image">
+                           <div class="image-title">Modern Interior</div>
+                       </div>
+                   </div>
+               </div>
+           </wix-interact-element>
+       </div>
+
+
+       <div class="gallery-column">
+           <wix-interact-element data-wix-path="#wrapper-2">
+               <div class="animation-wrapper" id="wrapper-2">
+                   <div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/373912/pexels-photo-373912.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Night Cityscape" data-description="The dazzling lights of a sprawling city skyline at night." class="gallery-image">
+                           <div class="image-title">Night Cityscape</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/256150/pexels-photo-256150.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Flowing Lines" data-description="The elegant and flowing lines of a modern architectural structure." class="gallery-image">
+                           <div class="image-title">Flowing Lines</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/2440024/pexels-photo-2440024.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Abstract Lines" data-description="An abstract close-up of architectural lines creating a sense of rhythm and depth." class="gallery-image">
+                           <div class="image-title">Abstract Lines</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/276528/pexels-photo-276528.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Bright Living Room" data-description="A stylish and bright living room with a mix of modern and classic elements." class="gallery-image">
+                           <div class="image-title">Bright Living Room</div>
+                       </div>
+                   </div>
+                   <div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/373912/pexels-photo-373912.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Night Cityscape" data-description="The dazzling lights of a sprawling city skyline at night." class="gallery-image">
+                           <div class="image-title">Night Cityscape</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/256150/pexels-photo-256150.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Flowing Lines" data-description="The elegant and flowing lines of a modern architectural structure." class="gallery-image">
+                           <div class="image-title">Flowing Lines</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/2440024/pexels-photo-2440024.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Abstract Lines" data-description="An abstract close-up of architectural lines creating a sense of rhythm and depth." class="gallery-image">
+                           <div class="image-title">Abstract Lines</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/276528/pexels-photo-276528.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Bright Living Room" data-description="A stylish and bright living room with a mix of modern and classic elements." class="gallery-image">
+                           <div class="image-title">Bright Living Room</div>
+                       </div>
+                   </div>
+               </div>
+           </wix-interact-element>
+       </div>
+
+
+       <div class="gallery-column">
+            <wix-interact-element data-wix-path="#wrapper-3">
+               <div class="animation-wrapper" id="wrapper-3">
+                   <div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/1105766/pexels-photo-1105766.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Symmetrical Hallway" data-description="A long, symmetrical hallway with dramatic lighting, leading to a vanishing point." class="gallery-image">
+                           <div class="image-title">Symmetrical Hallway</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/259598/pexels-photo-259598.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Glass Ceiling" data-description="Looking up through a stunning glass and steel ceiling of a modern building." class="gallery-image">
+                           <div class="image-title">Glass Ceiling</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/220769/pexels-photo-220769.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Industrial Interior" data-description="An open-plan industrial space with exposed brick and large windows." class="gallery-image">
+                           <div class="image-title">Industrial Interior</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/347135/pexels-photo-347135.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Suspension Bridge" data-description="The impressive engineering of a large suspension bridge against a clear sky." class="gallery-image">
+                           <div class="image-title">Suspension Bridge</div>
+                       </div>
+                   </div>
+                   <div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/1105766/pexels-photo-1105766.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Symmetrical Hallway" data-description="A long, symmetrical hallway with dramatic lighting, leading to a vanishing point." class="gallery-image">
+                           <div class="image-title">Symmetrical Hallway</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/259598/pexels-photo-259598.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Glass Ceiling" data-description="Looking up through a stunning glass and steel ceiling of a modern building." class="gallery-image">
+                           <div class="image-title">Glass Ceiling</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/220769/pexels-photo-220769.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Industrial Interior" data-description="An open-plan industrial space with exposed brick and large windows." class="gallery-image">
+                           <div class="image-title">Industrial Interior</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/347135/pexels-photo-347135.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Suspension Bridge" data-description="The impressive engineering of a large suspension bridge against a clear sky." class="gallery-image">
+                           <div class="image-title">Suspension Bridge</div>
+                       </div>
+                   </div>
+               </div>
+           </wix-interact-element>
+       </div>
+      
+       <div class="gallery-column">
+           <wix-interact-element data-wix-path="#wrapper-4">
+               <div class="animation-wrapper" id="wrapper-4">
+                   <div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/259725/pexels-photo-259725.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Modern Museum" data-description="The clean, white interior of a modern art museum with sweeping curves." class="gallery-image">
+                           <div class="image-title">Modern Museum</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/2096983/pexels-photo-2096983.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Skyscraper Reflection" data-description="The sky and clouds reflected perfectly in the glass facade of a modern skyscraper." class="gallery-image">
+                           <div class="image-title">Skyscraper Reflection</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/1212487/pexels-photo-1212487.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Cozy Nook" data-description="A comfortable and stylish reading nook by a large window in a modern home." class="gallery-image">
+                           <div class="image-title">Cozy Nook</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/2506923/pexels-photo-2506923.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Library Rows" data-description="Rows of books stretching into the distance in a grand, beautiful library." class="gallery-image">
+                           <div class="image-title">Library Rows</div>
+                       </div>
+                   </div>
+                   <div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/259725/pexels-photo-259725.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Modern Museum" data-description="The clean, white interior of a modern art museum with sweeping curves." class="gallery-image">
+                           <div class="image-title">Modern Museum</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/2096983/pexels-photo-2096983.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Skyscraper Reflection" data-description="The sky and clouds reflected perfectly in the glass facade of a modern skyscraper." class="gallery-image">
+                           <div class="image-title">Skyscraper Reflection</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/1212487/pexels-photo-1212487.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Cozy Nook" data-description="A comfortable and stylish reading nook by a large window in a modern home." class="gallery-image">
+                           <div class="image-title">Cozy Nook</div>
+                       </div>
+                       <div class="image-container" onclick="openLightbox(this)">
+                           <img src="https://images.pexels.com/photos/2506923/pexels-photo-2506923.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Library Rows" data-description="Rows of books stretching into the distance in a grand, beautiful library." class="gallery-image">
+                           <div class="image-title">Library Rows</div>
+                       </div>
+                   </div>
+               </div>
+           </wix-interact-element>
+       </div>
+   </div>
+  
+   <!-- Lightbox structure -->
+   <div id="lightbox" class="lightbox">
+       <span class="close-btn">&times;</span>
+       <div class="lightbox-container">
+           <img class="lightbox-content" id="lightbox-img">
+           <div class="lightbox-text-content">
+               <h3 id="lightbox-title" class="lightbox-title"></h3>
+               <p id="lightbox-description" class="lightbox-description"></p>
+           </div>
+       </div>
+   </div>
+
+
+   <script type="module">
+       import {
+           Interact
+       } from 'https://esm.sh/@wix/interact@1.78.0';
+
+
+       document.addEventListener('DOMContentLoaded', () => {
+           // Wix Interact setup
+           const config = {
+               interactions: [
+                   {
+                       key: '#wrapper-1',
+                       trigger: 'viewEnter',
+                       params: { type: 'state' },
+                       effects: [{
+                           key: '#wrapper-1',
+                           keyframeEffect: {
+                               keyframes: [{ transform: 'translateY(-50%)' }, { transform: 'translateY(0)' }]
+                           },
+                           duration: 40000,
+                           easing: 'linear',
+                           iterations: Infinity
+                       }]
+                   },
+                   {
+                       key: '#wrapper-2',
+                       trigger: 'viewEnter',
+                       params: { type: 'state' },
+                       effects: [{
+                           key: '#wrapper-2',
+                           keyframeEffect: {
+                               name: 'scroll-up',
+                               keyframes: [{ transform: 'translateY(0)' }, { transform: 'translateY(-50%)' }],
+                           },
+                           duration: 50000,
+                           easing: 'linear',
+                           iterations: Infinity,
+                       }]
+                   },
+                   {
+                       key: '#wrapper-3',
+                       trigger: 'viewEnter',
+                       params: { type: 'state' },
+                       effects: [{
+                           key: '#wrapper-3',
+                           keyframeEffect: {
+                               name: 'scroll-down-fast',
+                               keyframes: [{ transform: 'translateY(-50%)' }, { transform: 'translateY(0)' }],
+                           },
+                           duration: 45000,
+                           easing: 'linear',
+                           iterations: Infinity,
+                       }]
+                   },
+                   {
+                       key: '#wrapper-4',
+                       trigger: 'viewEnter',
+                       params: { type: 'state' },
+                       effects: [{
+                           key: '#wrapper-4',
+                           keyframeEffect: {
+                               name: 'scroll-up-fast',
+                               keyframes: [{ transform: 'translateY(0)' }, { transform: 'translateY(-50%)' }],
+                           },
+                           duration: 55000,
+                           easing: 'linear',
+                           iterations: Infinity
+                       }]
+                   }
+               ]
+           };
+
+
+           Interact.create(config);
+
+
+           // Lightbox functionality
+           const lightbox = document.getElementById('lightbox');
+           const lightboxImg = document.getElementById('lightbox-img');
+           const lightboxTitle = document.getElementById('lightbox-title');
+           const lightboxDesc = document.getElementById('lightbox-description');
+           const closeBtn = document.querySelector('.close-btn');
+
+
+           // Define a global function to be called by onclick attributes
+           window.openLightbox = function(container) {
+                if (container) {
+                   const galleryImg = container.querySelector('.gallery-image');
+                   const title = container.querySelector('.image-title').textContent;
+                   const description = galleryImg.dataset.description;
+                  
+                   lightboxImg.src = galleryImg.src;
+                   lightboxTitle.textContent = title;
+                   lightboxDesc.textContent = description;
+
+
+                   lightbox.classList.add('active');
+               }
+           }
+          
+           const closeLightbox = () => {
+               lightbox.classList.remove('active');
+           };
+
+
+           closeBtn.addEventListener('click', closeLightbox);
+          
+           lightbox.addEventListener('click', (e) => {
+               // Close if the click is on the background, not the container content
+               if (e.target === lightbox) {
+                   closeLightbox();
+               }
+           });
+       });
+   </script>
+
+
+</body>
+</html>

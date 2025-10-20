@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sticky Repeater Stack with @wix/interact</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <script type="module" src="https://esm.sh/@wix/interact@1.78.0"></script>
+    <style>
+        :root {
+            --card-bg-1: linear-gradient(135deg, #007BFF, #00BFFF);
+            --card-bg-2: linear-gradient(135deg, #8A2BE2, #4B0082);
+            --card-bg-3: linear-gradient(135deg, #32CD32, #008000);
+            --card-bg-4: linear-gradient(135deg, #FF4500, #FF8C00);
+            --card-bg-5: linear-gradient(135deg, #FF1493, #C71585);
+        }
+        
+        body {
+            margin: 0;
+            background-color: #111;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .intro-section, .outro-section {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 2rem;
+        }
+
+        .intro-section h1, .outro-section h1 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            margin-bottom: 1rem;
+        }
+        
+        .intro-section p {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            max-width: 600px;
+            color: #aaa;
+            line-height: 1.6;
+        }
+
+        .scroll-down-arrow {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            border-left: 2px solid white;
+            border-bottom: 2px solid white;
+            width: 24px;
+            height: 24px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0) rotate(-45deg);
+            }
+            40% {
+                transform: translateY(-10px) rotate(-45deg);
+            }
+            60% {
+                transform: translateY(-5px) rotate(-45deg);
+            }
+        }
+
+        .scroll-section {
+            height: 400vh;
+            position: relative;
+        }
+
+        .repeater-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* The gap and top stickiness control the stacking overlap */
+            gap: 20vh; 
+            perspective: 1000px;
+            padding-top: 15vh;
+        }
+
+        /* wix-interact-element styling */
+        wix-interact-element {
+            display: contents; /* Ensures the wrapper doesn't break flex/grid layout */
+        }
+        
+        .card {
+            width: 100vw;
+            max-width: 800px;
+            height: 50vh;
+            position: sticky;
+            top: 25vh; /* The point where cards become sticky */
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: bold;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            
+            /* Initial values for our CSS variables */
+            --scale: 1;
+            --rotateX: 0deg;
+            --translateY: 0px;
+
+            /* The combined transform driven by @wix/interact */
+            transform: translateY(var(--translateY)) rotateX(var(--rotateX)) scale(var(--scale));
+            will-change: transform;
+        }
+
+        #card-1 { background: var(--card-bg-1); }
+        #card-2 { background: var(--card-bg-2); }
+        #card-3 { background: var(--card-bg-3); }
+        #card-4 { background: var(--card-bg-4); }
+        #card-5 { background: var(--card-bg-5); }
+    </style>
+</head>
+<body>
+
+    <section class="intro-section">
+        <div>
+            <h1>Repeater Stack Effect</h1>
+            <p>Scroll down to experience a scroll-driven stacking animation combined with a 3D mouse-tilt interaction. Built entirely with the @wix/interact library.</p>
+        </div>
+        <div class="scroll-down-arrow"></div>
+    </section>
+
+    <wix-interact-element data-wix-path="#scroll-section-el">
+      <section class="scroll-section" id="scroll-section">
+          <div class="repeater-wrapper">
+              <wix-interact-element data-wix-path="#card-el-1">
+                  <div class="card" id="card-1">Container 1</div>
+              </wix-interact-element>
+              <wix-interact-element data-wix-path="#card-el-2">
+                  <div class="card" id="card-2">Container 2</div>
+              </wix-interact-element>
+              <wix-interact-element data-wix-path="#card-el-3">
+                  <div class="card" id="card-3">Container 3</div>
+              </wix-interact-element>
+              <wix-interact-element data-wix-path="#card-el-4">
+                  <div class="card" id="card-4">Container 4</div>
+              </wix-interact-element>
+              <wix-interact-element data-wix-path="#card-el-5">
+                  <div class="card" id="card-5">Container 5</div>
+              </wix-interact-element>
+          </div>
+      </section>
+    </wix-interact-element>
+
+    <section class="outro-section">
+        <h1>End of Section</h1>
+    </section>
+
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+
+        const config = {
+            effects: {
+                'card-tilt': {
+                    customEffect: (element, progress) => {
+                        const yPos = progress * 2 - 1; // Maps 0-1 to -1 to 1 (top to bottom)
+                        const rotateVal = yPos * -12; // Inverted for natural feel
+                        const translateVal = yPos * -30;
+                        element.style.setProperty('--rotateX', `${rotateVal}deg`);
+                        element.style.setProperty('--translateY', `${translateVal}px`);
+                    }
+                },
+                'card-stack-scale': {
+                    customEffect: (element, progress) => {
+                        const scale = 1 - (progress * 0.2); // Scale from 1 down to 0.8
+                        element.style.setProperty('--scale', Math.max(0.8, scale));
+                    },
+                    // Animate as the element is pushed off the top of the viewport
+                    rangeStart: { name: 'exit', offset: { type: 'percentage', value: 0 } },
+                    rangeEnd: { name: 'exit', offset: { type: 'percentage', value: 100 } },
+                    easing: 'linear',
+                    fill: 'both'
+                }
+            },
+            interactions: [
+                // === MOUSE TILT INTERACTION ===
+                // One interaction to control the tilt of all cards based on mouse position.
+                {
+                    key: '#scroll-section-el',
+                    trigger: 'pointerMove',
+                    effects: [
+                        { key: '#card-1', effectId: 'card-tilt' },
+                        { key: '#card-2', effectId: 'card-tilt' },
+                        { key: '#card-3', effectId: 'card-tilt' },
+                        { key: '#card-4', effectId: 'card-tilt' },
+                        { key: '#card-5', effectId: 'card-tilt' },
+                    ]
+                },
+                // === SCROLL SCALE INTERACTIONS ===
+                // A separate interaction for each card to handle its scaling during the scroll.
+                {
+                    key: '#card-el-1',
+                    trigger: 'viewProgress',
+                    effects: [{ key: '#card-1', effectId: 'card-stack-scale' }]
+                },
+                {
+                    key: '#card-el-2',
+                    trigger: 'viewProgress',
+                    effects: [{ key: '#card-2', effectId: 'card-stack-scale' }]
+                },
+                {
+                    key: '#card-el-3',
+                    trigger: 'viewProgress',
+                    effects: [{ key: '#card-3', effectId: 'card-stack-scale' }]
+                },
+                {
+                    key: '#card-el-4',
+                    trigger: 'viewProgress',
+                    effects: [{ key: '#card-4', effectId: 'card-stack-scale' }]
+                },
+                {
+                    key: '#card-el-5',
+                    trigger: 'viewProgress',
+                    effects: [{ key: '#card-5', effectId: 'card-stack-scale' }]
+                }
+            ]
+        };
+
+        Interact.create(config);
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endless Marquee with @wix/interact</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- @wix/interact library -->
+    <script type="module" src="https://esm.sh/@wix/interact@1.78.0"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden; /* Prevent horizontal scrollbars */
+        }
+
+        /* A wrapper to create the marquee viewport and hide overflow */
+        .carousel-wrapper {
+            width: 100%;
+            overflow: hidden;
+            /* A subtle fade effect on the edges for a more seamless appearance */
+            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        }
+
+        .carousel {
+            display: flex;
+            gap: 2rem; /* 32px */
+            width: 540rem; /* (16rem width + 2rem gap) * 30 cards = 540rem */
+        }
+
+        .perspective-container {
+            perspective: 1000px;
+            flex-shrink: 0; /* Prevents flex items from shrinking */
+        }
+
+        .card {
+            width: 16rem; /* Equivalent to w-64 */
+            position: relative; /* Required for z-index to work correctly */
+            transform: rotateY(25deg);
+            z-index: 1; /* Set a base z-index */
+        }
+
+        /* The hover state is now handled by @wix/interact */
+    </style>
+</head>
+<body class="bg-gray-900 flex items-center justify-center min-h-screen">
+
+    <div class="carousel-wrapper py-8">
+        <!-- This element is the source for the marquee animation -->
+        <wix-interact-element data-wix-path="#carousel-container">
+            <div id="carousel-container" class="carousel">
+                <!-- === START ORIGINAL CARDS (Set of 15) === -->
+                <!-- Each card container is wrapped to be recognized by @wix/interact -->
+                <wix-interact-element data-wix-path="card-1">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=1" class="rounded-lg mb-4 w-full h-40 object-cover" alt="Project Image">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Alpha</h3>
+                            <p class="text-gray-600">An innovative approach to modern web design.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-2">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=2" class="rounded-lg mb-4 w-full h-40 object-cover" alt="Project Image">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Beta</h3>
+                            <p class="text-gray-600">Exploring the future of user interfaces.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-3">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=3" class="rounded-lg mb-4 w-full h-40 object-cover" alt="Project Image">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Gamma</h3>
+                            <p class="text-gray-600">Data visualization and interactive charts.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-4">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=4" class="rounded-lg mb-4 w-full h-40 object-cover" alt="Project Image">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Delta</h3>
+                            <p class="text-gray-600">Mobile-first development strategies.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-5">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=5" class="rounded-lg mb-4 w-full h-40 object-cover" alt="Project Image">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Epsilon</h3>
+                            <p class="text-gray-600">Backend architecture and scalability.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-6">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=6" class="rounded-lg mb-4 w-full h-40 object-cover" alt="Project Image">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Zeta</h3>
+                            <p class="text-gray-600">Cloud integration and deployment.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-7">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=7" class="rounded-lg mb-4 w-full h-40 object-cover" alt="Project Image">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Eta</h3>
+                            <p class="text-gray-600">AI-powered user personalization.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-8">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=8" class="rounded-lg mb-4 w-full h-40 object-cover" alt="Project Image">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Theta</h3>
+                            <p class="text-gray-600">Cybersecurity and data protection.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-9">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=9" class="rounded-lg mb-4 w-full h-40 object-cover" alt="Project Image">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Iota</h3>
+                            <p class="text-gray-600">Cross-platform application frameworks.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-10">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=10" class="rounded-lg mb-4 w-full h-40 object-cover" alt="Project Image">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Kappa</h3>
+                            <p class="text-gray-600">User experience and journey mapping.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-11">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=11" class="rounded-lg mb-4 w-full h-40 object-cover" alt="Project Image">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Lambda</h3>
+                            <p class="text-gray-600">Serverless functions and microservices.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-12">
+                     <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=12" class="rounded-lg mb-4 w-full h-40 object-cover" alt="Project Image">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Mu</h3>
+                            <p class="text-gray-600">Augmented reality integrations.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-13">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=13" class="rounded-lg mb-4 w-full h-40 object-cover" alt="Project Image">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Nu</h3>
+                            <p class="text-gray-600">Blockchain and decentralized apps.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-14">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=14" class="rounded-lg mb-4 w-full h-40 object-cover" alt="Project Image">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Xi</h3>
+                            <p class="text-gray-600">API design and documentation.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-15">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=15" class="rounded-lg mb-4 w-full h-40 object-cover" alt="Project Image">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Omicron</h3>
+                            <p class="text-gray-600">Performance optimization and testing.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <!-- === END ORIGINAL CARDS === -->
+
+                <!-- === START DUPLICATE CARDS (for seamless looping) === -->
+                 <wix-interact-element data-wix-path="card-16" aria-hidden="true">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=1" class="rounded-lg mb-4 w-full h-40 object-cover" alt="">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Alpha</h3>
+                            <p class="text-gray-600">An innovative approach to modern web design.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-17" aria-hidden="true">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=2" class="rounded-lg mb-4 w-full h-40 object-cover" alt="">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Beta</h3>
+                            <p class="text-gray-600">Exploring the future of user interfaces.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-18" aria-hidden="true">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=3" class="rounded-lg mb-4 w-full h-40 object-cover" alt="">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Gamma</h3>
+                            <p class="text-gray-600">Data visualization and interactive charts.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-19" aria-hidden="true">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=4" class="rounded-lg mb-4 w-full h-40 object-cover" alt="">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Delta</h3>
+                            <p class="text-gray-600">Mobile-first development strategies.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-20" aria-hidden="true">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=5" class="rounded-lg mb-4 w-full h-40 object-cover" alt="">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Epsilon</h3>
+                            <p class="text-gray-600">Backend architecture and scalability.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-21" aria-hidden="true">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=6" class="rounded-lg mb-4 w-full h-40 object-cover" alt="">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Zeta</h3>
+                            <p class="text-gray-600">Cloud integration and deployment.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-22" aria-hidden="true">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=7" class="rounded-lg mb-4 w-full h-40 object-cover" alt="">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Eta</h3>
+                            <p class="text-gray-600">AI-powered user personalization.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-23" aria-hidden="true">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=8" class="rounded-lg mb-4 w-full h-40 object-cover" alt="">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Theta</h3>
+                            <p class="text-gray-600">Cybersecurity and data protection.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-24" aria-hidden="true">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=9" class="rounded-lg mb-4 w-full h-40 object-cover" alt="">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Iota</h3>
+                            <p class="text-gray-600">Cross-platform application frameworks.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-25" aria-hidden="true">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=10" class="rounded-lg mb-4 w-full h-40 object-cover" alt="">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Kappa</h3>
+                            <p class="text-gray-600">User experience and journey mapping.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-26" aria-hidden="true">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=11" class="rounded-lg mb-4 w-full h-40 object-cover" alt="">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Lambda</h3>
+                            <p class="text-gray-600">Serverless functions and microservices.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-27" aria-hidden="true">
+                     <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=12" class="rounded-lg mb-4 w-full h-40 object-cover" alt="">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Mu</h3>
+                            <p class="text-gray-600">Augmented reality integrations.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-28" aria-hidden="true">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=13" class="rounded-lg mb-4 w-full h-40 object-cover" alt="">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Nu</h3>
+                            <p class="text-gray-600">Blockchain and decentralized apps.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-29" aria-hidden="true">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=14" class="rounded-lg mb-4 w-full h-40 object-cover" alt="">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Xi</h3>
+                            <p class="text-gray-600">API design and documentation.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <wix-interact-element data-wix-path="card-30" aria-hidden="true">
+                    <div class="perspective-container">
+                        <div class="card bg-white shadow-xl rounded-2xl p-4">
+                            <img src="https://picsum.photos/300/200?random=15" class="rounded-lg mb-4 w-full h-40 object-cover" alt="">
+                            <h3 class="text-lg font-bold mb-2 text-gray-800">Project Omicron</h3>
+                            <p class="text-gray-600">Performance optimization and testing.</p>
+                        </div>
+                    </div>
+                </wix-interact-element>
+                <!-- === END DUPLICATE CARDS === -->
+            </div>
+        </wix-interact-element>
+    </div>
+
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+
+        const config = {
+            interactions: [
+                // Interaction 1: Endless Marquee Animation
+                {
+                    key: '#carousel-container', // The element that triggers the animation
+                    trigger: 'pageVisible',      // Starts when the page is visible
+                    effects: [{
+                        key: '#carousel-container', // The element that gets animated
+                        keyframeEffect: {
+                            name: 'marquee-scroll',
+                            keyframes: [
+                                // Move from start to the end of the first set of cards
+                                { transform: 'translateX(0)' },
+                                { transform: 'translateX(-270rem)' } // (16rem width + 2rem gap) * 15 cards
+                            ]
+                        },
+                        duration: 60000, // 60 seconds for one loop
+                        easing: 'linear',
+                        iterations: Infinity // Loop forever
+                    }]
+                },
+
+                // Interaction 2: Card Hover Animation
+                {
+                    key: '.perspective-container', // Applies to all card containers
+                    trigger: 'hover',
+                    params: {
+                        type: 'alternate' // Plays forward on enter, reverse on leave
+                    },
+                    effects: [{
+                        key: '.card', // Animate the .card within the hovered container
+                        keyframeEffect: {
+                            name: 'card-hover-effect',
+                            keyframes: [
+                                // The initial state defined in CSS
+                                { transform: 'rotateY(25deg) scale(1)', zIndex: '1' },
+                                // The state to animate to on hover
+                                { transform: 'rotateY(0deg) scale(1.05)', zIndex: '10' }
+                            ]
+                        },
+                        duration: 600,
+                        easing: 'cubic-bezier(0.23, 1, 0.32, 1)',
+                        fill: 'both' // Retains the final state of the animation
+                    }]
+                }
+            ]
+        };
+
+        // Initialize @wix/interact with the configuration
+        Interact.create(config);
+    </script>
+
+</body>
+</html>

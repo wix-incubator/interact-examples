@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corner Fold Scroll Animation with @wix/interact</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- @wix/interact -->
+    <script type="module" src="https://esm.sh/@wix/interact@1.78.0"></script>
+
+    <style>
+        /* Base styles */
+        body {
+            background-color: #000;
+            color: #FFA500; /* Orange */
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Helper for full-screen sections */
+        .fullscreen-section {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        /* The main scroll animation area */
+        .scroll-parent-container {
+            position: relative;
+        }
+
+        /* This container holds the visible panels and sticks to the top */
+        .sticky-wrapper {
+            height: 100vh;
+            width: 100vw;
+            position: sticky;
+            top: 0;
+            overflow: hidden;
+        }
+        
+        /* This container holds the empty trigger divs that provide the scrollable height */
+        .scroll-triggers-placeholder {
+            position: relative;
+            z-index: -1; /* Place it behind the sticky wrapper content */
+        }
+
+        .scroll-section {
+            height: 100vh;
+            width: 100%;
+        }
+
+        /* A single panel within the sticky wrapper */
+        .sticky-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Stacking order is critical for the reveal effect */
+        #panel-1 { z-index: 5; }
+        #panel-2 { z-index: 4; }
+        #panel-3 { z-index: 3; }
+        #panel-4 { z-index: 2; }
+        #panel-5 { z-index: 1; }
+
+        /* Animated title bar styling */
+        .animated-title {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding-left: 2rem;
+            background-color: #000;
+            border-top: 1px solid #FFA500;
+            border-bottom: 1px solid #FFA500;
+            z-index: 20; /* High z-index to be above the image */
+        }
+        
+        .animated-title p {
+            color: #FFA500;
+            font-weight: 500;
+        }
+
+        /* Image container and the image itself */
+        .image-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            clip-path: inset(0% 0% 0% 0%); /* Initial: fully visible */
+        }
+
+        .animated-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Initial animation states */
+        #panel-2, #panel-3, #panel-4, #panel-5 {
+            transform: translateY(100vh);
+        }
+        .animated-image {
+            clip-path: inset(0% 0% 100% 100%);
+        }
+
+    </style>
+</head>
+<body class="bg-black">
+
+    <!-- 1. Full-screen intro section -->
+    <header class="fullscreen-section">
+        <h1 class="text-4xl md:text-6xl font-bold mb-4">Corner Fold Effect</h1>
+        <p class="text-lg md:text-xl text-gray-300">Scroll down to begin the animation.</p>
+    </header>
+
+    <!-- 2. Main animation area -->
+    <div class="scroll-parent-container">
+        <!-- Sticky container for visual panels -->
+        <div class="sticky-wrapper">
+            <!-- Panel 1 -->
+            <wix-interact-element data-wix-path="#panel-1">
+                <div id="panel-1" class="sticky-item">
+                    <div class="animated-title"><p>Text 1: Architectural Curves</p></div>
+                    <wix-interact-element data-wix-path="#image-container-1">
+                        <div id="image-container-1" class="image-container">
+                            <wix-interact-element data-wix-path="#image-1">
+                                <img id="image-1" src="https://static.wixstatic.com/media/9eca39_4175bf73f46448989a6ed6cd2aa65142~mv2.jpg" onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/000000/FFA500?text=Image+1';" class="animated-image" alt="Abstract architectural building with curves">
+                            </wix-interact-element>
+                        </div>
+                    </wix-interact-element>
+                </div>
+            </wix-interact-element>
+
+            <!-- Panel 2 -->
+            <wix-interact-element data-wix-path="#panel-2">
+                <div id="panel-2" class="sticky-item">
+                    <div class="animated-title"><p>Text 2: Desert Landscape</p></div>
+                    <wix-interact-element data-wix-path="#image-container-2">
+                        <div id="image-container-2" class="image-container">
+                            <wix-interact-element data-wix-path="#image-2">
+                                <img id="image-2" src="https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?q=80&w=2670&auto=format&fit=crop" onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/000000/FFA500?text=Image+2';" class="animated-image" alt="Vast desert landscape with mountains">
+                            </wix-interact-element>
+                        </div>
+                    </wix-interact-element>
+                </div>
+            </wix-interact-element>
+
+            <!-- Panel 3 -->
+            <wix-interact-element data-wix-path="#panel-3">
+                <div id="panel-3" class="sticky-item">
+                    <div class="animated-title"><p>Text 3: Urban Metropolis</p></div>
+                    <wix-interact-element data-wix-path="#image-container-3">
+                        <div id="image-container-3" class="image-container">
+                            <wix-interact-element data-wix-path="#image-3">
+                                <img id="image-3" src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=2670&auto=format&fit=crop" onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/000000/FFA500?text=Image+3';" class="animated-image" alt="Night view of a sprawling city with lights">
+                            </wix-interact-element>
+                        </div>
+                    </wix-interact-element>
+                </div>
+            </wix-interact-element>
+
+            <!-- Panel 4 -->
+            <wix-interact-element data-wix-path="#panel-4">
+                <div id="panel-4" class="sticky-item">
+                    <div class="animated-title"><p>Text 4: Forest Canopy</p></div>
+                    <wix-interact-element data-wix-path="#image-container-4">
+                        <div id="image-container-4" class="image-container">
+                             <wix-interact-element data-wix-path="#image-4">
+                                <img id="image-4" src="https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=2670&auto=format&fit=crop" onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/000000/FFA500?text=Image+4';" class="animated-image" alt="Sunlight filtering through a dense forest canopy">
+                            </wix-interact-element>
+                        </div>
+                    </wix-interact-element>
+                </div>
+            </wix-interact-element>
+
+            <!-- Panel 5 -->
+            <wix-interact-element data-wix-path="#panel-5">
+                <div id="panel-5" class="sticky-item">
+                    <div class="animated-title"><p>Text 5: Ocean Waves</p></div>
+                    <wix-interact-element data-wix-path="#image-container-5">
+                        <div id="image-container-5" class="image-container">
+                             <wix-interact-element data-wix-path="#image-5">
+                                <img id="image-5" src="https://static.wixstatic.com/media/9eca39_2bfcffd0d1e3491a9b025401acf0e3d0~mv2.jpg" onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/000000/FFA500?text=Image+5';" class="animated-image" alt="Turquoise ocean waves crashing on a sandy beach">
+                            </wix-interact-element>
+                        </div>
+                    </wix-interact-element>
+                </div>
+            </wix-interact-element>
+        </div>
+        
+        <!-- Placeholder for scroll triggers -->
+        <div class="scroll-triggers-placeholder">
+            <wix-interact-element data-wix-path="#trigger-1"><div id="trigger-1" class="scroll-section"></div></wix-interact-element>
+            <wix-interact-element data-wix-path="#trigger-2"><div id="trigger-2" class="scroll-section"></div></wix-interact-element>
+            <wix-interact-element data-wix-path="#trigger-3"><div id="trigger-3" class="scroll-section"></div></wix-interact-element>
+            <wix-interact-element data-wix-path="#trigger-4"><div id="trigger-4" class="scroll-section"></div></wix-interact-element>
+            <wix-interact-element data-wix-path="#trigger-5"><div id="trigger-5" class="scroll-section"></div></wix-interact-element>
+        </div>
+    </div>
+
+    <!-- 3. Full-screen conclusion section -->
+    <footer class="fullscreen-section">
+        <h1 class="text-4xl md:text-6xl font-bold">Animation Complete</h1>
+    </footer>
+
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+
+        const interactions = [];
+        const panelCount = 5;
+
+        // --- Panel 1 (Special Case) ---
+        // Image Reveal (0% to 50% of scroll)
+        interactions.push({
+            key: '#trigger-1',
+            trigger: 'viewProgress',
+            effects: [{
+                key: '#image-1',
+                keyframeEffect: {
+                    name: 'panel1-img-reveal',
+                    keyframes: [
+                        { clipPath: 'inset(0% 0% 100% 100%)' },
+                        { clipPath: 'inset(0% 0% 0% 0%)' }
+                    ]
+                },
+                rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 } },
+                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 50 } },
+                fill: 'both',
+                easing: 'linear'
+            }]
+        });
+
+        // Panel Shrink (50% to 100% of scroll)
+        interactions.push({
+            key: '#trigger-1',
+            trigger: 'viewProgress',
+            effects: [{
+                key: '#image-container-1',
+                keyframeEffect: {
+                    name: 'panel1-shrink',
+                    keyframes: [
+                        { clipPath: 'inset(0% 0% 0% 0%)' },
+                        { clipPath: 'inset(0% 100% 100% 0%)' }
+                    ]
+                },
+                rangeStart: { name: 'cover', offset: { type: 'percentage', value: 50 } },
+                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 } },
+                fill: 'both',
+                easing: 'linear'
+            }]
+        });
+
+        // --- Panels 2 to 5 (Loop) ---
+        for (let i = 2; i <= panelCount; i++) {
+            const currentPanel = `#panel-${i}`;
+            const currentImage = `#image-${i}`;
+            const currentImageContainer = `#image-container-${i}`;
+            const currentTrigger = `#trigger-${i}`;
+            const previousTrigger = `#trigger-${i - 1}`;
+            
+            // 1. Reveal Animation (triggered by the *previous* panel's scroll section)
+            // This slides the panel up and expands its image simultaneously.
+            interactions.push({
+                key: previousTrigger,
+                trigger: 'viewProgress',
+                effects: [
+                    { // Slide panel up
+                        key: currentPanel,
+                        keyframeEffect: {
+                            name: `panel${i}-slide-up`,
+                            keyframes: [ { transform: 'translateY(100vh)' }, { transform: 'translateY(0vh)' } ]
+                        },
+                        rangeStart: { name: 'cover', offset: { type: 'percentage', value: 50 } },
+                        rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 } },
+                        fill: 'both',
+                        easing: 'linear'
+                    },
+                    { // Expand image from top-right
+                        key: currentImage,
+                        keyframeEffect: {
+                            name: `panel${i}-img-reveal`,
+                            keyframes: [
+                                { clipPath: 'inset(0% 0% 100% 100%)' },
+                                { clipPath: 'inset(0% 0% 0% 0%)' }
+                            ]
+                        },
+                        rangeStart: { name: 'cover', offset: { type: 'percentage', value: 50 } },
+                        rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 } },
+                        fill: 'both',
+                        easing: 'linear'
+                    }
+                ]
+            });
+
+            // 2. Shrink Animation (triggered by its *own* panel's scroll section)
+            // This shrinks the panel's container to reveal the next panel.
+            interactions.push({
+                key: currentTrigger,
+                trigger: 'viewProgress',
+                effects: [{
+                    key: currentImageContainer,
+                    keyframeEffect: {
+                        name: `panel${i}-shrink`,
+                        keyframes: [
+                            { clipPath: 'inset(0% 0% 0% 0%)' },
+                            { clipPath: 'inset(0% 100% 100% 0%)' }
+                        ]
+                    },
+                    rangeStart: { name: 'cover', offset: { type: 'percentage', value: 50 } },
+                    rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 } },
+                    fill: 'both',
+                    easing: 'linear'
+                }]
+            });
+        }
+
+        const config = { interactions };
+        Interact.create(config);
+
+    </script>
+</body>
+</html>

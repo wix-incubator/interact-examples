@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Spread Animation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #111;
+            --text-color: #f0f0f0;
+        }
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .intro, .outro {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .scroll-section {
+            height: 300vh;
+        }
+
+        .cards-container-wrapper {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #cards-collection {
+            position: relative;
+            width: 20vw;
+            height: 100vh;
+            margin: 0 auto;
+        }
+
+        .card {
+            position: absolute;
+            width: 20vw;
+            height: 100vh;
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5rem;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        #card-1 { background: linear-gradient(45deg, #ff6b6b, #feca57); z-index: 3; }
+        #card-2 { background: linear-gradient(45deg, #ff9ff3, #feca57); z-index: 4; }
+        #card-3 { background: linear-gradient(45deg, #54a0ff, #5f27cd); z-index: 5; }
+        #card-4 { background: linear-gradient(45deg, #5f27cd, #54a0ff); z-index: 2; }
+        #card-5 { background: linear-gradient(45deg, #ff9ff3, #ff6b6b); z-index: 1; }
+
+        .bounce-arrow {
+            font-size: 2rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .card {
+                transform: none !important;
+                height: 100vh !important;
+            }
+            .bounce-arrow {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <wix-interact-element data-wix-path=".intro">
+        <section class="intro">
+            <h1>Card Spread</h1>
+            <div class="bounce-arrow">↓</div>
+        </section>
+    </wix-interact-element>
+
+    <wix-interact-element data-wix-path=".scroll-section">
+        <section class="scroll-section">
+            <div class="cards-container-wrapper">
+                <wix-interact-element data-wix-path="#cards-collection">
+                    <div id="cards-collection">
+                        <wix-interact-element data-wix-path="#card-1">
+                            <div id="card-1" class="card">1</div>
+                        </wix-interact-element>
+                        <wix-interact-element data-wix-path="#card-2">
+                            <div id="card-2" class="card">2</div>
+                        </wix-interact-element>
+                        <wix-interact-element data-wix-path="#card-3">
+                            <div id="card-3" class="card">3</div>
+                        </wix-interact-element>
+                        <wix-interact-element data-wix-path="#card-4">
+                            <div id="card-4" class="card">4</div>
+                        </wix-interact-element>
+                        <wix-interact-element data-wix-path="#card-5">
+                            <div id="card-5" class="card">5</div>
+                        </wix-interact-element>
+                    </div>
+                </wix-interact-element>
+            </div>
+        </section>
+    </wix-interact-element>
+
+    <wix-interact-element data-wix-path=".outro">
+        <section class="outro">
+            <h1>Animation Complete</h1>
+        </section>
+    </wix-interact-element>
+
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+
+        const config = {
+            interactions: [
+                {
+                    key: '.scroll-section',
+                    trigger: 'viewProgress',
+                    effects: [
+                        {
+                            key: '.card',
+                            keyframeEffect: {
+                                name: 'card-shrink',
+                                keyframes: [
+                                    { height: '100vh' },
+                                    { height: '85vh' }
+                                ]
+                            },
+                            rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 } },
+                            rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 } },
+                            easing: 'cubic-bezier(0.42, 0, 0.58, 1)',
+                            fill: 'both'
+                        },
+                        {
+                            key: '#card-1',
+                            keyframeEffect: {
+                                name: 'card-1-move',
+                                keyframes: [
+                                    { transform: 'translateX(0)' },
+                                    { transform: 'translateX(-40vw)' }
+                                ]
+                            },
+                            rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 } },
+                            rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 } },
+                            easing: 'cubic-bezier(0.42, 0, 0.58, 1)',
+                            fill: 'both'
+                        },
+                        {
+                            key: '#card-2',
+                            keyframeEffect: {
+                                name: 'card-2-move',
+                                keyframes: [
+                                    { transform: 'translateX(0)' },
+                                    { transform: 'translateX(-20vw)' }
+                                ]
+                            },
+                            rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 } },
+                            rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 } },
+                            easing: 'cubic-bezier(0.42, 0, 0.58, 1)',
+                            fill: 'both'
+                        },
+                        {
+                            key: '#card-4',
+                            keyframeEffect: {
+                                name: 'card-4-move',
+                                keyframes: [
+                                    { transform: 'translateX(0)' },
+                                    { transform: 'translateX(20vw)' }
+                                ]
+                            },
+                            rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 } },
+                            rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 } },
+                            easing: 'cubic-bezier(0.42, 0, 0.58, 1)',
+                            fill: 'both'
+                        },
+                        {
+                            key: '#card-5',
+                            keyframeEffect: {
+                                name: 'card-5-move',
+                                keyframes: [
+                                    { transform: 'translateX(0)' },
+                                    { transform: 'translateX(40vw)' }
+                                ]
+                            },
+                            rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 } },
+                            rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 } },
+                            easing: 'cubic-bezier(0.42, 0, 0.58, 1)',
+                            fill: 'both'
+                        }
+                    ]
+                },
+                {
+                    key: '.intro',
+                    trigger: 'viewEnter',
+                    params: {
+                        type: 'once',
+                        threshold: 0.3
+                    },
+                    effects: [
+                        {
+                            key: '.intro h1',
+                            keyframeEffect: {
+                                name: 'intro-title-enter',
+                                keyframes: [
+                                    { opacity: 0, transform: 'translateY(40px)' },
+                                    { opacity: 1, transform: 'translateY(0)' }
+                                ]
+                            },
+                            duration: 800,
+                            easing: 'ease-out',
+                            fill: 'backwards'
+                        }
+                    ]
+                },
+                {
+                    key: '.outro',
+                    trigger: 'viewEnter',
+                    params: {
+                        type: 'once',
+                        threshold: 0.3
+                    },
+                    effects: [
+                        {
+                            key: '.outro h1',
+                            keyframeEffect: {
+                                name: 'outro-title-enter',
+                                keyframes: [
+                                    { opacity: 0, transform: 'translateY(40px)' },
+                                    { opacity: 1, transform: 'translateY(0)' }
+                                ]
+                            },
+                            duration: 800,
+                            easing: 'ease-out',
+                            fill: 'backwards'
+                        }
+                    ]
+                }
+            ]
+        };
+
+        Interact.create(config);
+    </script>
+</body>
+</html>
+Put your HTML text here

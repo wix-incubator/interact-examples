@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Interactive Image Gallery - @wix/interact</title>
+   <!-- Libraries -->
+   <script src="https://cdn.tailwindcss.com"></script>
+   <script type="module" src="https://esm.sh/@wix/interact@1.78.0"></script>
+   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+   <style>
+       /* Base styling for the page and gallery. */
+       body {
+           font-family: 'Inter', sans-serif;
+           background-color: #000;
+           color: white;
+           overflow: hidden;
+           margin: 0;
+       }
+
+
+       /* The main container for the gallery. It now hides overflow. */
+       .gallery-container {
+           display: flex;
+           align-items: center;
+           height: 100vh;
+           width: 100vw;
+           position: relative;
+           overflow: hidden; /* Crucial for transform-based scrolling */
+       }
+
+
+       /* The grid holds the gallery items. It is no longer a scroll container. */
+       .gallery-grid {
+           display: flex;
+           padding: 0 1.5vw;
+           /* The transform property will be animated by JS */
+           will-change: transform;
+       }
+      
+       /* Individual gallery items. */
+       .gallery-item {
+           cursor: pointer;
+           position: relative;
+           flex-shrink: 0;
+           height: 50vh;
+           width: 30vw;
+           margin: 0 1.5vw;
+           background-color: #000;
+           overflow: hidden;
+           border-radius: 1rem;
+           display: flex;
+           justify-content: center;
+           align-items: center;
+       }
+
+
+       /* The clipper element creates the elliptical mask effect. */
+       .image-clipper {
+           position: absolute;
+           top: 0;
+           left: 0;
+           width: 100%;
+           height: 100%;
+           clip-path: ellipse(142% 142% at 50% 50%);
+           transform: rotate(0deg);
+       }
+
+
+       /* The image itself. */
+       .gallery-item img {
+           height: 100%;
+           width: 100%;
+           object-fit: cover;
+           display: block;
+           transform: scale(1) rotate(0deg);
+       }
+      
+       /* The text container for the title. */
+       .gallery-item-text {
+           position: relative;
+           z-index: 5;
+           color: white;
+           text-align: center;
+           opacity: 0;
+           transform: translateY(20px);
+           pointer-events: none;
+           text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+       }
+
+
+       /* Styling for the title text. */
+       .gallery-item-title {
+           font-size: clamp(0.8rem, 2vw, 1.2rem);
+           font-weight: 700;
+           text-transform: uppercase;
+       }
+      
+       /* Ensure interact wrappers don't break flex/grid/absolute positioning */
+       wix-interact-element {
+           display: contents;
+       }
+
+
+       /* Styles for the invisible scroll hot zones */
+       .hotzone {
+           position: absolute;
+           top: 0;
+           height: 100%;
+           width: 15vw;
+           z-index: 20; /* Ensures they are on top of other content */
+       }
+       #hotzone-left {
+           left: 0;
+           cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24'><polyline points='15 6 9 12 15 18' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>") 4 12, auto;
+       }
+       #hotzone-right {
+           right: 0;
+           cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24'><polyline points='9 6 15 12 9 18' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>") 20 12, auto;
+       }
+   </style>
+</head>
+<body class="bg-black">
+   <!-- Gallery Container -->
+   <div id="gallery-container-main" class="gallery-container">
+       <!-- Invisible Hot Zones for Scrolling - NOW CORRECTLY WRAPPED -->
+       <wix-interact-element data-wix-path="#hotzone-left">
+           <div id="hotzone-left" class="hotzone"></div>
+       </wix-interact-element>
+       <wix-interact-element data-wix-path="#hotzone-right">
+           <div id="hotzone-right" class="hotzone"></div>
+       </wix-interact-element>
+
+
+       <!-- Gallery Grid - WRAPPED AS A TARGET -->
+       <wix-interact-element data-wix-path="#gallery-grid">
+           <div id="gallery-grid" class="gallery-grid">
+               <!-- Gallery Item 1 -->
+               <wix-interact-element data-wix-path="#gallery-item-1">
+                   <div id="gallery-item-1" class="gallery-item" data-title="Serene Lake">
+                       <wix-interact-element data-wix-path="#image-clipper-1">
+                           <div id="image-clipper-1" class="image-clipper">
+                               <wix-interact-element data-wix-path="#image-1">
+                                   <img id="image-1" src="https://images.unsplash.com/photo-1476514msub-07fb3b4ae5f1?q=80&w=2070&auto=format&fit=crop" alt="A serene lake with mountains" onerror="this.onerror=null;this.src='https://placehold.co/600x800/A5B4FC/3730A3?text=Image+1';">
+                               </wix-interact-element>
+                           </div>
+                       </wix-interact-element>
+                       <wix-interact-element data-wix-path="#gallery-item-text-1">
+                           <div id="gallery-item-text-1" class="gallery-item-text">
+                               <h3 class="gallery-item-title">Serene Lake</h3>
+                           </div>
+                       </wix-interact-element>
+                   </div>
+               </wix-interact-element>
+              
+               <!-- Gallery Item 2 -->
+               <wix-interact-element data-wix-path="#gallery-item-2"><div id="gallery-item-2" class="gallery-item" data-title="Mountain Majesty"><wix-interact-element data-wix-path="#image-clipper-2"><div id="image-clipper-2" class="image-clipper"><wix-interact-element data-wix-path="#image-2"><img id="image-2" src="https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?q=80&w=2070&auto=format&fit=crop" alt="A majestic mountain range" onerror="this.onerror=null;this.src='https://placehold.co/600x800/93C5FD/1E3A8A?text=Image+2';"></wix-interact-element></div></wix-interact-element><wix-interact-element data-wix-path="#gallery-item-text-2"><div id="gallery-item-text-2" class="gallery-item-text"><h3 class="gallery-item-title">Mountain Majesty</h3></div></wix-interact-element></div></wix-interact-element>
+              
+               <!-- Gallery Item 3 -->
+               <wix-interact-element data-wix-path="#gallery-item-3"><div id="gallery-item-3" class="gallery-item" data-title="Coastal Drive"><wix-interact-element data-wix-path="#image-clipper-3"><div id="image-clipper-3" class="image-clipper"><wix-interact-element data-wix-path="#image-3"><img id="image-3" src="https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?q=80&w=1974&auto=format&fit=crop" alt="A winding coastal road" onerror="this.onerror=null;this.src='https://placehold.co/600x800/FCA5A5/7F1D1D?text=Image+3';"></wix-interact-element></div></wix-interact-element><wix-interact-element data-wix-path="#gallery-item-text-3"><div id="gallery-item-text-3" class="gallery-item-text"><h3 class="gallery-item-title">Coastal Drive</h3></div></wix-interact-element></div></wix-interact-element>
+              
+               <!-- Gallery Item 4 -->
+               <wix-interact-element data-wix-path="#gallery-item-4"><div id="gallery-item-4" class="gallery-item" data-title="Forest Path"><wix-interact-element data-wix-path="#image-clipper-4"><div id="image-clipper-4" class="image-clipper"><wix-interact-element data-wix-path="#image-4"><img id="image-4" src="https://images.unsplash.com/photo-1473448912268-2022ce9509d8?q=80&w=1925&auto=format&fit=crop" alt="A sunlit path through a forest" onerror="this.onerror=null;this.src='https://placehold.co/600x800/86EFAC/14532D?text=Image+4';"></wix-interact-element></div></wix-interact-element><wix-interact-element data-wix-path="#gallery-item-text-4"><div id="gallery-item-text-4" class="gallery-item-text"><h3 class="gallery-item-title">Forest Path</h3></div></wix-interact-element></div></wix-interact-element>
+              
+               <!-- Gallery Item 5 -->
+               <wix-interact-element data-wix-path="#gallery-item-5"><div id="gallery-item-5" class="gallery-item" data-title="Desert Dunes"><wix-interact-element data-wix-path="#image-clipper-5"><div id="image-clipper-5" class="image-clipper"><wix-interact-element data-wix-path="#image-5"><img id="image-5" src="https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?q=80&w=2070&auto=format&fit=crop" alt="Vast desert dunes" onerror="this.onerror=null;this.src='https://placehold.co/600x800/FDE047/78350F?text=Image+5';"></wix-interact-element></div></wix-interact-element><wix-interact-element data-wix-path="#gallery-item-text-5"><div id="gallery-item-text-5" class="gallery-item-text"><h3 class="gallery-item-title">Desert Dunes</h3></div></wix-interact-element></div></wix-interact-element>
+              
+               <!-- Gallery Item 6 -->
+               <wix-interact-element data-wix-path="#gallery-item-6"><div id="gallery-item-6" class="gallery-item" data-title="City Lights"><wix-interact-element data-wix-path="#image-clipper-6"><div id="image-clipper-6" class="image-clipper"><wix-interact-element data-wix-path="#image-6"><img id="image-6" src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=2070&auto=format&fit=crop" alt="A sprawling cityscape at night" onerror="this.onerror=null;this.src='https://placehold.co/600x800/C4B5FD/4C1D95?text=Image+6';"></wix-interact-element></div></wix-interact-element><wix-interact-element data-wix-path="#gallery-item-text-6"><div id="gallery-item-text-6" class="gallery-item-text"><h3 class="gallery-item-title">City Lights</h3></div></wix-interact-element></div></wix-interact-element>
+           </div>
+       </wix-interact-element>
+   </div>
+  
+   <script type="module">
+       import { Interact } from 'https://esm.sh/v135/@wix/interact@1.78.0';
+
+
+       window.addEventListener('load', () => {
+           const interactions = [];
+           const itemCount = 6;
+           const cardHoverEasing = 'cubic-bezier(0.77, 0, 0.175, 1)';
+          
+           // --- 1. Generate hover interactions for each gallery item ---
+           for (let i = 1; i <= itemCount; i++) {
+               interactions.push({
+                   key: `#gallery-item-${i}`,
+                   trigger: 'hover',
+                   params: { type: 'alternate' },
+                   effects: [
+                       { key: `#image-clipper-${i}`, keyframeEffect: { name: `clipper-anim-${i}`, keyframes: [ { transform: 'rotate(0deg)', clipPath: 'ellipse(142% 142% at 50% 50%)' }, { transform: 'rotate(45deg)', clipPath: 'ellipse(35% 45% at 50% 50%)' } ] }, duration: 600, easing: cardHoverEasing, fill: 'both' },
+                       { key: `#image-${i}`, keyframeEffect: { name: `image-anim-${i}`, keyframes: [ { transform: 'rotate(0deg) scale(1)' }, { transform: 'rotate(-45deg) scale(1.5)' } ] }, duration: 600, easing: cardHoverEasing, fill: 'both' },
+                       { key: `#gallery-item-text-${i}`, keyframeEffect: { name: `text-anim-${i}`, keyframes: [ { opacity: 0, transform: 'translateY(20px)' }, { opacity: 1, transform: 'translateY(0)' } ] }, duration: 500, easing: 'ease', fill: 'both' }
+                   ]
+               });
+           }
+          
+           // --- 2. Define reusable scrolling effects using @wix/interact ---
+           const galleryGrid = document.getElementById('gallery-grid');
+           const galleryContainer = document.getElementById('gallery-container-main');
+           const maxScroll = galleryGrid.scrollWidth - galleryContainer.clientWidth;
+
+
+           const effects = {
+               'scroll-to-end': {
+                   keyframeEffect: {
+                       name: 'scroll-end-anim',
+                       // Animate from the current position to the end
+                       keyframes: [ { transform: `translateX(-${maxScroll}px)` } ]
+                   },
+                   duration: 10000,
+                   easing: 'linear',
+                   fill: 'both'
+               },
+               'scroll-to-start': {
+                   keyframeEffect: {
+                       name: 'scroll-start-anim',
+                       // Animate from the current position to the start
+                       keyframes: [ { transform: 'translateX(0px)' } ]
+                   },
+                   duration: 10000,
+                   easing: 'linear',
+                   fill: 'both'
+               }
+           };
+
+
+           // --- 3. Add hover interactions for the hot zones ---
+           interactions.push(
+               {
+                   key: '#hotzone-left',
+                   trigger: 'hover',
+                   params: { type: 'state' }, // Play on hover, pause on leave
+                   effects: [{ effectId: 'scroll-to-start', key: '#gallery-grid' }]
+               },
+               {
+                   key: '#hotzone-right',
+                   trigger: 'hover',
+                   params: { type: 'state' }, // Play on hover, pause on leave
+                   effects: [{ effectId: 'scroll-to-end', key: '#gallery-grid' }]
+               }
+           );
+
+
+           // --- 4. Initialize Interact with all configurations ---
+           const config = { effects, interactions };
+           Interact.create(config);
+       });
+   </script>
+</body>
+</html>

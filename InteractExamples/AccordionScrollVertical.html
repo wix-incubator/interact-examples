@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expanding Image Columns with @wix/interact</title>
+    <link href__="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Base styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            /* Prevent the main page from scrolling vertically */
+            overflow: hidden;
+        }
+
+        /* Container for the scrollable gallery */
+        .feature-container {
+            display: flex;
+            gap: 1.5rem; /* 24px */
+            overflow-x: auto;
+            padding-bottom: 1rem;
+            /* Hide the default scrollbar */
+            scrollbar-width: none; /* For Firefox */
+        }
+
+        .feature-container::-webkit-scrollbar {
+            display: none; /* For Chrome, Safari, and Opera */
+        }
+
+        /* Individual column styling */
+        .feature-column {
+            /* Initial width set here. Animation is handled by @wix/interact */
+            width: 200px; 
+            flex-shrink: 0; /* Important: Prevents columns from shrinking */
+            height: 70vh;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            border-radius: 1rem;
+        }
+
+        .feature-column .feature-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* --- Styles for the bottom text group (title and subtitle) --- */
+        .feature-text-group {
+            position: absolute;
+            bottom: 1.25rem;
+            left: 1.25rem;
+            /* Initial state set here. Animation is handled by @wix/interact */
+            opacity: 0;
+            transform: translateY(20px);
+            z-index: 10;
+            text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.6);
+            line-height: 1.2;
+        }
+
+        .feature-bottom-subtitle {
+            font-size: 0.875rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.9);
+            white-space: nowrap;
+        }
+
+        .feature-bottom-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: white;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-6">
+
+    <div class="w-full max-w-7xl mx-auto">
+        <!-- Main container for the expanding columns -->
+        <div class="feature-container">
+
+            <!-- Column 1 -->
+            <wix-interact-element data-wix-path="#column-1">
+                <div id="column-1" class="feature-column">
+                    <div class="feature-text-group">
+                        <p class="feature-bottom-subtitle">Italian Alps</p>
+                        <h2 class="feature-bottom-title">Serene Lakes</h2>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2070&auto=format&fit=crop"
+                         alt="A serene lake with mountains in the background" class="feature-image">
+                </div>
+            </wix-interact-element>
+
+            <!-- Column 2 -->
+            <wix-interact-element data-wix-path="#column-2">
+                <div id="column-2" class="feature-column">
+                    <div class="feature-text-group">
+                        <p class="feature-bottom-subtitle">Arid Climate</p>
+                        <h2 class="feature-bottom-title">Vast Deserts</h2>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?q=80&w=2070&auto=format&fit=crop"
+                         alt="Sand dunes in a vast desert under a clear sky" class="feature-image">
+                </div>
+            </wix-interact-element>
+
+            <!-- Column 3 -->
+            <wix-interact-element data-wix-path="#column-3">
+                <div id="column-3" class="feature-column">
+                    <div class="feature-text-group">
+                        <p class="feature-bottom-subtitle">Temperate Rainforest</p>
+                        <h2 class="feature-bottom-title">Lush Forests</h2>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=2070&auto=format&fit=crop"
+                         alt="Sunlight filtering through trees in a lush green forest" class="feature-image">
+                </div>
+            </wix-interact-element>
+
+            <!-- Column 4 -->
+            <wix-interact-element data-wix-path="#column-4">
+                <div id="column-4" class="feature-column">
+                    <div class="feature-text-group">
+                        <p class="feature-bottom-subtitle">Rocky Peaks</p>
+                        <h2 class="feature-bottom-title">Majestic Mountains</h2>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070&auto=format&fit=crop"
+                         alt="A majestic mountain range with a starry night sky" class="feature-image">
+                </div>
+            </wix-interact-element>
+
+            <!-- Column 5 -->
+            <wix-interact-element data-wix-path="#column-5">
+                <div id="column-5" class="feature-column">
+                    <div class="feature-text-group">
+                        <p class="feature-bottom-subtitle">Metropolitan Area</p>
+                        <h2 class="feature-bottom-title">Urban Landscapes</h2>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=2070&auto=format&fit=crop"
+                         alt="A sprawling city skyline at dusk" class="feature-image">
+                </div>
+            </wix-interact-element>
+
+            <!-- Column 6 -->
+            <wix-interact-element data-wix-path="#column-6">
+                <div id="column-6" class="feature-column">
+                    <div class="feature-text-group">
+                        <p class="feature-bottom-subtitle">Coastal Views</p>
+                        <h2 class="feature-bottom-title">Ocean Shores</h2>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1507525428034-b723a9ce6890?q=80&w=2070&auto=format&fit=crop"
+                         alt="Ocean waves crashing on a sandy beach" class="feature-image">
+                </div>
+            </wix-interact-element>
+
+            <!-- Column 7 -->
+            <wix-interact-element data-wix-path="#column-7">
+                <div id="column-7" class="feature-column">
+                    <div class="feature-text-group">
+                        <p class="feature-bottom-subtitle">Winter Scene</p>
+                        <h2 class="feature-bottom-title">Snowy Hills</h2>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1483921104529-623be6f80997?q=80&w=2070&auto=format&fit=crop"
+                         alt="Hills and trees covered in a thick blanket of snow" class="feature-image">
+                </div>
+            </wix-interact-element>
+
+            <!-- Column 8 -->
+            <wix-interact-element data-wix-path="#column-8">
+                <div id="column-8" class="feature-column">
+                    <div class="feature-text-group">
+                        <p class="feature-bottom-subtitle">Iceland</p>
+                        <h2 class="feature-bottom-title">Waterfalls</h2>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1535546205639-b87332b25b2a?q=80&w=1974&auto=format&fit=crop"
+                         alt="A large, powerful waterfall in a rocky landscape" class="feature-image">
+                </div>
+            </wix-interact-element>
+
+            <!-- Column 9 -->
+            <wix-interact-element data-wix-path="#column-9">
+                <div id="column-9" class="feature-column">
+                    <div class="feature-text-group">
+                        <p class="feature-bottom-subtitle">Night Sky</p>
+                        <h2 class="feature-bottom-title">The Aurora</h2>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=2070&auto=format&fit=crop"
+                         alt="The aurora borealis over a forest of pine trees" class="feature-image">
+                </div>
+            </wix-interact-element>
+
+            <!-- Column 10 -->
+            <wix-interact-element data-wix-path="#column-10">
+                <div id="column-10" class="feature-column">
+                    <div class="feature-text-group">
+                        <p class="feature-bottom-subtitle">Rural Life</p>
+                        <h2 class="feature-bottom-title">Farmlands</h2>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1932&auto=format&fit=crop"
+                         alt="A winding road through green, rolling farmlands" class="feature-image">
+                </div>
+            </wix-interact-element>
+
+        </div>
+    </div>
+
+    <!-- @wix/interact configuration -->
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+
+        const interactions = [];
+        const columnCount = 10;
+
+        // Programmatically create an interaction for each column
+        for (let i = 1; i <= columnCount; i++) {
+            interactions.push({
+                key: `#column-${i}`,
+                trigger: 'hover',
+                effects: [
+                    // Effect 1: Expand the column's width
+                    {
+                        key: `#column-${i}`,
+                        keyframeEffect: {
+                            name: `expand-column-${i}`,
+                            keyframes: [{ width: '200px' }, { width: '600px' }],
+                        },
+                        duration: 500,
+                        easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                        fill: 'both' // Ensures the state persists
+                    },
+                    // Effect 2: Fade in the text content
+                    {
+                        key: `#column-${i} .feature-text-group`,
+                        keyframeEffect: {
+                            name: `fade-text-${i}`,
+                            keyframes: [
+                                { opacity: 0, transform: 'translateY(20px)' },
+                                { opacity: 1, transform: 'translateY(0px)' }
+                            ],
+                        },
+                        duration: 400,
+                        easing: 'ease',
+                        delay: 200, // Wait for the expansion to start
+                        fill: 'both'
+                    }
+                ]
+            });
+        }
+
+        // Create the configuration object and initialize the interactions
+        const config = { interactions };
+        Interact.create(config);
+    </script>
+    
+    <!-- Custom scrolling logic -->
+    <script>
+        const container = document.querySelector('.feature-container');
+
+        /*
+         * Vertical-to-horizontal scrolling.
+         * This hijacks the standard vertical scroll ('wheel' event) and
+         * applies it as horizontal scroll to the container.
+         * This functionality is not part of @wix/interact and remains as custom JS.
+        */
+        container.addEventListener('wheel', (evt) => {
+            // Prevent the default vertical scroll behavior
+            evt.preventDefault();
+            // Apply the scroll amount to the container's horizontal scroll
+            container.scrollLeft += evt.deltaY;
+        });
+    </script>
+
+</body>
+</html>
