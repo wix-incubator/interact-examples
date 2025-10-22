@@ -30,13 +30,16 @@
        /* Each row styling */
        .feature-column {
            width: 100%;
-           /* Initial height set by CSS */
-           height: 20vh;
+           /* Use max-height for animation instead of height */
+           max-height: 20vh; /* Default height for desktop */
            overflow: hidden;
-           position: relative;
+           position: relative; /* Required for z-index stacking */
+           z-index: 1; /* Default stacking context */
            cursor: pointer;
            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
            border-radius: 1rem;
+           /* REMOVED: The CSS transition below was causing a conflict with the JS animation */
+           /* transition: max-height 0.3s ease, margin-bottom 0.3s ease; */
        }
 
 
@@ -60,6 +63,8 @@
            line-height: 1.2;
            /* Prevents text from being selected during interaction */
            user-select: none;
+           /* FIX: Prevents this element from capturing mouse events, stopping the hover glitch */
+           pointer-events: none;
        }
 
 
@@ -79,47 +84,62 @@
            color: white;
            white-space: nowrap;
        }
+
+       /* Media query for mobile responsiveness */
+       @media (max-width: 768px) {
+           .feature-column {
+               max-height: 25vh; /* Initial height for mobile */
+           }
+
+           .feature-bottom-title {
+               font-size: 1.5rem; /* Slightly smaller title on mobile */
+           }
+
+           .feature-bottom-subtitle {
+               font-size: 0.8rem; /* Slightly smaller subtitle on mobile */
+           }
+       }
    </style>
 </head>
 <body class="p-6">
 
 
-   <div class="w-full max-w-4xl mx-auto">
+   <div class="w-full mx-auto">
        <div id="feature-container" class="feature-container">
            <!-- Rows will be dynamically wrapped by the script -->
            <div id="column-1" class="feature-column">
-               <div class="feature-text-group">
+               <div id="text-1" class="feature-text-group">
                    <p class="feature-bottom-subtitle">Italian Alps</p>
                    <h2 class="feature-bottom-title">Serene Lakes</h2>
                </div>
-               <img src="https://images.unsplash.com/photo-1439853949127-fa647821eba0?q=80&w=1974&auto=format&fit=crop"
+               <img src="https://images.unsplash.com/photo-1439853949127-fa647821eba0?q=80&w=1974&auto=format=fit=crop"
                     onerror="this.onerror=null;this.src='https://placehold.co/1200x800/cccccc/ffffff?text=Image+Not+Found';"
                     alt="A serene lake with mountains in the background" class="feature-image">
            </div>
            <div id="column-2" class="feature-column">
-               <div class="feature-text-group">
+               <div id="text-2" class="feature-text-group">
                    <p class="feature-bottom-subtitle">Arid Climate</p>
                    <h2 class="feature-bottom-title">Vast Deserts</h2>
                </div>
-               <img src="https://images.unsplash.com/photo-1488197047962-b48492212cda?q=80&w=2070&auto=format&fit=crop"
+               <img src="https://images.unsplash.com/photo-1488197047962-b48492212cda?q=80&w=2070&auto=format=fit=crop"
                     onerror="this.onerror=null;this.src='https://placehold.co/1200x800/cccccc/ffffff?text=Image+Not+Found';"
                     alt="Sand dunes in a vast desert under a clear sky" class="feature-image">
            </div>
            <div id="column-3" class="feature-column">
-               <div class="feature-text-group">
+               <div id="text-3" class="feature-text-group">
                    <p class="feature-bottom-subtitle">Tropical Paradise</p>
                    <h2 class="feature-bottom-title">Lush Rainforests</h2>
                </div>
-               <img src="https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?q=80&w=1974&auto=format&fit=crop"
+               <img src="https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?q=80&w=1974&auto=format=fit=crop"
                     onerror="this.onerror=null;this.src='https://placehold.co/1200x800/cccccc/ffffff?text=Image+Not+Found';"
                     alt="A dense rainforest with sunlight filtering through the canopy" class="feature-image">
            </div>
             <div id="column-4" class="feature-column">
-               <div class="feature-text-group">
+               <div id="text-4" class="feature-text-group">
                    <p class="feature-bottom-subtitle">Coastal Views</p>
                    <h2 class="feature-bottom-title">Ocean Cliffs</h2>
                </div>
-               <img src="https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?q=80&w=1974&auto=format&fit=crop"
+               <img src="https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?q=80&w=1974&auto=format=fit=crop"
                     onerror="this.onerror=null;this.src='https://placehold.co/1200x800/cccccc/ffffff?text=Image+Not+Found';"
                     alt="Dramatic ocean cliffs with waves crashing below" class="feature-image">
            </div>
@@ -136,6 +156,9 @@
            const columns = document.querySelectorAll('.feature-column');
            const columnIds = Array.from(columns).map(col => `#${col.id}`);
 
+           // Find all text groups
+           const textGroups = document.querySelectorAll('.feature-text-group');
+
 
            // Programmatically wrap each column with the required wix-interact-element
            columns.forEach(column => {
@@ -145,48 +168,134 @@
                wrapper.appendChild(column);
            });
 
+           // Programmatically wrap each text group
+           textGroups.forEach(textGroup => {
+               if (textGroup.id) {
+                   const wrapper = document.createElement('wix-interact-element');
+                   wrapper.dataset.wixPath = `#${textGroup.id}`;
+                   // Insert wrapper before the text group, inside the column
+                   textGroup.parentNode.insertBefore(wrapper, textGroup);
+                   wrapper.appendChild(textGroup);
+               }
+           });
 
-           // Dynamically generate a single 'hover' interaction for each column
-           // The 'hover' trigger automatically handles both enter and leave states
-           const interactions = columnIds.map(currentId => ({
-               key: currentId,
-               trigger: 'hover',
-               effects: [
-                   // Effect to expand/collapse the column height
-                   {
-                       key: currentId,
+           // --- Responsive Interaction Logic ---
+           const isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+           
+           // Define animation heights based on device (must match CSS)
+           const initialHeight = isMobile ? '25vh' : '20vh';
+           const expandedHeight = isMobile ? '45vh' : '50vh'; // Mobile expand height
+
+           // Calculate the height difference and the negative margin needed to compensate for layout shift
+           // The 1.5rem matches the 'gap' in the .feature-container CSS
+           const heightDiff = `calc(${expandedHeight} - ${initialHeight})`;
+           const negativeMargin = `calc(-(${heightDiff}) - 1.5rem)`;
+
+           // --- Config with Reusable Effects ---
+           // We define the animations here so we can call them programmatically
+           const config = {
+               effects: {
+                   'expand-column': {
                        keyframeEffect: {
-                           name: `expand-collapse-${currentId}`,
-                           keyframes: [{ height: '20vh' }, { height: '50vh' }],
+                           name: 'expand-collapse',
+                           // Animate max-height to expand, and a negative margin-bottom
+                           // to "pull up" the content below it, preventing jitter.
+                           // Animate z-index to ensure the expanded item overlaps siblings.
+                           keyframes: [
+                               { maxHeight: initialHeight, marginBottom: '0rem', zIndex: 1 },
+                               { maxHeight: expandedHeight, marginBottom: negativeMargin, zIndex: 10 }
+                           ],
                        },
                        duration: 500,
                        easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                       fill: 'both' // 'both' ensures start/end states are correctly applied
+                       fill: 'both'
                    },
-                   // Effect to show/hide the text content
-                   {
-                       key: `${currentId} .feature-text-group`,
+                   'show-text': {
                        keyframeEffect: {
-                           name: `show-hide-text-${currentId}`,
+                           name: 'show-hide-text',
                            keyframes: [
                                { opacity: 0, transform: 'translateY(20px)' },
                                { opacity: 1, transform: 'translateY(0)' }
                            ],
                        },
                        duration: 400,
-                       delay: 200,
+                       delay: 200, // This delay will apply on 'add'
                        easing: 'ease-out',
                        fill: 'both'
                    }
-               ]
-           }));
-          
-           // Create the configuration object
-           const config = { interactions };
+               },
+               interactions: [] // We will populate this only for desktop
+           };
 
 
-           // Initialize the interactions
-           Interact.create(config);
+           if (isMobile) {
+               // --- Mobile "Accordion" Logic ---
+               
+               // Initialize interact with just the effects
+               Interact.create(config);
+
+               let openColumnWrapper = null;
+
+               columns.forEach(column => {
+                   const columnWrapper = column.parentElement; // The <wix-interact-element> for the column
+                   const textWrapper = column.querySelector('wix-interact-element'); // The <wix-interact-element> for the text
+
+                   if (!columnWrapper || !textWrapper) return;
+
+                   columnWrapper.addEventListener('click', () => {
+                       if (openColumnWrapper && openColumnWrapper === columnWrapper) {
+                           // Case 1: Clicked the *open* item. Collapse it.
+                           columnWrapper.toggleEffect('expand-column', 'remove');
+                           textWrapper.toggleEffect('show-text', 'remove');
+                           openColumnWrapper = null;
+                       } else if (openColumnWrapper && openColumnWrapper !== columnWrapper) {
+                           // Case 2: Clicked a *new* item while another is open.
+                           // 1. Collapse the old one.
+                           openColumnWrapper.toggleEffect('expand-column', 'remove');
+                           openColumnWrapper.querySelector('wix-interact-element').toggleEffect('show-text', 'remove');
+                           
+                           // 2. Expand the new one.
+                           columnWrapper.toggleEffect('expand-column', 'add');
+                           textWrapper.toggleEffect('show-text', 'add');
+                           openColumnWrapper = columnWrapper;
+                       } else {
+                           // Case 3: No item is open. Expand this one.
+                           columnWrapper.toggleEffect('expand-column', 'add');
+                           textWrapper.toggleEffect('show-text', 'add');
+                           openColumnWrapper = columnWrapper;
+                       }
+                   });
+               });
+
+           } else {
+               // --- Desktop "Hover" Logic ---
+               
+               // Populate the interactions array for hover
+               config.interactions = columnIds.map(currentId => ({
+                   key: currentId,
+                   trigger: 'hover', // Use hover for desktop
+                   params: {
+                       type: 'alternate' // This is the correct way to handle enter/leave
+                   },
+                   effects: [
+                       // Effect to expand/collapse the column height
+                       {
+                           key: currentId,
+                           effectId: 'expand-column' // Reference the reusable effect
+                           // 'reversed: false' was removed
+                       },
+                       // Effect to show/hide the text content
+                       {
+                           key: currentId.replace('column', 'text'), // e.g., converts #column-1 to #text-1
+                           effectId: 'show-text' // Reference the reusable effect
+                           // 'reversed: false' was removed
+                       }
+                   ]
+               }));
+
+               // Initialize interact with effects and hover interactions
+               Interact.create(config);
+           }
        });
    </script>
 </body>
