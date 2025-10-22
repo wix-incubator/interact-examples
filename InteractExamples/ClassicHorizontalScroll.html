@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wix Interact - Horizontal Scroll</title>
+    <title>Wix Interact - Horizontal Scroll (Image Redesign)</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
@@ -17,6 +17,7 @@
             font-family: 'Inter', sans-serif;
             background-color: #1a1a1a;
             color: #f0f2f5;
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
 
         /* The tall container that provides the scrollable height */
@@ -48,36 +49,76 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem;
+            justify-content: flex-end;  /* Changed from center */
+            align-items: flex-start; /* Changed from center */
+            padding: 4rem;           /* Updated padding */
             box-sizing: border-box;
-            text-align: center;
+            text-align: left;        /* Changed from center */
+            position: relative;        /* Added for background image */
+            overflow: hidden;          /* Added for background image */
         }
+
+        .panel-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        .panel-content {
+            position: relative;
+            z-index: 2;
+            color: #ffffff;
+            /* Add a gradient overlay for readability */
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 60%);
+            padding: 2rem;
+            margin: -4rem; /* Counteract the parent padding to go edge-to-edge at the bottom */
+            padding-top: 6rem; /* Add padding to push text up from bottom edge */
+            padding-left: 4rem;
+            padding-right: 4rem;
+            width: calc(100% + 8rem); /* Make it full width by counteracting parent padding */
+        }
+
 
         .panel h2 {
             font-size: 3rem;
             margin: 0;
-            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); /* Updated shadow */
         }
 
         .panel p {
             font-size: 1.25rem;
-            max-width: 600px;
-            opacity: 0.8;
+            width: 60vw; /* Set width to 60% of viewport width */
+            /* Removed width: 100% and max-width: 600px */
+            opacity: 0.9;
             margin-top: 1rem;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5); /* Added shadow */
         }
         
-        /* Unique background colors for each panel */
-        .panel-one { background-color: #0d1b2a; }
-        .panel-two { background-color: #1b263b; }
-        .panel-three { background-color: #415a77; }
-        .panel-four { background-color: #778da9; color: #1a1a1a; }
-        .panel-five { background-color: #a9bcd0; color: #1a1a1a; }
-        .panel-six { background-color: #7d8491; color: #1a1a1a;}
-        .panel-seven { background-color: #495867; }
-        .panel-eight { background-color: #2e3944; }
+        /* Removed the old background-color styles */
 
+        @media (max-width: 768px) {
+            .panel {
+                padding: 2rem; /* Reduce padding on mobile */
+            }
+
+            .panel-content {
+                margin: -2rem; /* Adjust margin to match new padding */
+                width: calc(100% + 4rem); /* Adjust width to match new padding */
+                padding: 4rem 2rem 2rem 2rem; /* Adjust padding (top, horizontal, bottom) */
+            }
+
+            .panel h2 {
+                font-size: 2.5rem; /* Smaller font size for title */
+            }
+
+            .panel p {
+                font-size: 1.125rem; /* Smaller font size for text */
+            }
+        }
     </style>
 </head>
 <body>
@@ -99,38 +140,87 @@
                 -->
                 <wix-interact-element data-wix-path="#horizontal-track">
                     <div id="horizontal-track">
+                        
                         <div class="panel panel-one">
-                            <h2>Panel One</h2>
-                            <p>As you scroll down, the panels will slide horizontally from right to left.</p>
+                            <img src="https://images.unsplash.com/photo-1439405326854-014607f694d7?q=80&w=1920&auto=format&fit=crop" 
+                                 onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/0d1b2a/f0f2f5?text=Panel+1';"
+                                 alt="Ocean View" class="panel-background">
+                            <div class="panel-content">
+                                <h2>Panel One</h2>
+                                <p>As you scroll down, the panels will slide horizontally from right to left.</p>
+                            </div>
                         </div>
+
                         <div class="panel panel-two">
-                            <h2>Panel Two</h2>
-                            <p>This effect is powered by the @wix/interact library using a viewProgress trigger.</p>
+                             <img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?q=80&w=1920&auto=format&fit=crop" 
+                                 onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/1b263b/f0f2f5?text=Panel+2';"
+                                 alt="Misty Lake" class="panel-background">
+                            <div class="panel-content">
+                                <h2>Panel Two</h2>
+                                <p>This effect is powered by the @wix/interact library using a viewProgress trigger.</p>
+                            </div>
                         </div>
+
                         <div class="panel panel-three">
-                            <h2>Panel Three</h2>
-                            <p>The entire animation is defined declaratively, with no manual scroll event listeners.</p>
+                             <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?q=80&w=1920&auto=format&fit=crop" 
+                                 onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/415a77/f0f2f5?text=Panel+3';"
+                                 alt="Forest" class="panel-background">
+                            <div class="panel-content">
+                                <h2>Panel Three</h2>
+                                <p>The entire animation is defined declaratively, with no manual scroll event listeners.</p>
+                            </div>
                         </div>
+
                         <div class="panel panel-four">
-                            <h2>Panel Four</h2>
-                            <p>The `contain` range is perfect for mapping scroll progress within a sticky section.</p>
+                             <img src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?q=80&w=1920&auto=format&fit=crop" 
+                                 onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/778da9/1a1a1a?text=Panel+4';"
+                                 alt="Meadow" class="panel-background">
+                            <div class="panel-content">
+                                <h2>Panel Four</h2>
+                                <p>The `contain` range is perfect for mapping scroll progress within a sticky section.</p>
+                            </div>
                         </div>
+
                         <div class="panel panel-five">
-                            <h2>Panel Five</h2>
-                            <p>Linear easing ensures a direct 1:1 relationship between vertical scroll and horizontal movement.</p>
+                             <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920&auto=format&fit=crop" 
+                                 onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/a9bcd0/1a1a1a?text=Panel+5';"
+                                 alt="Misty Mountains" class="panel-background">
+                            <div class="panel-content">
+                                <h2>Panel Five</h2>
+                                <p>Linear easing ensures a direct 1:1 relationship between vertical scroll and horizontal movement.</p>
+                            </div>
                         </div>
+
                         <div class="panel panel-six">
-                            <h2>Panel Six</h2>
-                            <p>This technique provides a smooth, performant, and app-like scrolling experience.</p>
+                             <img src="https://images.unsplash.com/photo-1473448912268-2022ce9509d8?q=80&w=1920&auto-format&fit=crop" 
+                                 onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/7d8491/1a1a1a?text=Panel+6';"
+                                 alt="Coastline" class="panel-background">
+                            <div class="panel-content">
+                                <h2>Panel Six</h2>
+                                <p>This technique provides a smooth, performant, and app-like scrolling experience.</p>
+                            </div>
                         </div>
+
                         <div class="panel panel-seven">
-                            <h2>Panel Seven</h2>
-                            <p>The animation adapts seamlessly to different viewport sizes.</p>
+                             <img src="https://images.unsplash.com/photo-1464802686167-b939a6910659?q=80&w=1920&auto-format&fit=crop" 
+                                 onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/495867/f0f2f5?text=Panel+7';"
+                                 alt="Galaxy" class="panel-background">
+                            <div class="panel-content">
+                                <h2>Panel Seven</h2>
+                                <p>The animation adapts seamlessly to different viewport sizes.</p>
+                            </div>
                         </div>
+
                         <div class="panel panel-eight">
-                            <h2>Panel Eight</h2>
-                            <p>You've reached the end of the horizontal journey. Scrolling further will resume normal vertical behavior.</p>
+                             <img src="https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=1920&auto=format&fit=crop" 
+                                 onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/2e3944/f0f2f5?text=Panel+8';"
+                                 alt="Forest Path" class="panel-background">
+                            <div class="panel-content">
+                                <h2>Panel Eight</h2>
+                                <p>You've reached the end of the horizontal journey. Scrolling further will resume normal vertical behavior.</p>
+                            </div>
                         </div>
+
                     </div>
                 </wix-interact-element>
             </div>
@@ -141,6 +231,7 @@
         import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
 
         // Define the interaction configuration
+        // This is unchanged, as requested.
         const config = {
             interactions: [
                 {
@@ -183,3 +274,8 @@
 
 </body>
 </html>
+
+
+
+
+
