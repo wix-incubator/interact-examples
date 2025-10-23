@@ -9,30 +9,25 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Base styles (Mobile-First) */
+        /* Basic body setup */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #ffffff;
-            /* Added for smoother vertical scrolling on mobile */
             overscroll-behavior-y: contain;
-            padding: 1.5rem; /* p-6 */
         }
 
-        /* Container: Mobile-first (vertical column) */
+        /* Vertical container for rows */
         .feature-container {
             display: flex;
             flex-direction: column;
             gap: 1.5rem; /* 24px */
             width: 100%;
-            max-w: 7xl; /* 1280px */
-            margin: 0 auto;
         }
 
-        /* Column: Mobile-first (vertical rows) */
+        /* Each row styling */
         .feature-column {
             width: 100%;
-            /* Use max-height for vertical animation */
-            max-height: 25vh; /* Initial height for mobile */
+            max-height: 20vh; /* Default height for desktop */
             overflow: hidden;
             position: relative; /* Required for z-index stacking */
             z-index: 1; /* Default stacking context */
@@ -58,9 +53,7 @@
             z-index: 10;
             text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.6);
             line-height: 1.2;
-            /* Prevents text from being selected during interaction */
             user-select: none;
-            /* FIX: Prevents this element from capturing mouse events, stopping the hover glitch */
             pointer-events: none;
         }
 
@@ -80,171 +73,174 @@
             white-space: nowrap;
         }
 
-        /* --- Desktop Styles (min-width: 769px) --- */
+        /* Media query for mobile responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding: 1.5rem;
+            }
+
+            .feature-column {
+                max-height: 25vh; /* Initial height for mobile */
+            }
+
+            .feature-bottom-title {
+                font-size: 1.5rem; /* Slightly smaller title on mobile */
+            }
+
+            .feature-bottom-subtitle {
+                font-size: 0.8rem; /* Slightly smaller subtitle on mobile */
+            }
+        }
+
+        /* Desktop Styles */
         @media (min-width: 769px) {
-            /* Center the component on the desktop screen */
             body.desktop-layout {
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 min-height: 100vh;
-                /* Prevent vertical scroll on desktop */
                 overflow: hidden;
+                padding: 1.5rem;
             }
 
-            /* Container: Desktop (horizontal row) */
             .feature-container {
                 flex-direction: row;
                 overflow-x: auto;
                 padding-bottom: 1rem;
-                /* Hide the default scrollbar */
-                scrollbar-width: none; /* For Firefox */
+                scrollbar-width: none;
+                max-width: 7xl;
+                margin: 0 auto;
             }
 
             .feature-container::-webkit-scrollbar {
-                display: none; /* For Chrome, Safari, and Opera */
+                display: none;
             }
 
-            /* Column: Desktop (horizontal columns) */
             .feature-column {
-                /* Initial width set here. Animation is handled by @wix/interact */
                 width: 200px;
-                max-height: none; /* Override mobile max-height */
-                height: 70vh; /* Set desktop height */
-                flex-shrink: 0; /* Important: Prevents columns from shrinking */
-            }
-
-            .feature-bottom-title {
-                font-size: 1.875rem; /* Ensure consistent title size */
-            }
-    
-            .feature-bottom-subtitle {
-                font-size: 0.875rem; /* Ensure consistent subtitle size */
-            }
-        }
-
-        /* Smaller mobile tweaks */
-         @media (max-width: 480px) {
-            .feature-bottom-title {
-                font-size: 1.5rem; /* Slightly smaller title on small mobile */
+                max-height: none;
+                height: 70vh;
+                flex-shrink: 0;
             }
         }
     </style>
 </head>
-<body class=""> <!-- JS will add 'desktop-layout' if needed -->
+<body class="p-6">
 
-    <div class="feature-container">
+    <div class="w-full mx-auto">
+        <div class="feature-container">
 
-        <!-- Column 1 -->
-        <div id="column-1" class="feature-column">
-            <div id="text-1" class="feature-text-group">
-                <p class="feature-bottom-subtitle">Italian Alps</p>
-                <h2 class="feature-bottom-title">Serene Lakes</h2>
+            <!-- Column 1 -->
+            <div id="column-1" class="feature-column">
+                <div id="text-1" class="feature-text-group">
+                    <p class="feature-bottom-subtitle">Italian Alps</p>
+                    <h2 class="feature-bottom-title">Serene Lakes</h2>
+                </div>
+                <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2070&auto=format&fit=crop"
+                     onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
+                     alt="A serene lake with mountains in the background" class="feature-image">
             </div>
-            <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2070&auto=format&fit=crop"
-                 onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
-                 alt="A serene lake with mountains in the background" class="feature-image">
-        </div>
 
-        <!-- Column 2 -->
-        <div id="column-2" class="feature-column">
-            <div id="text-2" class="feature-text-group">
-                <p class="feature-bottom-subtitle">Arid Climate</p>
-                <h2 class="feature-bottom-title">Vast Deserts</h2>
+            <!-- Column 2 -->
+            <div id="column-2" class="feature-column">
+                <div id="text-2" class="feature-text-group">
+                    <p class="feature-bottom-subtitle">Arid Climate</p>
+                    <h2 class="feature-bottom-title">Vast Deserts</h2>
+                </div>
+                <img src="https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?q=80&w=2070&auto=format&fit=crop"
+                     onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
+                     alt="Sand dunes in a vast desert under a clear sky" class="feature-image">
             </div>
-            <img src="https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?q=80&w=2070&auto=format&fit=crop"
-                 onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
-                 alt="Sand dunes in a vast desert under a clear sky" class="feature-image">
-        </div>
 
-        <!-- Column 3 -->
-        <div id="column-3" class="feature-column">
-            <div id="text-3" class="feature-text-group">
-                <p class="feature-bottom-subtitle">Temperate Rainforest</p>
-                <h2 class="feature-bottom-title">Lush Forests</h2>
+            <!-- Column 3 -->
+            <div id="column-3" class="feature-column">
+                <div id="text-3" class="feature-text-group">
+                    <p class="feature-bottom-subtitle">Temperate Rainforest</p>
+                    <h2 class="feature-bottom-title">Lush Forests</h2>
+                </div>
+                <img src="https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=2070&auto=format&fit=crop"
+                     onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
+                     alt="Sunlight filtering through trees in a lush green forest" class="feature-image">
             </div>
-            <img src="https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=2070&auto=format&fit=crop"
-                 onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
-                 alt="Sunlight filtering through trees in a lush green forest" class="feature-image">
-        </div>
 
-        <!-- Column 4 -->
-        <div id="column-4" class="feature-column">
-            <div id="text-4" class="feature-text-group">
-                <p class="feature-bottom-subtitle">Rocky Peaks</p>
-                <h2 class="feature-bottom-title">Majestic Mountains</h2>
+            <!-- Column 4 -->
+            <div id="column-4" class="feature-column">
+                <div id="text-4" class="feature-text-group">
+                    <p class="feature-bottom-subtitle">Rocky Peaks</p>
+                    <h2 class="feature-bottom-title">Majestic Mountains</h2>
+                </div>
+                <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070&auto=format&fit=crop"
+                     onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
+                     alt="A majestic mountain range with a starry night sky" class="feature-image">
             </div>
-            <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070&auto=format&fit=crop"
-                 onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
-                 alt="A majestic mountain range with a starry night sky" class="feature-image">
-        </div>
 
-        <!-- Column 5 -->
-        <div id="column-5" class="feature-column">
-            <div id="text-5" class="feature-text-group">
-                <p class="feature-bottom-subtitle">Metropolitan Area</p>
-                <h2 class="feature-bottom-title">Urban Landscapes</h2>
+            <!-- Column 5 -->
+            <div id="column-5" class="feature-column">
+                <div id="text-5" class="feature-text-group">
+                    <p class="feature-bottom-subtitle">Metropolitan Area</p>
+                    <h2 class="feature-bottom-title">Urban Landscapes</h2>
+                </div>
+                <img src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=2070&auto=format&fit=crop"
+                     onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
+                     alt="A sprawling city skyline at dusk" class="feature-image">
             </div>
-            <img src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?q=80&w=2070&auto=format&fit=crop"
-                 onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
-                 alt="A sprawling city skyline at dusk" class="feature-image">
-        </div>
 
-        <!-- Column 6 -->
-        <div id="column-6" class="feature-column">
-            <div id="text-6" class="feature-text-group">
-                <p class="feature-bottom-subtitle">Coastal Views</p>
-                <h2 class="feature-bottom-title">Ocean Shores</h2>
+            <!-- Column 6 -->
+            <div id="column-6" class="feature-column">
+                <div id="text-6" class="feature-text-group">
+                    <p class="feature-bottom-subtitle">Coastal Views</p>
+                    <h2 class="feature-bottom-title">Ocean Shores</h2>
+                </div>
+                <img src="https://images.unsplash.com/photo-1507525428034-b723a9ce6890?q=80&w=2070&auto=format&fit=crop"
+                     onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
+                     alt="Ocean waves crashing on a sandy beach" class="feature-image">
             </div>
-            <img src="https://images.unsplash.com/photo-1507525428034-b723a9ce6890?q=80&w=2070&auto=format&fit=crop"
-                 onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
-                 alt="Ocean waves crashing on a sandy beach" class="feature-image">
-        </div>
 
-        <!-- Column 7 -->
-        <div id="column-7" class="feature-column">
-            <div id="text-7" class="feature-text-group">
-                <p class="feature-bottom-subtitle">Winter Scene</p>
-                <h2 class="feature-bottom-title">Snowy Hills</h2>
+            <!-- Column 7 -->
+            <div id="column-7" class="feature-column">
+                <div id="text-7" class="feature-text-group">
+                    <p class="feature-bottom-subtitle">Winter Scene</p>
+                    <h2 class="feature-bottom-title">Snowy Hills</h2>
+                </div>
+                <img src="https://images.unsplash.com/photo-1483921104529-623be6f80997?q=80&w=2070&auto=format&fit=crop"
+                     onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
+                     alt="Hills and trees covered in a thick blanket of snow" class="feature-image">
             </div>
-            <img src="https://images.unsplash.com/photo-1483921104529-623be6f80997?q=80&w=2070&auto=format&fit=crop"
-                 onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
-                 alt="Hills and trees covered in a thick blanket of snow" class="feature-image">
-        </div>
 
-        <!-- Column 8 -->
-        <div id="column-8" class="feature-column">
-            <div id="text-8" class="feature-text-group">
-                <p class="feature-bottom-subtitle">Iceland</p>
-                <h2 class="feature-bottom-title">Waterfalls</h2>
+            <!-- Column 8 -->
+            <div id="column-8" class="feature-column">
+                <div id="text-8" class="feature-text-group">
+                    <p class="feature-bottom-subtitle">Iceland</p>
+                    <h2 class="feature-bottom-title">Waterfalls</h2>
+                </div>
+                <img src="https://images.unsplash.com/photo-1535546205639-b87332b25b2a?q=80&w=1974&auto=format&fit=crop"
+                     onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
+                     alt="A large, powerful waterfall in a rocky landscape" class="feature-image">
             </div>
-            <img src="https://images.unsplash.com/photo-1535546205639-b87332b25b2a?q=80&w=1974&auto=format&fit=crop"
-                 onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
-                 alt="A large, powerful waterfall in a rocky landscape" class="feature-image">
-        </div>
 
-        <!-- Column 9 -->
-        <div id="column-9" class="feature-column">
-            <div id="text-9" class="feature-text-group">
-                <p class="feature-bottom-subtitle">Night Sky</p>
-                <h2 class="feature-bottom-title">The Aurora</h2>
+            <!-- Column 9 -->
+            <div id="column-9" class="feature-column">
+                <div id="text-9" class="feature-text-group">
+                    <p class="feature-bottom-subtitle">Night Sky</p>
+                    <h2 class="feature-bottom-title">The Aurora</h2>
+                </div>
+                <img src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=2070&auto=format&fit=crop"
+                     onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
+                     alt="The aurora borealis over a forest of pine trees" class="feature-image">
             </div>
-            <img src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=2070&auto=format&fit=crop"
-                 onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
-                 alt="The aurora borealis over a forest of pine trees" class="feature-image">
-        </div>
 
-        <!-- Column 10 -->
-        <div id="column-10" class="feature-column">
-            <div id="text-10" class="feature-text-group">
-                <p class="feature-bottom-subtitle">Rural Life</p>
-                <h2 class="feature-bottom-title">Farmlands</h2>
+            <!-- Column 10 -->
+            <div id="column-10" class="feature-column">
+                <div id="text-10" class="feature-text-group">
+                    <p class="feature-bottom-subtitle">Rural Life</p>
+                    <h2 class="feature-bottom-title">Farmlands</h2>
+                </div>
+                <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1932&auto=format&fit=crop"
+                     onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
+                     alt="A winding road through green, rolling farmlands" class="feature-image">
             </div>
-            <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1932&auto=format&fit=crop"
-                 onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/ffffff?text=Image+Missing';"
-                 alt="A winding road through green, rolling farmlands" class="feature-image">
-        </div>
 
+        </div>
     </div>
 
     <!-- @wix/interact configuration -->
@@ -252,61 +248,63 @@
         import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
 
         document.addEventListener("DOMContentLoaded", () => {
-            // Check viewport width to determine layout
-            const isMobile = window.innerWidth <= 768;
-
             const columns = document.querySelectorAll('.feature-column');
+            const columnIds = Array.from(columns).map(col => `#${col.id}`);
             const textGroups = document.querySelectorAll('.feature-text-group');
 
-            // --- Programmatically wrap elements ---
-            // This is required for @wix/interact to target elements
+            // Programmatically wrap each column with the required wix-interact-element
             columns.forEach(column => {
-                if (column.parentElement.tagName !== 'WIX-INTERACT-ELEMENT') {
-                    const wrapper = document.createElement('wix-interact-element');
-                    wrapper.dataset.wixPath = `#${column.id}`;
-                    column.parentNode.insertBefore(wrapper, column);
-                    wrapper.appendChild(column);
-                }
+                const wrapper = document.createElement('wix-interact-element');
+                wrapper.dataset.wixPath = `#${column.id}`;
+                column.parentNode.insertBefore(wrapper, column);
+                wrapper.appendChild(column);
             });
 
+            // Programmatically wrap each text group
             textGroups.forEach(textGroup => {
-                if (textGroup.id && textGroup.parentElement.tagName !== 'WIX-INTERACT-ELEMENT') {
+                if (textGroup.id) {
                     const wrapper = document.createElement('wix-interact-element');
                     wrapper.dataset.wixPath = `#${textGroup.id}`;
+                    // Insert wrapper before the text group, inside the column
                     textGroup.parentNode.insertBefore(wrapper, textGroup);
                     wrapper.appendChild(textGroup);
                 }
             });
 
-            // --- Define Animation Values ---
-            // Mobile (Vertical)
-            const mobileInitialHeight = '25vh';
-            const mobileExpandedHeight = '45vh';
-            const verticalGap = '1.5rem';
-            const mobileHeightDiff = `calc(${mobileExpandedHeight} - ${mobileInitialHeight})`;
-            const mobileNegativeMargin = `calc(-(${mobileHeightDiff}) - ${verticalGap})`;
+            // --- Responsive Interaction Logic ---
+            const isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+            
+            // Define animation heights based on device (must match CSS)
+            const initialHeight = isMobile ? '25vh' : '20vh';
+            const expandedHeight = isMobile ? '45vh' : '50vh'; // Mobile expand height
+
+            // Calculate the height difference and the negative margin needed to compensate for layout shift
+            // The 1.5rem matches the 'gap' in the .feature-container CSS
+            const heightDiff = `calc(${expandedHeight} - ${initialHeight})`;
+            const negativeMargin = `calc(-(${heightDiff}) - 1.5rem)`;
 
             // Desktop (Horizontal)
             const desktopInitialWidth = '200px';
             const desktopExpandedWidth = '600px';
 
-            // --- Define Reusable Effects ---
+            // --- Config with Reusable Effects ---
             const config = {
                 effects: {
-                    // Mobile vertical expansion
-                    'expand-column-vertical': {
+                    'expand-column': {
                         keyframeEffect: {
-                            name: 'expand-collapse-vertical',
+                            name: 'expand-collapse',
+                            // Animate max-height to expand, and a negative margin-bottom
+                            // to "pull up" the content below it, preventing jitter.
+                            // Animate z-index to ensure the expanded item overlaps siblings.
                             keyframes: [
-                                { maxHeight: mobileInitialHeight, marginBottom: '0rem', zIndex: 1 },
-                                { maxHeight: mobileExpandedHeight, marginBottom: mobileNegativeMargin, zIndex: 10 }
+                                { maxHeight: initialHeight, marginBottom: '0rem', zIndex: 1 },
+                                { maxHeight: expandedHeight, marginBottom: negativeMargin, zIndex: 10 }
                             ],
                         },
                         duration: 500,
                         easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                         fill: 'both'
                     },
-                    // Desktop horizontal expansion
                     'expand-column-horizontal': {
                         keyframeEffect: {
                             name: 'expand-collapse-horizontal',
@@ -319,7 +317,6 @@
                         easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                         fill: 'both'
                     },
-                    // Shared text fade-in
                     'show-text': {
                         keyframeEffect: {
                             name: 'show-hide-text',
@@ -334,14 +331,30 @@
                         fill: 'both'
                     }
                 },
-                interactions: [] // To be populated based on device
+                interactions: [] // We will populate this only for desktop
             };
 
-
             if (isMobile) {
-                // --- Mobile "Accordion" Logic (Click-based) ---
+                // --- Mobile "Accordion" Logic ---
                 
-                // Initialize interact with just the effects
+                // *** MODIFICATION ***
+                // OVERRIDE the expand-column effect for mobile to only expand down,
+                // removing the negativeMargin.
+                config.effects['expand-column'] = {
+                    keyframeEffect: {
+                        name: 'expand-collapse-mobile', // New name for clarity
+                        keyframes: [
+                            { maxHeight: initialHeight, marginBottom: '0rem', zIndex: 1 },
+                            { maxHeight: expandedHeight, marginBottom: '0rem', zIndex: 10 } // Changed negativeMargin to 0rem
+                        ],
+                    },
+                    duration: 500,
+                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                    fill: 'both'
+                };
+                // *** END MODIFICATION ***
+
+                // Initialize interact with the *modified* config
                 Interact.create(config);
 
                 let openColumnWrapper = null;
@@ -355,22 +368,22 @@
                     columnWrapper.addEventListener('click', () => {
                         if (openColumnWrapper && openColumnWrapper === columnWrapper) {
                             // Case 1: Clicked the *open* item. Collapse it.
-                            columnWrapper.toggleEffect('expand-column-vertical', 'remove');
+                            columnWrapper.toggleEffect('expand-column', 'remove');
                             textWrapper.toggleEffect('show-text', 'remove');
                             openColumnWrapper = null;
                         } else if (openColumnWrapper && openColumnWrapper !== columnWrapper) {
                             // Case 2: Clicked a *new* item while another is open.
                             // 1. Collapse the old one.
-                            openColumnWrapper.toggleEffect('expand-column-vertical', 'remove');
+                            openColumnWrapper.toggleEffect('expand-column', 'remove');
                             openColumnWrapper.querySelector('wix-interact-element').toggleEffect('show-text', 'remove');
                             
                             // 2. Expand the new one.
-                            columnWrapper.toggleEffect('expand-column-vertical', 'add');
+                            columnWrapper.toggleEffect('expand-column', 'add');
                             textWrapper.toggleEffect('show-text', 'add');
                             openColumnWrapper = columnWrapper;
                         } else {
                             // Case 3: No item is open. Expand this one.
-                            columnWrapper.toggleEffect('expand-column-vertical', 'add');
+                            columnWrapper.toggleEffect('expand-column', 'add');
                             textWrapper.toggleEffect('show-text', 'add');
                             openColumnWrapper = columnWrapper;
                         }
@@ -378,37 +391,39 @@
                 });
 
             } else {
-                // --- Desktop "Hover" Logic (Horizontal) ---
+                // --- Desktop "Hover" Logic ---
                 
                 document.body.classList.add('desktop-layout');
 
-                // 1. Add interactions to the config
-                config.interactions = Array.from(columns).map(column => ({
-                    key: `#${column.id}`,
-                    trigger: 'hover',
-                    params: { type: 'alternate' },
+                // Populate the interactions array for hover
+                config.interactions = columnIds.map(currentId => ({
+                    key: currentId,
+                    trigger: 'hover', // Use hover for desktop
+                    params: {
+                        type: 'alternate' // This is the correct way to handle enter/leave
+                    },
                     effects: [
+                        // Effect to expand/collapse the column width
                         {
-                            key: `#${column.id}`,
-                            effectId: 'expand-column-horizontal'
+                            key: currentId,
+                            effectId: 'expand-column-horizontal' // Reference the reusable effect
                         },
+                        // Effect to show/hide the text content
                         {
-                            key: `#${column.id.replace('column', 'text')}`,
-                            effectId: 'show-text'
+                            key: currentId.replace('column', 'text'), // e.g., converts #column-1 to #text-1
+                            effectId: 'show-text' // Reference the reusable effect
                         }
                     ]
                 }));
 
-                // 2. Initialize interact with effects AND interactions
+                // Initialize interact with effects and hover interactions
                 Interact.create(config);
 
-                // 3. Add custom horizontal scrolling logic
+                // Add custom horizontal scrolling logic
                 const container = document.querySelector('.feature-container');
                 if (container) {
                     container.addEventListener('wheel', (evt) => {
-                        // Prevent the default vertical scroll behavior
                         evt.preventDefault();
-                        // Apply the scroll amount to the container's horizontal scroll
                         container.scrollLeft += evt.deltaY;
                     });
                 }
@@ -418,4 +433,3 @@
 
 </body>
 </html>
-
