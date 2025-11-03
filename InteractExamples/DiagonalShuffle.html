@@ -37,16 +37,21 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 920px;
-            height: 680px;
-            background-size: cover;
-            background-position: center;
+            
+            /* Responsive Sizing */
+            width: 90vw; /* Use 90% of the viewport width */
+            max-width: 920px; /* Set a max-width for desktop */
+            
+            /* MOBILE-FIRST: Default to vertical aspect ratio */
+            aspect-ratio: 3 / 4; 
+            
             border-radius: 1rem;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
             /* Set initial state for animations: off-screen and invisible */
             opacity: 0;
             will-change: transform, opacity;
             transform-style: preserve-3d;
+            overflow: hidden; /* Ensure inner image respects border-radius */
         }
 
         .card-content {
@@ -54,39 +59,59 @@
             bottom: 0;
             left: 0;
             right: 0;
-            padding: 1.5rem;
+            padding: 1rem; /* Smaller padding for mobile */
             background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
             color: white;
-            border-radius: 0 0 1rem 1rem;
         }
 
         .card-title {
-            font-size: 1.5rem;
+            font-size: 1.25rem; /* Smaller font for mobile */
             font-weight: 700;
         }
 
         .card-description {
-            font-size: 0.9rem;
+            font-size: 0.875rem; /* Smaller font for mobile */
             opacity: 0.8;
             margin-top: 0.25rem;
+        }
+
+        /* Media query for medium screens and up (Tailwind 'md' breakpoint) */
+        @media (min-width: 768px) {
+            .card {
+                /* Switch to landscape aspect ratio on desktop */
+                aspect-ratio: 4 / 3;
+            }
+            .card-content {
+                padding: 1.5rem; /* Restore original padding */
+            }
+            .card-title {
+                font-size: 1.5rem; /* Restore original font size */
+            }
+            .card-description {
+                font-size: 0.9rem; /* Restore original font size */
+            }
         }
 
     </style>
 </head>
 <body>
 
-    <div class="h-[100vh] flex flex-col items-center justify-center text-center">
-        <h1 class="text-5xl font-bold">Diagonal Shuffle</h1>
-        <p class="text-xl mt-4 text-gray-400">Scroll down to see the cards animate.</p>
-    </div>
+    <!-- 
+      Blank 100vh intro section added back.
+    -->
+    <div class="h-[100vh]"></div>
 
     <wix-interact-element data-wix-path="#scroll-section">
         <div id="scroll-section">
             <div class="sticky-wrapper">
                 <!-- Card 1 -->
                 <wix-interact-element data-wix-path="#card-1">
-                    <div id="card-1" class="card" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500');">
-                        <div class="card-content">
+                    <div id="card-1" class="card">
+                        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500" 
+                             alt="Misty Mountains" 
+                             class="absolute inset-0 w-full h-full object-cover"
+                             onerror="this.src='https://placehold.co/920x680/555/fff?text=Image+Failed+To+Load'">
+                        <div class="card-content z-10">
                             <h2 class="card-title">Misty Mountains</h2>
                             <p class="card-description">A journey through ethereal landscapes.</p>
                         </div>
@@ -95,8 +120,12 @@
 
                 <!-- Card 2 -->
                 <wix-interact-element data-wix-path="#card-2">
-                    <div id="card-2" class="card" style="background-image: url('https://images.unsplash.com/photo-1511884642898-4c92249e20b6?w=500');">
-                         <div class="card-content">
+                    <div id="card-2" class="card">
+                        <img src="https://images.unsplash.com/photo-1511884642898-4c92249e20b6?w=500" 
+                             alt="Forest Canopy" 
+                             class="absolute inset-0 w-full h-full object-cover"
+                             onerror="this.src='https://placehold.co/920x680/555/fff?text=Image+Failed+To+Load'">
+                         <div class="card-content z-10">
                             <h2 class="card-title">Forest Canopy</h2>
                             <p class="card-description">Overhead view of a dense, green forest.</p>
                         </div>
@@ -105,8 +134,12 @@
 
                 <!-- Card 3 -->
                 <wix-interact-element data-wix-path="#card-3">
-                    <div id="card-3" class="card" style="background-image: url('https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=500');">
-                         <div class="card-content">
+                    <div id="card-3" class="card">
+                        <img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=500" 
+                             alt="Alpine Lake" 
+                             class="absolute inset-0 w-full h-full object-cover"
+                             onerror="this.src='https://placehold.co/920x680/555/fff?text=Image+Failed+To+Load'">
+                         <div class="card-content z-10">
                             <h2 class="card-title">Alpine Lake</h2>
                             <p class="card-description">Crystal clear water reflecting the peaks.</p>
                         </div>
@@ -115,8 +148,12 @@
 
                 <!-- Card 4 -->
                 <wix-interact-element data-wix-path="#card-4">
-                    <div id="card-4" class="card" style="background-image: url('https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=500');">
-                         <div class="card-content">
+                    <div id="card-4" class="card">
+                        <img src="https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=500" 
+                             alt="Hidden Waterfall" 
+                             class="absolute inset-0 w-full h-full object-cover"
+                             onerror="this.src='https://placehold.co/920x680/555/fff?text=Image+Failed+To+Load'">
+                         <div class="card-content z-10">
                             <h2 class="card-title">Hidden Waterfall</h2>
                             <p class="card-description">Nature's raw and untamed power.</p>
                         </div>
@@ -125,8 +162,12 @@
 
                 <!-- Card 5 -->
                 <wix-interact-element data-wix-path="#card-5">
-                    <div id="card-5" class="card" style="background-image: url('https://images.unsplash.com/photo-1501854140801-50d01698950b?w=500');">
-                         <div class="card-content">
+                    <div id="card-5" class="card">
+                        <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=500" 
+                             alt="Rolling Hills" 
+                             class="absolute inset-0 w-full h-full object-cover"
+                             onerror="this.src='https://placehold.co/920x680/555/fff?text=Image+Failed+To+Load'">
+                         <div class="card-content z-10">
                             <h2 class="card-title">Rolling Hills</h2>
                             <p class="card-description">Endless green fields under a summer sky.</p>
                         </div>
@@ -137,14 +178,16 @@
         </div>
     </wix-interact-element>
 
-    <div class="h-[100vh] flex items-center justify-center text-center">
-        <h2 class="text-4xl font-bold">End of Section</h2>
-    </div>
+    <!-- 
+      The Outro section has been removed.
+    -->
 
 
     <script type="module">
         import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
 
+        // The interaction configuration remains the same, as it uses
+        // viewport-relative units (vw/vh) for its transforms.
         const interactions = [
             // Card 1: Flies in from bottom-left
             {
@@ -248,3 +291,5 @@
 
 </body>
 </html>
+
+
