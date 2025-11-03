@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Sticky Scroll Experience</title>
+    <!-- Import Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Basic page setup */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background-color: #111827; /* Dark background */
+            color: #f3f4f6; /* Light text */
+            overscroll-behavior-y: none;
+        }
+
+        /* Helper class for spacer sections */
+        .spacer {
+            height: 100vh;
+            display: grid;
+            place-items: center;
+            text-align: center;
+            padding: 0 2rem;
+        }
+
+        .spacer h1 {
+            font-size: 3rem;
+            font-weight: 700;
+        }
+
+        /* * The scroll-wrapper defines the total scrollable height 
+         * for the "contain" range of the animation.
+         * 300vh = 3 sections, 100vh each.
+        */
+        #scroll-wrapper {
+            height: 600vh; /* Changed from 300vh to 600vh */
+            position: relative;
+        }
+
+        /*
+         * The sticky-container will stick to the top of the viewport.
+         * It acts as the "stage" for our 3D animations.
+         * We set perspective here to create a shared 3D space
+         * for all child panels.
+        */
+        .sticky-container {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden; /* Clips the panels as they fly off-screen */
+            
+            /* Define the 3D rendering context */
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+
+        /*
+         * Panels are stacked on top of each other using position: absolute.
+         * They will be animated by @wix/interact.
+         * We set their initial state (opacity: 0) here, which the
+         * animation's "fill: 'both'" property will respect.
+        */
+        .panel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            place-items: center;
+            border-radius: 1.5rem; /* Rounded corners */
+            
+            /* Start invisible. The animation will fade them in. */
+            opacity: 0; 
+            
+            /* Styling for the card content */
+            font-size: 2.5rem;
+            font-weight: 700;
+            padding: 2rem;
+            box-sizing: border-box;
+            text-align: center;
+            
+            /* Add a border and shadow for depth */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Different panel colors for contrast */
+        #panel-1 {
+            background-color: #3b82f6; /* Blue */
+        }
+        #panel-2 {
+            background-color: #10b981; /* Green */
+        }
+        #panel-3 {
+            background-color: #ef4444; /* Red */
+        }
+        
+        /* * We must wrap each element we reference in the config
+         * in a wix-interact-element.
+        */
+        wix-interact-element {
+            /* These wrappers need to respect the layout of their children */
+            display: contents;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Section 1: Introduction spacer -->
+    <section class="spacer">
+        <h1>Scroll down to begin...</h1>
+    </section>
+
+    <!-- 
+      Section 2: The 3D Scroll Experience 
+      The wix-interact-element wraps the scroll-wrapper.
+      The scroll-wrapper is the *source* of the 'viewProgress' trigger.
+    -->
+    <wix-interact-element data-wix-path="#scroll-wrapper">
+        <div id="scroll-wrapper">
+            <div class="sticky-container">
+                <!-- 
+                  Each panel is also wrapped.
+                  These are the *targets* of the animation effects.
+                -->
+                <wix-interact-element data-wix-path="#panel-1">
+                    <div class="panel" id="panel-1">
+                        Panel One
+                    </div>
+                </wix-interact-element>
+
+                <wix-interact-element data-wix-path="#panel-2">
+                    <div class="panel" id="panel-2">
+                        Panel Two
+                    </div>
+                </wix-interact-element>
+                
+                <wix-interact-element data-wix-path="#panel-3">
+                    <div class="panel" id="panel-3">
+                        Panel Three
+                    </div>
+                </wix-interact-element>
+            </div>
+        </div>
+    </wix-interact-element>
+
+    <!-- Section 3: Final spacer -->
+    <section class="spacer">
+        <h1>You've reached the end.</h1>
+    </section>
+
+    <!-- 
+      Import @wix/interact as a module.
+      The configuration script MUST also be type="module".
+    -->
+    <script type="module" src="https://esm.sh/@wix/interact@1.78.0"></script>
+    
+    <!-- Configuration Script -->
+    <script type="module">
+        // Import the Interact class
+        import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+
+        // This is the 3D keyframe animation all panels will use.
+        // It's a keyframeEffect as required by the docs for 3D perspective.
+        // We follow Rule 1 (Page 61) by putting perspective() *inside* the transform.
+        const panel3DKeyframes = [
+            { 
+                opacity: 0, 
+                transform: 'perspective(1000px) rotateX(45deg) translateZ(-500px)' 
+            },
+            { 
+                opacity: 1, 
+                transform: 'perspective(1000px) rotateX(0deg) translateZ(0px)' 
+            },
+            { 
+                opacity: 1, 
+                transform: 'perspective(1000px) rotateX(0deg) translateZ(0px)' 
+            },
+            { 
+                opacity: 0, 
+                transform: 'perspective(1000px) rotateX(-45deg) translateZ(500px)' 
+            }
+        ];
+
+        // Define the configuration for @wix/interact
+        const config = {
+            // We don't need the top-level 'effects' object for this pattern.
+            // We will define the effects inline within the interaction.
+            interactions: [
+                {
+                    // The trigger is the main scroll wrapper
+                    key: '#scroll-wrapper',
+                    trigger: 'viewProgress',
+                    
+                    // This one interaction controls all three panels
+                    effects: [
+                        // --- Panel 1 Animation ---
+                        // This is a ScrubEffect (Rule 4, Page 18)
+                        {
+                            // Target the first panel
+                            key: '#panel-1',
+                            // Use our reusable keyframes
+                            keyframeEffect: {
+                                name: 'panel-1-3d-scroll',
+                                keyframes: panel3DKeyframes,
+                                // We add offsets to the keyframes to control the "hold"
+                                offset: [0, 0.33, 0.66, 1.0] // In at 33%, out at 66%
+                            },
+                            // Animation plays during the first 1/3 of the scroll
+                            rangeStart: { name: 'contain', offset: { type: 'percentage', value: 0 } },
+                            rangeEnd: { name: 'contain', offset: { type: 'percentage', value: 33 } },
+                            easing: 'linear', // Linear easing for smooth scrolling
+                            fill: 'both' // Holds the animation state
+                        },
+                        
+                        // --- Panel 2 Animation ---
+                        {
+                            key: '#panel-2',
+                            keyframeEffect: {
+                                name: 'panel-2-3d-scroll',
+                                keyframes: panel3DKeyframes,
+                                offset: [0, 0.33, 0.66, 1.0]
+                            },
+                            // Animation plays during the middle 1/3 of the scroll
+                            rangeStart: { name: 'contain', offset: { type: 'percentage', value: 33 } },
+                            rangeEnd: { name: 'contain', offset: { type: 'percentage', value: 66 } },
+                            easing: 'linear',
+                            fill: 'both'
+                        },
+                        
+                        // --- Panel 3 Animation ---
+                        {
+                            key: '#panel-3',
+                            keyframeEffect: {
+                                name: 'panel-3-3d-scroll',
+                                keyframes: panel3DKeyframes,
+                                offset: [0, 0.33, 0.66, 1.0]
+                            },
+                            // Animation plays during the final 1/3 of the scroll
+                            rangeStart: { name: 'contain', offset: { type: 'percentage', value: 66 } },
+                            rangeEnd: { name: 'contain', offset: { type: 'percentage', value: 100 } },
+                            easing: 'linear',
+                            fill: 'both'
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // Initialize @wix/interact
+        Interact.create(config);
+    </script>
+
+</body>
+</html>
+
