@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Responsive Expanding Gallery with @wix/interact</title>
-    <!-- Google Fonts (Inter) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Prevent horizontal scroll */
@@ -40,7 +38,8 @@
         /* Each row styling (Mobile-first) */
         .feature-column {
             width: 100%;
-            max-height: 20vh;
+            /* This is the 'from' state for the mobile animation */
+            max-height: 25vh; 
             overflow: hidden;
             position: relative;
             z-index: 1;
@@ -94,6 +93,7 @@
             }
 
             .feature-column {
+                /* This is the base state for mobile */
                 max-height: 25vh;
             }
 
@@ -136,7 +136,8 @@
             }
 
             .desktop-layout .feature-column {
-                width: 200px;
+                /* This is the 'from' state for the desktop animation */
+                width: 200px; 
                 max-height: none;
                 height: 100%;
                 flex-shrink: 0;
@@ -207,13 +208,15 @@
     </div>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+        // Import from the correct URL
+        import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
 
         document.addEventListener("DOMContentLoaded", () => {
             const columns = document.querySelectorAll('.feature-column');
             const columnIds = Array.from(columns).map(col => `#${col.id}`);
             const textGroups = document.querySelectorAll('.feature-text-group');
 
+            // --- 1. Wrap elements ---
             columns.forEach(column => {
                 const wrapper = document.createElement('wix-interact-element');
                 wrapper.dataset.wixPath = `#${column.id}`;
@@ -230,144 +233,118 @@
                 }
             });
 
-            const mobileInitialHeight = '25vh';
-            const mobileExpandedHeight = '80vh';
-            const desktopInitialWidth = '200px';
-            const desktopExpandedWidth = '600px';
+            // --- 2. Define Interact Config (once) ---
+            const config = {
+                effects: {
+                    'expand-column-vertical': {
+                        keyframeEffect: {
+                            name: 'expand-collapse-vertical',
+                            keyframes: [
+                                /* 'from' state is now implicit from CSS */
+                                { maxHeight: '80vh', zIndex: 10 }
+                            ],
+                        },
+                        duration: 500,
+                        easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                        fill: 'both'
+                    },
+                    'expand-column-horizontal': {
+                        keyframeEffect: {
+                            name: 'expand-collapse-horizontal',
+                            keyframes: [
+                                /* 'from' state is now implicit from CSS */
+                                { width: '600px', zIndex: 10 }
+                            ],
+                        },
+                        duration: 500,
+                        easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                        fill: 'both'
+                    },
+                    'show-text': {
+                        keyframeEffect: {
+                            name: 'show-hide-text',
+                            keyframes: [
+                                { opacity: 0, transform: 'translateY(20px)' },
+                                { opacity: 1, transform: 'translateY(0)' }
+                            ],
+                        },
+                        duration: 400,
+                        delay: 200,
+                        easing: 'ease-out',
+                        fill: 'both'
+                    }
+                },
+                conditions: {
+                    'mobile': {
+                        type: 'media',
+                        predicate: '(max-width: 768px)'
+                    },
+                    'desktop': {
+                        type: 'media',
+                        predicate: '(min-width: 769px)'
+                    }
+                },
+                interactions: [] // We will populate this next
+            };
 
-            let interactInstance = null;
-            let currentLayout = null;
-
-            function initializeInteract() {
-                const isDesktop = window.innerWidth >= 769;
-                const newLayout = isDesktop ? 'desktop' : 'mobile';
-
-                if (currentLayout === newLayout && interactInstance) {
-                    return;
-                }
-
-                currentLayout = newLayout;
-
-                if (interactInstance) {
-                    interactInstance.destroy();
-                }
-
-                columns.forEach(column => {
-                    column.style.maxHeight = '';
-                    column.style.width = '';
-                    column.style.marginBottom = '';
-                    column.style.zIndex = '';
+            // --- 3. Build Interactions ---
+            const interactions = [];
+            columnIds.forEach(currentId => {
+                const textId = currentId.replace('column', 'text');
+                
+                // Interaction for MOBILE layout
+                interactions.push({
+                    key: currentId,
+                    trigger: 'hover',
+                    params: { type: 'alternate' },
+                    conditions: ['mobile'], // Only runs if 'mobile' condition is true
+                    effects: [
+                        { key: currentId, effectId: 'expand-column-vertical' },
+                        { key: textId, effectId: 'show-text' }
+                    ]
                 });
 
-                textGroups.forEach(textGroup => {
-                    textGroup.style.opacity = '';
-                    textGroup.style.transform = '';
+                // Interaction for DESKTOP layout
+                interactions.push({
+                    key: currentId,
+                    trigger: 'hover',
+                    params: { type: 'alternate' },
+                    conditions: ['desktop'], // Only runs if 'desktop' condition is true
+                    effects: [
+                        { key: currentId, effectId: 'expand-column-horizontal' },
+                        { key: textId, effectId: 'show-text' }
+                    ]
                 });
+            });
 
-                if (isDesktop) {
+            config.interactions = interactions;
+
+            // --- 4. Create Interact Instance (once) ---
+            Interact.create(config);
+
+            // --- 5. Add Body Class Toggling & Scroll ---
+            const container = document.querySelector('.feature-container');
+
+            // Function to toggle body class based on width
+            const toggleBodyClass = () => {
+                if (window.innerWidth >= 769) {
                     document.body.classList.add('desktop-layout');
                 } else {
                     document.body.classList.remove('desktop-layout');
                 }
+            };
 
-                const config = {
-                    effects: {
-                        'expand-column-vertical': {
-                            keyframeEffect: {
-                                name: 'expand-collapse-vertical',
-                                keyframes: [
-                                    { maxHeight: mobileInitialHeight, marginBottom: '0rem', zIndex: 1 },
-                                    { maxHeight: mobileExpandedHeight, marginBottom: '0rem', zIndex: 10 }
-                                ],
-                            },
-                            duration: 500,
-                            easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                            fill: 'both'
-                        },
-                        'expand-column-horizontal': {
-                            keyframeEffect: {
-                                name: 'expand-collapse-horizontal',
-                                keyframes: [
-                                    { width: desktopInitialWidth, zIndex: 1 },
-                                    { width: desktopExpandedWidth, zIndex: 10 }
-                                ],
-                            },
-                            duration: 500,
-                            easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                            fill: 'both'
-                        },
-                        'show-text': {
-                            keyframeEffect: {
-                                name: 'show-hide-text',
-                                keyframes: [
-                                    { opacity: 0, transform: 'translateY(20px)' },
-                                    { opacity: 1, transform: 'translateY(0)' }
-                                ],
-                            },
-                            duration: 400,
-                            delay: 200,
-                            easing: 'ease-out',
-                            fill: 'both'
-                        }
-                    },
-                    conditions: {
-                        'mobile': {
-                            type: 'media',
-                            predicate: '(max-width: 768px)'
-                        },
-                        'desktop': {
-                            type: 'media',
-                            predicate: '(min-width: 769px)'
-                        }
-                    },
-                    interactions: []
-                };
+            // Toggle class on initial load
+            toggleBodyClass();
 
-                const interactions = [];
-                columnIds.forEach(currentId => {
-                    const textId = currentId.replace('column', 'text');
+            // Toggle class on resize
+            window.addEventListener('resize', toggleBodyClass);
 
-                    interactions.push({
-                        key: currentId,
-                        trigger: 'hover',
-                        params: { type: 'alternate' },
-                        conditions: ['mobile'],
-                        effects: [
-                            { key: currentId, effectId: 'expand-column-vertical' },
-                            { key: textId, effectId: 'show-text' }
-                        ]
-                    });
-
-                    interactions.push({
-                        key: currentId,
-                        trigger: 'hover',
-                        params: { type: 'alternate' },
-                        conditions: ['desktop'],
-                        effects: [
-                            { key: currentId, effectId: 'expand-column-horizontal' },
-                            { key: textId, effectId: 'show-text' }
-                        ]
-                    });
-                });
-
-                config.interactions = interactions;
-                interactInstance = Interact.create(config);
-            }
-
-            initializeInteract();
-
-            let resizeTimeout;
-            window.addEventListener('resize', () => {
-                clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(() => {
-                    initializeInteract();
-                }, 150);
-            });
-
-            const container = document.querySelector('.feature-container');
+            // Handle horizontal scroll on wheel
             if (container) {
                 container.addEventListener('wheel', (evt) => {
                     if (window.innerWidth >= 769) {
+                        evt.preventDefault(); // Prevent page scroll
                         container.scrollLeft += evt.deltaY;
                     }
                 });
