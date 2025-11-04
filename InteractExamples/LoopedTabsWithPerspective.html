@@ -7,12 +7,12 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- @wix/interact library -->
-    <script type="module" src="https://esm.sh/@wix/interact@1.78.0"></script>
+    <script type="module" src="https://esm.sh/@wix/interact@1.79.0"></script>
 
     <style>
         body {
@@ -45,9 +45,9 @@
             position: relative; /* Required for z-index to work correctly */
             transform: rotateY(25deg);
             z-index: 1; /* Set a base z-index */
+            /* The hover state is now handled by @wix/interact */
+            transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
         }
-
-        /* The hover state is now handled by @wix/interact */
     </style>
 </head>
 <body class="bg-gray-900 flex items-center justify-center min-h-screen">
@@ -337,57 +337,80 @@
     </div>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
+        
+        // --- 1. Generate the interactions for each card ---
+        const cardInteractions = [];
+        const totalCards = 30;
 
-        const config = {
-            interactions: [
-                // Interaction 1: Endless Marquee Animation
-                {
-                    key: '#carousel-container', // The element that triggers the animation
-                    trigger: 'pageVisible',      // Starts when the page is visible
-                    effects: [{
-                        key: '#carousel-container', // The element that gets animated
-                        keyframeEffect: {
-                            name: 'marquee-scroll',
-                            keyframes: [
-                                // Move from start to the end of the first set of cards
-                                { transform: 'translateX(0)' },
-                                { transform: 'translateX(-270rem)' } // (16rem width + 2rem gap) * 15 cards
-                            ]
-                        },
-                        duration: 60000, // 60 seconds for one loop
-                        easing: 'linear',
-                        iterations: Infinity // Loop forever
-                    }]
+        for (let i = 1; i <= totalCards; i++) {
+            const cardKey = `card-${i}`;
+            
+            cardInteractions.push({
+                key: cardKey, // The trigger element
+                trigger: 'hover',
+                params: {
+                    type: 'alternate' // Plays forward on enter, reverse on leave
                 },
-
-                // Interaction 2: Card Hover Animation
-                {
-                    key: '.perspective-container', // Applies to all card containers
-                    trigger: 'hover',
-                    params: {
-                        type: 'alternate' // Plays forward on enter, reverse on leave
-                    },
-                    effects: [{
-                        key: '.card', // Animate the .card within the hovered container
+                effects: [
+                    // Effect 1: Straighten the hovered card
+                    {
+                        key: cardKey, // Target the trigger element itself
+                        selector: '.card', // Animate the .card descendant
                         keyframeEffect: {
-                            name: 'card-hover-effect',
+                            name: `card-hover-effect-${i}`,
                             keyframes: [
-                                // The initial state defined in CSS
+                                // from: initial state in CSS is rotateY(25deg)
                                 { transform: 'rotateY(25deg) scale(1)', zIndex: '1' },
-                                // The state to animate to on hover
+                                // to: straightened and slightly larger
                                 { transform: 'rotateY(0deg) scale(1.05)', zIndex: '10' }
                             ]
                         },
-                        duration: 600,
+                        duration: 300,
                         easing: 'cubic-bezier(0.23, 1, 0.32, 1)',
-                        fill: 'both' // Retains the final state of the animation
+                        fill: 'both' 
+                    },
+                    // Effect 2: Pause and resume the marquee animation
+                    {
+                        key: '#carousel-container', // Target the scrolling container
+                        transition: {
+                            duration: 1, // Make the change immediate
+                            styleProperties: [
+                                { name: 'animationPlayState', value: 'paused' }
+                            ]
+                        }
+                    }
+                ]
+            });
+        }
+
+        // --- 2. Define the main configuration ---
+        const config = {
+            interactions: [
+                // Interaction 1: Endless Marquee Animation (runs by default)
+                {
+                    key: '#carousel-container', 
+                    trigger: 'pageVisible',   
+                    effects: [{
+                        key: '#carousel-container',
+                        keyframeEffect: {
+                            name: 'marquee-scroll',
+                            keyframes: [
+                                { transform: 'translateX(0)' },
+                                { transform: 'translateX(-270rem)' }
+                            ]
+                        },
+                        duration: 60000, 
+                        easing: 'linear',
+                        iterations: Infinity 
                     }]
-                }
+                },
+                // Add all the generated card hover interactions
+                ...cardInteractions
             ]
         };
 
-        // Initialize @wix/interact with the configuration
+        // --- 3. Initialize @wix/interact ---
         Interact.create(config);
     </script>
 
