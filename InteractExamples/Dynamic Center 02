@@ -3,43 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Living Collage (@wix/interact Version)</title>
+    <title>Living Collage with @wix/interact</title>
     <!-- Import Google Font 'Inter' -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     
-    <!--
-      NOTE: In a real project, you would load the @wix/interact library and 
-      its custom element definition, for example:
-      <script src="path/to/wix-interact-element.js"></script>
-      <script src="path/to/interact.umd.js"></script>
-    -->
+    <!-- Import @wix/interact library -->
+    <script type="module" src="https://esm.sh/@wix/interact@1.79.0"></script>
 
     <style>
-        /* Base styles for fullscreen, no margin/padding */
+        /* Base styles for a clean, fullscreen experience */
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
             overflow: hidden; /* Hide scrollbars */
-            background-color: #000; /* Fallback background */
+            background-color: #000;
             font-family: 'Inter', sans-serif;
         }
 
-        /* Main container for the collage */
+        /* Main container for the collage, acting as the interactive area */
         #collage-container {
             width: 100%;
             height: 100%;
             position: relative;
-            cursor: pointer; /* Indicate interactivity */
+            cursor: pointer;
         }
 
-        /* Wrapper for the custom element */
+        /* The wix-interact-element wrapper is made layout-neutral */
         wix-interact-element {
-            display: contents; /* Makes the wrapper layout-neutral */
+            display: contents;
         }
 
-        /* Each image layer is a 'fragment' */
+        /* Each image layer in the collage */
         .fragment {
             position: absolute;
             overflow: hidden;
@@ -47,15 +43,12 @@
             height: 100%;
             left: 0;
             top: 0;
-            background-color: #111; /* Visible if image is slow */
-            
-            /* The initial state (scale(0)) is now set by the @wix/interact
-              keyframe effect, which is applied via 'fill: backwards'
-              or by being the first frame of the animation.
-            */
+            background-color: #111;
+            /* The initial state (scale(0)) is now set declaratively by the 
+               first keyframe of the @wix/interact animation. */
         }
 
-        /* The image itself, styled as a background */
+        /* The image itself, styled as a background for perfect covering */
         .fragment .content-image {
             width: 100%;
             height: 100%;
@@ -64,27 +57,23 @@
             background-repeat: no-repeat;
         }
 
-        /* Text overlay, hidden by default */
+        /* Text overlay, which fades in on hover */
         .text-overlay {
             position: absolute;
             bottom: 0;
             left: 0;
-            /* width: 100%; */ /* <-- REMOVED to align to the left */
-            padding: 20px 40px;
-            box-sizing: border-box; /* Include padding in width */
-            /* background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); */ /* <-- REMOVED */
-            color: #fff;
-            
-            /* Initial opacity is set to 0 */
-            opacity: 0; 
-            /* Added CSS transition back */
-            transition: opacity 0.4s ease-in-out;
-            
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
             padding: max(20px, 4vw);
+            box-sizing: border-box;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            
+            /* Initial state is invisible */
+            opacity: 0; 
+            /* A simple CSS transition handles the fade effect */
+            transition: opacity 0.4s ease-in-out;
         }
 
-        /* Re-added the CSS hover rule */
+        /* On hover of the main wrapper, the text overlay becomes visible */
         wix-interact-element[data-wix-path="#collage-wrapper"]:hover .text-overlay {
             opacity: 1;
         }
@@ -103,37 +92,26 @@
 </head>
 <body>
     <!-- 
-      Wrap the main container in a wix-interact-element
-      to handle the text-overlay hover interaction.
+      This main wrapper handles the hover interaction for pausing the animation
+      and for fading in the text overlay.
     -->
     <wix-interact-element data-wix-path="#collage-wrapper">
-        <!-- Fullscreen collage container -->
         <div id="collage-container">
-            <!-- Fragments will be dynamically added here -->
+            <!-- Fragments will be dynamically added here by JavaScript -->
         </div>
     </wix-interact-element>
 
 
     <script type="module">
-        /*
-          In a real build environment, you would import Interact:
-          import { Interact } from '@wix/interact';
-          
-          For this demo, we'll assume 'Interact' and 'wix-interact-element'
-          have been loaded globally from script tags in the <head>.
-        */
+        import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
         
         document.addEventListener('DOMContentLoaded', () => {
 
             // --- 1. @wix/interact Configuration ---
-            
-            // This config defines the animations declaratively.
+            // This config declaratively defines the entrance animation for new fragments.
             const interactConfig = {
-                
-                // Reusable effects
                 effects: {
                     'fragment-scale-in': {
-                        // This replaces the JS-based scale animation
                         keyframeEffect: {
                             name: 'fragment-scale-in',
                             keyframes: [
@@ -141,35 +119,18 @@
                                 { transform: 'scale(1)' }
                             ]
                         },
-                        duration: 1000, // From your original JS (random 0.8-1.3, simplified to 1s)
+                        duration: 1100,
                         easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
-                        fill: 'both' // Ensures it stays at scale(1)
+                        fill: 'both' // Keeps the fragment at scale(1) after animating
                     }
-                    /* REMOVED 'text-fade' effect
-                    'text-fade': {
-                        ...
-                    }
-                    */
                 },
-                
-                // Interaction definitions
                 interactions: [
-                    /* REMOVED the hover interaction for 'text-fade'
                     {
-                        // Interaction for the text overlay hover
-                        source: '#collage-wrapper', // The data-wix-path of the main wrapper
-                        trigger: 'hover',
-                        params: { type: 'alternate' }, // Plays forward on enter, reverse on leave
-                        effects: [
-                            { effectId: 'text-fade' }
-                        ]
-                    },
-                    */
-                    {
-                        // Interaction for new fragments scaling in
-                        source: '.collage-fragment-wrapper', // Applies to all elements with this class
-                        trigger: 'viewEnter', // Triggers when element is added/enters view
-                        params: { type: 'once' }, // Only runs one time
+                        // This interaction targets any element with the class '.collage-fragment-wrapper'
+                        // and triggers as soon as it's added to the DOM and enters the viewport.
+                        key: '.collage-fragment-wrapper',
+                        trigger: 'viewEnter',
+                        params: { type: 'once' }, // The animation runs only one time per element.
                         effects: [
                             { effectId: 'fragment-scale-in' }
                         ]
@@ -178,94 +139,75 @@
             };
 
             // --- 2. Initialize Interact ---
-            
-            if (window.Interact && window.customElements.get('wix-interact-element')) {
-                window.Interact.create(interactConfig);
-            } else {
-                console.warn(
-                  `@wix/interact library or <wix-interact-element> not found. 
-                  Animations will not run. Please load the library.`
-                );
-            }
+            Interact.create(interactConfig);
 
-
-            // --- 3. Application Logic (Slightly Modified) ---
-            
+            // --- 3. Application Logic ---
             const container = document.getElementById('collage-container');
             let animationIntervalId = null;
-            const intervalTime = 2000; // 2 seconds between images
+            const intervalTime = 2000; // Time between new images
 
+            // Function to get a new random image
             const getRealImageUrl = () => `https://picsum.photos/1200/800?random=${Math.random()}`;
 
             function createFragment(imageUrl) {
-                // Create the wix-interact-element wrapper
+                // Create the wix-interact-element that will trigger the animation
                 const wixElement = document.createElement('wix-interact-element');
-                
-                // Assign the class selector for the 'viewEnter' interaction
-                wixElement.className = 'collage-fragment-wrapper';
-                
-                // Give it a unique path (good practice, though class selector is used)
-                wixElement.dataset.wixPath = `fragment-${Date.now()}`;
+                wixElement.className = 'collage-fragment-wrapper'; // Target for the 'viewEnter' interaction
+                wixElement.dataset.wixPath = `fragment-${Date.now()}`; // Unique ID is good practice
 
-                // Create the original fragment div
+                // Create the visual fragment structure
                 const fragment = document.createElement('div');
                 fragment.className = 'fragment';
 
-                // --- Animation logic removed from here ---
-                // The 'fragment-scale-in' effect handles the scale animation
-                
                 const content = document.createElement('div');
                 content.className = 'content-image';
                 content.style.backgroundImage = `url(${imageUrl})`;
                 fragment.appendChild(content);
 
+                // Add the text overlay to each fragment
                 const textOverlay = document.createElement('div');
                 textOverlay.className = 'text-overlay';
                 const title = document.createElement('h1');
-                title.textContent = 'Explore the View';
+                title.textContent = 'A Fleeting Moment';
                 const subtitle = document.createElement('p');
-                subtitle.textContent = 'Hover to pause and discover more about this moment.';
+                subtitle.textContent = 'Hover to pause and take in the view.';
                 textOverlay.appendChild(title);
                 textOverlay.appendChild(subtitle);
                 fragment.appendChild(textOverlay);
 
-                // Append the fragment *inside* the wix-interact wrapper
+                // Put the visual fragment inside the interact wrapper
                 wixElement.appendChild(fragment);
 
-                return wixElement; // Return the wrapper element
+                return wixElement;
             }
 
+            // Main function to drive the collage
             function animateCollage() {
                 const imageUrl = getRealImageUrl();
                 const preloader = new Image();
 
+                // Preload the image to ensure it's ready before animating
                 preloader.onload = () => {
+                    // Remove old fragments after a delay
                     const oldFragments = container.querySelectorAll('wix-interact-element');
                     setTimeout(() => oldFragments.forEach(node => node.remove()), 1500);
 
+                    // Create and append the new fragment. The 'viewEnter' trigger will
+                    // automatically fire, running the 'fragment-scale-in' effect.
                     const fragmentWrapper = createFragment(imageUrl);
                     container.appendChild(fragmentWrapper);
-                    
-                    // --- setTimeout for animation removed ---
-                    // The 'viewEnter' trigger on '.collage-fragment-wrapper'
-                    // will automatically run the 'fragment-scale-in' effect.
                 };
 
-                preloader.onerror = () => {
-                    console.error("Failed to load image:", imageUrl);
-                };
-
+                preloader.onerror = () => console.error("Failed to load image:", imageUrl);
                 preloader.src = imageUrl;
             }
 
-            // --- 4. Interval and Hover-to-Pause Logic (Unchanged) ---
-            
-            // This logic MUST remain, as @wix/interact cannot pause/resume
-            // a JavaScript setInterval loop.
-            
+            // --- 4. Interval and Hover-to-Pause Logic ---
+            // This logic remains in JavaScript as it controls the application's
+            // timing loop, which is outside the scope of @wix/interact's animation system.
             function startAnimation() {
                 if (animationIntervalId === null) {
-                    animateCollage();
+                    animateCollage(); // Animate immediately
                     animationIntervalId = setInterval(animateCollage, intervalTime);
                 }
             }
@@ -275,14 +217,13 @@
                 animationIntervalId = null;
             }
 
-            // We must use the wrapper element for the hover events
             const wrapper = document.querySelector('wix-interact-element[data-wix-path="#collage-wrapper"]');
             
+            // Pause and resume the JS interval on hover
             wrapper.addEventListener('mouseenter', stopAnimation);
             wrapper.addEventListener('mouseleave', startAnimation);
 
-            window.addEventListener('resize', () => {});
-
+            // Initial start
             startAnimation();
         });
     </script>
