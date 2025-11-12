@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Parallax Grid Limited Columns</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body {
+  margin:0;
+  padding:40px;
+  background:#111;
+  font-family:'Inter', sans-serif;
+}
+.grid-container {
+  display:grid;
+  gap:20px; /* רווח אחיד */
+  perspective: 2000px; /* חיזוק הפרספקטיבה */
+  grid-auto-rows: 1fr;
+}
+wix-interact-element {
+  display:block;
+  position:relative;
+  border-radius:20px;
+  overflow:visible;
+  transform-style: preserve-3d;
+  cursor:pointer;
+}
+.card-inner {
+  width:100%;
+  aspect-ratio:1/1;
+  border-radius:20px;
+  background-size:cover;
+  background-position:center;
+  box-shadow:0 10px 20px rgba(0,0,0,0.5);
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding:16px;
+  box-sizing:border-box;
+  color:white;
+  font-weight:500;
+  transition: transform 0.1s ease-out;
+}
+.card-content {
+  opacity:0;
+  transform: translateY(12px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.card-content h3 { margin:0 0 2px 0; }
+.card-content p { margin:0; }
+wix-interact-element:hover .card-content {
+  opacity:1;
+  transform: translateY(0);
+}
+</style>
+</head>
+<body>
+
+<div class="grid-container" id="grid-container"></div>
+
+<script>
+const container = document.getElementById('grid-container');
+const numCards = 18; // ניתן לשנות מ-3 עד 60
+const cards = [];
+
+function getColumns(numCards) {
+  const maxCols = 6;
+  const minCols = 2;
+  return Math.min(maxCols, Math.max(minCols, numCards));
+}
+
+// יצירת כרטיסיות
+for(let i=0;i<numCards;i++){
+  const card = document.createElement('wix-interact-element');
+  card.setAttribute('data-wix-path','card-'+(i+1));
+
+  const inner = document.createElement('div');
+  inner.classList.add('card-inner');
+  inner.style.backgroundImage = `linear-gradient(180deg,#0003,#000c), url('https://picsum.photos/seed/card${i+1}/600/400')`;
+
+  const content = document.createElement('div');
+  content.classList.add('card-content');
+  content.innerHTML = `<h3>Card ${i+1}</h3><p>Demo text</p>`;
+
+  inner.appendChild(content);
+  card.appendChild(inner);
+  container.appendChild(card);
+
+  cards.push({el:card, inner});
+}
+
+// פונקציה לעדכון מספר עמודות לפי רוחב המסך
+function updateGridColumns() {
+  let columns = getColumns(numCards);
+  if(window.innerWidth < 750) columns = 2;
+  container.style.gridTemplateColumns = `repeat(${columns},1fr)`;
+}
+
+// קריאה ראשונית
+updateGridColumns();
+
+// עדכון במסך משתנה
+window.addEventListener('resize', updateGridColumns);
+
+// פרלקס לפי העכבר
+document.addEventListener('mousemove',(e)=>{
+  const mouseX = e.clientX;
+  const mouseY = e.clientY;
+  const windowWidth = window.innerWidth;
+  const windowHeight = window.innerHeight;
+  const percentX = ((mouseX/windowWidth)-0.5)*2;
+  const percentY = ((mouseY/windowHeight)-0.5)*2;
+  const maxRotate = 40; // חיזוק הזווית
+
+  cards.forEach(({inner})=>{
+    inner.style.transform = `rotateX(${percentY*maxRotate}deg) rotateY(${-percentX*maxRotate}deg) scale(1)`;
+  });
+});
+</script>
+
+</body>
+</html>
