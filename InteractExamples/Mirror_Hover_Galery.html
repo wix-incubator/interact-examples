@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wild Nature Gallery with @wix/interact</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<script type="module" src="https://esm.sh/@wix/interact@1.79.0"></script>
+<style>
+body {
+  margin:0;
+  padding:40px;
+  background:#111;
+  font-family:'Inter', sans-serif;
+  color:white;
+  overflow-x:hidden;
+}
+
+/* GRID */
+.grid-container {
+  display:grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-auto-rows:180px;
+  gap:40px;
+  width:100%;
+}
+
+/* CARD BASE */
+wix-interact-element {
+  display:block;
+  position:relative;
+  overflow:hidden;
+  width:100%;
+  height:100%;
+  border-radius:5px; /* Reduced radius */
+  cursor:pointer;
+}
+
+/* inner wrapper */
+.card-inner {
+  width:100%;
+  height:100%;
+  position:relative;
+  border-radius:5px; /* Reduced radius */
+}
+
+/* card background */
+.card-bg {
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background-size:cover;
+  background-position:center;
+  transition: background-image 0.3s ease;
+}
+
+/* overlay */
+.card-overlay {
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.2);
+  z-index:1;
+  border-radius:5px; /* Reduced radius */
+}
+
+/* text */
+.card-content {
+  position:absolute;
+  bottom:12px;
+  left:12px;
+  right:12px;
+  opacity:0;
+  transform:translateY(10px);
+  z-index:2;
+  line-height:1.2;
+  text-shadow:0 2px 6px rgba(0,0,0,0.5);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events:none;
+}
+
+.card-content h3 {margin:0 0 3px 0; font-size:1rem;}
+.card-content p {margin:0; font-size:0.85rem;}
+
+/* Show text on hover of only the hovered card */
+wix-interact-element:hover .card-content {
+  opacity:1;
+  transform:translateY(0);
+}
+
+@media(max-width:1200px){
+  .grid-container{grid-template-columns: repeat(4,1fr);}
+}
+@media(max-width:800px){
+  .grid-container{grid-template-columns: repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<section class="grid-container"></section>
+
+<script type="module">
+import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
+
+const container = document.querySelector('.grid-container');
+const ROWS = 4;
+const COLS = 8;
+const CARD_COUNT = ROWS*COLS;
+const originalImages = [];
+const natureSeeds = [
+  'forest', 'mountain', 'river', 'wild', 'jungle', 'desert', 'waterfall', 'canyon', 'prairie', 'lake',
+  'volcano', 'ice', 'valley', 'rainforest', 'beach', 'cliff', 'glacier', 'savanna', 'woods', 'stream',
+  'sunset', 'meadow', 'ocean', 'hills', 'swamp', 'rocks', 'pond', 'flowers', 'trees', 'night',
+  'fog', 'autumn', 'spring', 'winter', 'summer', 'mist', 'cave', 'sky', 'riverbank', 'island',
+  'wetlands', 'coast', 'pine', 'peak', 'lava', 'dunes', 'jungle2', 'wildflowers', 'marsh', 'delta',
+  'creek', 'bay', 'iceberg', 'mountainscape', 'rain', 'sunrise', 'rocks2', 'tundra', 'bamboo', 'valley2'
+];
+
+// Create cards
+for(let i=1;i<=CARD_COUNT;i++){
+  const card=document.createElement('wix-interact-element');
+  card.dataset.wixPath='card-'+i;
+  card.innerHTML = `
+    <div class="card-inner" id="card-inner-${i}">
+      <div class="card-bg" id="card-bg-${i}"></div>
+      <div class="card-overlay" id="card-overlay-${i}"></div>
+      <div class="card-content" id="card-content-${i}">
+        <h3>Title ${i}</h3>
+        <p>Subtitle for card ${i}</p>
+      </div>
+    </div>
+  `;
+
+  // set background image
+  const bg=card.querySelector('.card-bg');
+  const seed = natureSeeds[i % natureSeeds.length];
+  const imgUrl=`https://picsum.photos/seed/${seed}/600/400`;
+  bg.style.backgroundImage=`url('${imgUrl}')`;
+  originalImages.push(imgUrl);
+
+  container.appendChild(card);
+}
+
+// --- @wix/interact Configuration ---
+const interactions = [];
+
+for (let i = 1; i <= CARD_COUNT; i++) {
+  interactions.push({
+    key: `card-${i}`,
+    trigger: 'hover',
+    params: { type: 'alternate' },
+    effects: [
+      {
+        key: `#card-inner-${i}`,
+        keyframeEffect: { name: 'card-zoom', keyframes: [{ transform: 'scale(1)' }, { transform: 'scale(1.05)' }] },
+        duration: 300,
+        easing: 'ease',
+        fill: 'both'
+      },
+      {
+        key: `#card-overlay-${i}`,
+        transition: {
+            duration: 300,
+            easing: 'ease',
+            styleProperties: [{ name: 'background-color', value: 'rgba(0,0,0,0.45)' }]
+        },
+        fill: 'both'
+      },
+      {
+        key: `card-${i}`,
+        transition: {
+            duration: 0,
+            styleProperties: [{ name: 'z-index', value: '99' }]
+        },
+        fill: 'both'
+      }
+    ]
+  });
+}
+
+Interact.create({ interactions });
+
+// Global background effect
+document.querySelectorAll('wix-interact-element').forEach((el)=>{
+  el.addEventListener('mouseenter',()=>{
+    const hoverImage = el.querySelector('.card-bg').style.backgroundImage;
+    document.querySelectorAll('wix-interact-element .card-bg').forEach(card=>{
+      card.style.backgroundImage = hoverImage;
+    });
+  });
+
+  el.addEventListener('mouseleave',()=>{
+    document.querySelectorAll('wix-interact-element .card-bg').forEach((card,i)=>{
+      card.style.backgroundImage = `url('${originalImages[i]}')`;
+    });
+  });
+});
+</script>
+
+</body>
+</html>
