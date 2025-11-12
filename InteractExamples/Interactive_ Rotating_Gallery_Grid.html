@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive 3D Gallery Grid with @wix/interact</title>
+    <script type="module" src="https://esm.sh/@wix/interact@1.79.0"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: #111;
+            font-family: 'Inter', sans-serif;
+            perspective: 1000px;
+        }
+
+        .grid-container {
+            display: grid;
+            gap: 40px;
+            grid-template-columns: repeat(8, 1fr);
+        }
+
+        /* Use 'contents' to prevent wrappers from breaking the grid layout */
+        wix-interact-element {
+            display: contents;
+        }
+
+        .card-component {
+            position: relative;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .card-inner {
+            width: 100%;
+            aspect-ratio: 1/1;
+            border-radius: 20px;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 32px;
+            box-sizing: border-box;
+            color: white;
+            font-weight: 500;
+            /* Allow smooth transitions for the transform property */
+            transition: transform 0.05s ease-out;
+            transform-style: preserve-3d;
+        }
+
+        .card-content {
+            opacity: 0;
+            transform: translateY(12px);
+        }
+
+        .card-content h3 {
+            margin: 0 0 4px 0;
+        }
+
+        .card-content p {
+            margin: 0;
+        }
+        
+        /* Responsive Grid Layout */
+        @media(max-width: 1200px) {
+            .grid-container {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media(max-width: 900px) {
+            .grid-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media(max-width: 750px) {
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    
+    <wix-interact-element data-wix-path="grid-wrapper">
+        <div class="grid-container" id="grid-container">
+            <!-- Cards will be dynamically inserted here by JavaScript -->
+        </div>
+    </wix-interact-element>
+
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
+
+        const container = document.getElementById('grid-container');
+        const numCards = 32;
+        let columns = 8;
+        const rows = 4;
+
+        // Create HTML for cards dynamically
+        function createCards() {
+            let cardsHtml = '';
+            for (let i = 0; i < numCards; i++) {
+                cardsHtml += `
+                    <wix-interact-element data-wix-path="card-${i}">
+                      <div class="card-component">
+                        <wix-interact-element data-wix-path="card-inner-${i}">
+                            <div class="card-inner" style="background-image: linear-gradient(180deg, #0003, #000c), url('https://picsum.photos/seed/card${i + 1}/600/400')">
+                                <wix-interact-element data-wix-path="card-content-${i}">
+                                    <div class="card-content">
+                                        <h3>Card ${i + 1}</h3>
+                                        <p>Demo text</p>
+                                    </div>
+                                </wix-interact-element>
+                            </div>
+                        </wix-interact-element>
+                      </div>
+                    </wix-interact-element>
+                `;
+            }
+            container.innerHTML = cardsHtml;
+        }
+
+        // Dynamically update the number of columns based on window width
+        function updateGridColumns() {
+            if (window.innerWidth < 750) columns = 2;
+            else if (window.innerWidth < 900) columns = 3;
+            else if (window.innerWidth < 1200) columns = 4;
+            else columns = 8;
+        }
+
+        // Helper to calculate card's position factor relative to the grid center
+        function getPositionFactor(index, currentColumns) {
+            const numRows = Math.ceil(numCards / currentColumns);
+            const row = Math.floor(index / currentColumns);
+            const col = index % currentColumns;
+            const centerCol = (currentColumns - 1) / 2;
+            const centerRow = (numRows - 1) / 2;
+
+            const offsetX = centerCol !== 0 ? (col - centerCol) / centerCol : 0;
+            const offsetY = centerRow !== 0 ? (row - centerRow) / centerRow : 0;
+
+            const factor = Math.min(1, Math.sqrt(offsetX * offsetX + offsetY * offsetY));
+            return { factor, offsetX, offsetY };
+        }
+        
+        // Initial setup on DOM content loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            createCards();
+            updateGridColumns();
+            window.addEventListener('resize', updateGridColumns);
+
+            const interactions = [];
+            const pointerMoveEffects = [];
+
+            // 1. Generate Hover interactions and Pointer Move effects
+            for (let i = 0; i < numCards; i++) {
+                // Hover interaction for each card's content
+                interactions.push({
+                    key: `card-${i}`,
+                    trigger: 'hover',
+                    params: { type: 'alternate' },
+                    effects: [{ 
+                        key: `card-content-${i}`,
+                        effectId: 'content-reveal' 
+                    }]
+                });
+
+                // Custom effect for pointer move on each card's inner element
+                pointerMoveEffects.push({
+                    key: `card-inner-${i}`,
+                    customEffect: (element, progress) => {
+                        const normalizedX = (progress.x - 0.5) * 2;
+                        const normalizedY = (progress.y - 0.5) * 2;
+
+                        const maxRotateZ = 15;
+                        const maxMove = 40;
+
+                        const pos = getPositionFactor(i, columns);
+                        const factor = pos.factor;
+                        const offsetX = pos.offsetX;
+                        const offsetY = pos.offsetY;
+
+                        const rotateZ = (factor * maxRotateZ) * -Math.sign(offsetX || 1) * normalizedX;
+                        const moveX = (factor * maxMove) * -offsetX * normalizedX;
+                        const moveY = (factor * maxMove) * -offsetY * normalizedY;
+                        
+                        element.style.transform = `translate(${moveX}px, ${moveY}px) rotateZ(${rotateZ}deg)`;
+                    }
+                });
+            }
+
+            // 2. Add the main Pointer Move interaction
+            interactions.push({
+                key: 'grid-wrapper',
+                trigger: 'pointerMove',
+                effects: pointerMoveEffects
+            });
+
+            // 3. Define reusable effects and create the Interact instance
+            const config = {
+                effects: {
+                    'content-reveal': {
+                        keyframeEffect: {
+                            name: 'content-reveal-anim',
+                            keyframes: [
+                                { opacity: 0, transform: 'translateY(12px)' },
+                                { opacity: 1, transform: 'translateY(0px)' }
+                            ]
+                        },
+                        duration: 300,
+                        easing: 'ease-out',
+                        fill: 'both'
+                    }
+                },
+                interactions: interactions
+            };
+
+            Interact.create(config);
+        });
+    </script>
+</body>
+
+</html>
