@@ -32,7 +32,7 @@ wix-interact-element {
   overflow:hidden;
   width:100%;
   height:100%;
-  border-radius:5px; /* Reduced radius */
+  border-radius:5px;
   cursor:pointer;
 }
 
@@ -41,7 +41,7 @@ wix-interact-element {
   width:100%;
   height:100%;
   position:relative;
-  border-radius:5px; /* Reduced radius */
+  border-radius:5px;
 }
 
 /* card background */
@@ -53,6 +53,7 @@ wix-interact-element {
   height:100%;
   background-size:cover;
   background-position:center;
+  /* This transition helps the global background effect feel smoother */
   transition: background-image 0.3s ease;
 }
 
@@ -62,7 +63,7 @@ wix-interact-element {
   inset:0;
   background:rgba(0,0,0,0.2);
   z-index:1;
-  border-radius:5px; /* Reduced radius */
+  border-radius:5px;
 }
 
 /* text */
@@ -76,18 +77,12 @@ wix-interact-element {
   z-index:2;
   line-height:1.2;
   text-shadow:0 2px 6px rgba(0,0,0,0.5);
-  transition: opacity 0.3s ease, transform 0.3s ease;
   pointer-events:none;
+  /* CSS transitions and hover effects are now fully handled by @wix/interact */
 }
 
 .card-content h3 {margin:0 0 3px 0; font-size:1rem;}
 .card-content p {margin:0; font-size:0.85rem;}
-
-/* Show text on hover of only the hovered card */
-wix-interact-element:hover .card-content {
-  opacity:1;
-  transform:translateY(0);
-}
 
 @media(max-width:1200px){
   .grid-container{grid-template-columns: repeat(4,1fr);}
@@ -113,9 +108,7 @@ const natureSeeds = [
   'forest', 'mountain', 'river', 'wild', 'jungle', 'desert', 'waterfall', 'canyon', 'prairie', 'lake',
   'volcano', 'ice', 'valley', 'rainforest', 'beach', 'cliff', 'glacier', 'savanna', 'woods', 'stream',
   'sunset', 'meadow', 'ocean', 'hills', 'swamp', 'rocks', 'pond', 'flowers', 'trees', 'night',
-  'fog', 'autumn', 'spring', 'winter', 'summer', 'mist', 'cave', 'sky', 'riverbank', 'island',
-  'wetlands', 'coast', 'pine', 'peak', 'lava', 'dunes', 'jungle2', 'wildflowers', 'marsh', 'delta',
-  'creek', 'bay', 'iceberg', 'mountainscape', 'rain', 'sunrise', 'rocks2', 'tundra', 'bamboo', 'valley2'
+  'fog', 'autumn', 'spring', 'winter', 'summer', 'mist', 'cave', 'sky', 'riverbank', 'island'
 ];
 
 // Create cards
@@ -133,9 +126,9 @@ for(let i=1;i<=CARD_COUNT;i++){
     </div>
   `;
 
-  // set background image
   const bg=card.querySelector('.card-bg');
-  const seed = natureSeeds[i % natureSeeds.length];
+  const seedIndex = (i - 1) % natureSeeds.length;
+  const seed = natureSeeds[seedIndex];
   const imgUrl=`https://picsum.photos/seed/${seed}/600/400`;
   bg.style.backgroundImage=`url('${imgUrl}')`;
   originalImages.push(imgUrl);
@@ -152,27 +145,44 @@ for (let i = 1; i <= CARD_COUNT; i++) {
     trigger: 'hover',
     params: { type: 'alternate' },
     effects: [
+      // 1. Card inner content zoom effect
       {
         key: `#card-inner-${i}`,
-        keyframeEffect: { name: 'card-zoom', keyframes: [{ transform: 'scale(1)' }, { transform: 'scale(1.05)' }] },
+        keyframeEffect: {
+            name: `card-zoom-${i}`,
+            keyframes: [{ transform: 'scale(1.05)' }]
+        },
         duration: 300,
-        easing: 'ease',
+        easing: 'ease-out',
         fill: 'both'
       },
+      // 2. Card overlay darken effect
       {
         key: `#card-overlay-${i}`,
         transition: {
             duration: 300,
-            easing: 'ease',
-            styleProperties: [{ name: 'background-color', value: 'rgba(0,0,0,0.45)' }]
+            easing: 'ease-out',
+            styleProperties: [{ name: 'background', value: 'rgba(0,0,0,0.45)' }]
         },
         fill: 'both'
       },
+      // 3. Text content reveal animation (replaces CSS :hover)
+      {
+        key: `#card-content-${i}`,
+        keyframeEffect: {
+            name: `text-reveal-${i}`,
+            keyframes: [{ opacity: 1, transform: 'translateY(0)' }]
+        },
+        duration: 300,
+        easing: 'ease-out',
+        fill: 'both'
+      },
+      // 4. z-index change to bring card to front
       {
         key: `card-${i}`,
         transition: {
-            duration: 0,
-            styleProperties: [{ name: 'z-index', value: '99' }]
+            duration: 0, // z-index is not animatable, so duration is 0
+            styleProperties: [{ name: 'z-index', value: '10' }]
         },
         fill: 'both'
       }
@@ -182,18 +192,22 @@ for (let i = 1; i <= CARD_COUNT; i++) {
 
 Interact.create({ interactions });
 
-// Global background effect
+// Global background effect - This complex global state logic is best handled
+// with event listeners, complementing @wix/interact's animation handling.
 document.querySelectorAll('wix-interact-element').forEach((el)=>{
   el.addEventListener('mouseenter',()=>{
     const hoverImage = el.querySelector('.card-bg').style.backgroundImage;
-    document.querySelectorAll('wix-interact-element .card-bg').forEach(card=>{
-      card.style.backgroundImage = hoverImage;
+    document.querySelectorAll('.card-bg').forEach(cardBg=>{
+      cardBg.style.backgroundImage = hoverImage;
     });
   });
 
   el.addEventListener('mouseleave',()=>{
-    document.querySelectorAll('wix-interact-element .card-bg').forEach((card,i)=>{
-      card.style.backgroundImage = `url('${originalImages[i]}')`;
+    document.querySelectorAll('wix-interact-element').forEach((cardEl, index)=>{
+      const cardBg = cardEl.querySelector('.card-bg');
+      if(cardBg) {
+          cardBg.style.backgroundImage = `url('${originalImages[index]}')`;
+      }
     });
   });
 });
