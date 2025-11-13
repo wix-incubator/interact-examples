@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Spread Animation on Hover</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f0f0f0;
+            --text-color: #111;
+            --card-title-color: #ffffff;
+        }
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100%;
+            width: 100%;
+        }
+
+        /* --- New Layout: Center the collection --- */
+        body {
+            display: grid;
+            place-items: center;
+            overflow: hidden; /* Prevent scrollbars from animation */
+        }
+
+        /* * This element is now the main hover trigger.
+         * It defines the initial size of the stacked cards.
+         */
+        #cards-collection {
+            position: relative;
+            /* UPDATED: Set width to 25vw */
+            width: 25vw;
+            height: 70vh;
+            margin: 0;
+            /* Cursors help indicate interactivity */
+            cursor: pointer;  
+        }
+
+        .card {
+            position: absolute;
+            /* UPDATED: Set width to 25vw */
+            width: 25vw;
+            height: 70vh;
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5rem;
+            font-weight: bold;
+            overflow: hidden;
+            color: rgba(255, 255, 255, 0.8);
+            will-change: transform; /* Performance hint - height animation removed */
+            /* This is the initial "stacked" state */
+            transform: translateX(0);  
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+        
+        .card-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            z-index: 2;
+            text-align: center;
+            color: var(--card-title-color);
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        }
+
+        .card-content h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .card-content p {
+            font-size: 1rem;
+            font-weight: 400;
+            margin: 0;
+        }
+
+        /* Z-index for desktop stacking */
+        #card-1 { z-index: 3; }
+        #card-2 { z-index: 4; }
+        #card-3 { z-index: 5; }
+        #card-4 { z-index: 2; }
+        #card-5 { z-index: 1; }
+
+        /* --- Mobile Styles --- */
+        @media (max-width: 768px) {
+            #cards-collection {
+                /* UPDATED: Set width to 25vw for mobile */
+                width: 25vw;
+                height: 70vh;
+            }
+
+            .card {
+                width: 100%; /* Full width of the 25vw collection */
+                height: 70vh; /* Match requested height */
+                left: 0;
+                top: 0;
+                transform: translateX(0);  
+            }
+
+            .card-content {
+                text-align: left;
+                padding: 1.5rem;
+            }
+            .card-content h2 {
+                font-size: 1.5rem;
+            }
+            .card-content p {
+                font-size: 0.9rem;
+            }
+            
+            /* Z-index for mobile stacking order: Card 1 is at the bottom, Card 5 is at the top. */
+            #card-1 { z-index: 1; }
+            #card-2 { z-index: 2; }
+            #card-3 { z-index: 3; }
+            #card-4 { z-index: 4; }
+            #card-5 { z-index: 5; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .card {
+                /* For no-motion, just show the final spread state */
+                transition: none;
+            }
+            /* Desktop reduced motion: show spread state with 10px gaps */
+            @media (min-width: 769px) {
+                /* UPDATED: Set height and transforms to match new 25vw expanded state */
+                .card { height: 70vh !important; }
+                #card-1 { transform: translateX(calc(-50vw - 20px)) !important; }
+                #card-2 { transform: translateX(calc(-25vw - 10px)) !important; }
+                #card-3 { transform: translateX(0) !important; }
+                #card-4 { transform: translateX(calc(25vw + 10px)) !important; }
+                #card-5 { transform: translateX(calc(50vw + 20px)) !important; }
+            }
+            /* Mobile reduced motion: show fanned state */
+            @media (max-width: 768px) {
+                /* UPDATED: Set height and transforms to match new fanned state (5vw steps) */
+                .card { height: 70vh !important; }
+                #card-1 { transform: translateX(-10vw) !important; }
+                #card-2 { transform: translateX(-5vw) !important; }
+                #card-3 { transform: translateX(0) !important; }
+                #card-4 { transform: translateX(5vw) !important; }
+                #card-5 { transform: translateX(10vw) !important; }
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!--  
+      The wix-interact-element is now on the collection itself.
+      This element will be the hover trigger.
+    -->
+    <wix-interact-element data-wix-path="#cards-collection">
+        <div id="cards-collection">
+            <wix-interact-element data-wix-path="#card-1">
+                <div id="card-1" class="card">
+                    <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2070&auto=format&fit=crop" alt="Misty mountains" onerror="this.style.display='none'">
+                    <div class="card-content">
+                        <h2>Serene Peaks</h2>
+                        <p>Find your calm</p>
+                    </div>
+                </div>
+            </wix-interact-element>
+            <wix-interact-element data-wix-path="#card-2">
+                <div id="card-2" class="card">
+                    <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?q=80&w=2475&auto=format&fit=crop" alt="Green hills" onerror="this.style.display='none'">
+                    <div class="card-content">
+                        <h2>Rolling Hills</h2>
+                        <p>Explore the landscape</p>
+                    </div>
+                </div>
+            </wix-interact-element>
+            <wix-interact-element data-wix-path="#card-3">
+                <div id="card-3" class="card">
+                    <img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?q=80&w=2070&auto=format&fit=crop" alt="Mountain lake" onerror="this.style.display='none'">
+                    <div class="card-content">
+                        <h2>Alpine Lake</h2>
+                        <p>Reflect and relax</p>
+                    </div>
+                </div>
+            </wix-interact-element>
+            <wix-interact-element data-wix-path="#card-4">
+                <div id="card-4" class="card">
+                    <img src="https://images.unsplash.com/photo-1433086966358-54859d0ed716?q=80&w=1974&auto=format&fit=crop" alt="Waterfall" onerror="this.style.display='none'">
+                    <div class="card-content">
+                        <h2>Hidden Falls</h2>
+                        <p>Discover nature's power</p>
+                    </div>
+                </div>
+            </wix-interact-element>
+            <wix-interact-element data-wix-path="#card-5">
+                <div id="card-5" class="card">
+                    <img src="https://images.unsplash.com/photo-1511884642898-4c92249e20b6?q=80&w=2070&auto=format&fit=crop" alt="Forest from above" onerror="this.style.display='none'">
+                    <div class="card-content">
+                        <h2>Forest Canopy</h2>
+                        <p>Breathe the fresh air</p>
+                    </div>
+                </div>
+            </wix-interact-element>
+        </div>
+    </wix-interact-element>
+
+    <script type="module">
+        // Import from the new URL specified in the prompt
+        import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
+
+        // Keep track of initialized instances
+        window.InteractInstances = window.InteractInstances || [];
+
+        function destroyInstances() {
+            if (window.InteractInstances) {
+                // This is a mock destroy function. In a real app, you'd use the library's
+                // specific cleanup/destroy method if it provides one.
+                // For this library, re-running Interact.create() with the same keys
+                // might just override, but we'll clear our array.
+                window.InteractInstances = [];
+            }
+        }
+
+
+        function setupAnimations() {
+            // Destroy any previous instances before creating new ones
+            destroyInstances();
+
+            // --- NEW Desktop Configuration (Hover) ---
+            const desktopConfig = {
+                interactions: [
+                    {
+                        key: '#cards-collection', // The collection is the hover trigger
+                        trigger: 'hover',
+                        params: { 
+                            type: 'alternate' // Play forward on enter, reverse on leave
+                        },
+                        effects: [
+                            {
+                                key: '#card-1',
+                                // UPDATED: Keyframes no longer animate height,
+                                // and use calc() for 10px gaps based on 25vw.
+                                keyframeEffect: { 
+                                    name: 'card-1-move', 
+                                    keyframes: [
+                                        { transform: 'translateX(0)' }, // Start
+                                        // Card 1: (Card 2) + (Card 1 width) + (10px gap)
+                                        // = (-25vw - 10px) - 25vw - 10px = -50vw - 20px
+                                        { transform: 'translateX(calc(-50vw - 20px))' } // End
+                                    ] 
+                                },
+                                duration: 600, // Duration for the hover animation
+                                easing: 'cubic-bezier(0.16, 1, 0.3, 1)', // "Ease out" for a snappy feel
+                                fill: 'both' // Hold the start and end states
+                            },
+                            {
+                                key: '#card-2',
+                                // Card 2: -(Card 3 width) - (10px gap)
+                                keyframeEffect: { name: 'card-2-move', keyframes: [{ transform: 'translateX(0)' }, { transform: 'translateX(calc(-25vw - 10px))' }] },
+                                duration: 600,
+                                easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                                fill: 'both'
+                            },
+                            {
+                                key: '#card-3',
+                                // Card 3: Stays centered
+                                keyframeEffect: { name: 'card-3-move', keyframes: [{ transform: 'translateX(0)' }, { transform: 'translateX(0)' }] },
+                                duration: 600,
+                                easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                                fill: 'both'
+                            },
+                            {
+                                key: '#card-4',
+                                // Card 4: (Card 3 width) + (10px gap)
+                                keyframeEffect: { name: 'card-4-move', keyframes: [{ transform: 'translateX(0)' }, { transform: 'translateX(calc(25vw + 10px))' }] },
+                                duration: 600,
+                                easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                                fill: 'both'
+                            },
+                            {
+                                key: '#card-5',
+                                // Card 5: (Card 4) + (Card 5 width) + (10px gap)
+                                // = (25vw + 10px) + 25vw + 10px = 50vw + 20px
+                                keyframeEffect: { name: 'card-5-move', keyframes: [{ transform: 'translateX(0)' }, { transform: 'translateX(calc(50vw + 20px))' }] },
+                                duration: 600,
+                                easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                                fill: 'both'
+                            }
+                        ]
+                    }
+                ]
+            };
+            
+            // --- NEW Mobile Configuration (Hover/Tap) ---
+            const mobileConfig = {
+                interactions: [
+                    {
+                        key: '#cards-collection',
+                        trigger: 'hover', // On mobile, this often acts as a "tap"
+                        params: { 
+                            type: 'alternate' 
+                        },
+                        effects: [
+                            // UPDATED: Proportional fanning based on 25vw card width (5vw steps)
+                            {
+                                key: '#card-1',
+                                keyframeEffect: { name: 'card-1-move-mob', keyframes: [{ transform: 'translateX(0)' }, { transform: 'translateX(-10vw)' }] },
+                                duration: 500,
+                                easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                                fill: 'both'
+                            },
+                            {
+                                key: '#card-2',
+                                keyframeEffect: { name: 'card-2-move-mob', keyframes: [{ transform: 'translateX(0)' }, { transform: 'translateX(-5vw)' }] },
+                                duration: 500,
+                                easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                                fill: 'both'
+                            },
+                            {
+                                key: '#card-3',
+                                keyframeEffect: { name: 'card-3-move-mob', keyframes: [{ transform: 'translateX(0)' }, { transform: 'translateX(0)' }] },
+                                duration: 500,
+                                easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                                fill: 'both'
+                            },
+                            {
+                                key: '#card-4',
+                                keyframeEffect: { name: 'card-4-move-mob', keyframes: [{ transform: 'translateX(0)' }, { transform: 'translateX(5vw)' }] },
+                                duration: 500,
+                                easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                                fill: 'both'
+                            },
+                            {
+                                key: '#card-5',
+                                keyframeEffect: { name: 'card-5-move-mob', keyframes: [{ transform: 'translateX(0)' }, { transform: 'translateX(10vw)' }] },
+                                duration: 500,
+                                easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                                fill: 'both'
+                            }
+                        ]
+                    }
+                ]
+            };
+
+            // Check window width and apply the correct configuration
+            if (window.innerWidth < 768) {
+                 // Reset styles potentially set by desktop config
+                 document.querySelectorAll('.card').forEach(card => {
+                    card.style.height = ''; // Reset height to let CSS control
+                    card.style.transform = ''; // Reset transform to let CSS control
+                 });
+                const mobileInstance = Interact.create(mobileConfig);
+                window.InteractInstances.push(mobileInstance);
+            } else {
+                 // Reset styles potentially set by mobile config
+                 document.querySelectorAll('.card').forEach(card => {
+                    card.style.height = ''; // Reset height
+                    card.style.transform = ''; // Reset transform
+                 });
+                const desktopInstance = Interact.create(desktopConfig);
+                window.InteractInstances.push(desktopInstance);
+            }
+        }
+
+        // Initial setup on load
+        window.addEventListener('load', setupAnimations);
+
+        // Debounced resize handler
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                // Rerun setup without reloading the page
+                setupAnimations();  
+            }, 250);
+        });
+
+    </script>
+</body>
+</html>
