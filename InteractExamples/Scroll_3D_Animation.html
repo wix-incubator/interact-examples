@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Scroll-Driven 3D Centered Panels with @wix/interact</title>
+<title>3D Scroll Panels Centering at End</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
 <style>
 body {
   margin: 0;
@@ -46,9 +47,8 @@ body {
 
 .panel {
   position: absolute;
-  left: 50%; /* מרכז אופקי */
+  left: 50%;
   transform-style: preserve-3d;
-  transform: translateX(-50%); /* Start centered, interact will override this */
 }
 
 .panel img {
@@ -61,7 +61,7 @@ body {
 }
 
 wix-interact-element {
-    display: contents;
+  display: contents;
 }
 
 @media (max-width: 1280px) {
@@ -95,13 +95,14 @@ wix-interact-element {
 }
 </style>
 </head>
+
 <body>
 
 <section class="intro">
   <div class="text-block">
     <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-2">Title 01</h1>
     <p class="text-base md:text-lg leading-relaxed">
-      Scroll-driven 3D animation with horizontal subtle movement.
+      Scroll-driven 3D animation with horizontal spacing that centers at the end.
     </p>
   </div>
 
@@ -117,99 +118,87 @@ wix-interact-element {
 </section>
 
 <script type="module">
-  import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
+import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
 
-  document.addEventListener('DOMContentLoaded', () => {
-    // If it's a mobile view, don't initialize animations. The static CSS handles the layout.
-    if (window.innerWidth <= 1280) {
-      return;
-    }
+document.addEventListener('DOMContentLoaded', () => {
 
-    // --- Get Elements ---
-    const introSection = document.querySelector('.intro');
-    const panelWrapper = document.querySelector('.panel-wrapper');
-    const panels = Array.from(document.querySelectorAll('.panel'));
-    const totalPanels = panels.length;
+  if (window.innerWidth <= 1280) return;
 
-    // --- Dynamic Element Wrapping ---
-    const wrapElement = (el, path) => {
-      const wrapper = document.createElement('wix-interact-element');
-      wrapper.dataset.wixPath = path;
-      el.parentNode.insertBefore(wrapper, el);
-      wrapper.appendChild(el);
-      return wrapper;
-    };
-    
-    wrapElement(introSection, 'intro-section');
-    wrapElement(panelWrapper, 'panel-wrapper');
+  const introSection = document.querySelector('.intro');
+  const panelWrapper = document.querySelector('.panel-wrapper');
+  const panels = Array.from(document.querySelectorAll('.panel'));
+  const totalPanels = panels.length;
 
-    const panelEffects = [];
+  const wrapElement = (el, path) => {
+    const wrapper = document.createElement('wix-interact-element');
+    wrapper.dataset.wixPath = path;
+    el.parentNode.insertBefore(wrapper, el);
+    wrapper.appendChild(el);
+    return wrapper;
+  };
 
-    // --- Set Initial Styles & Generate Panel Effects ---
-    panels.forEach((panel, i) => {
-      const id = `panel-${i}`;
-      panel.id = id;
-      wrapElement(panel, `#${id}`);
+  wrapElement(introSection, 'intro-section');
+  wrapElement(panelWrapper, 'panel-wrapper');
 
-      const progress = totalPanels > 1 ? i / (totalPanels - 1) : 1;
-      
-      // Set non-animating dynamic styles directly
-      panel.style.width = `${45 + progress * 20}vw`;
-      panel.style.height = `${30 + progress * 12}vw`;
+  const panelEffects = [];
 
-      // Define transform values for animation
-      const scale = 0.75 + progress * 0.4;
-      const zPos = -i * 120;
-      const xEnd = (i - (totalPanels - 1) / 2) * 20;
-      const baseTransform = `translateZ(${zPos}px) scale(${scale})`;
+  panels.forEach((panel, i) => {
+    const id = `panel-${i}`;
+    panel.id = id;
+    wrapElement(panel, `#${id}`);
 
-      panelEffects.push({
-        key: `#${id}`,
-        keyframeEffect: {
-          name: `panel-move-${i}`,
-          keyframes: [
-            { transform: `translateX(-50%) translateX(0px) ${baseTransform}` },
-            { transform: `translateX(-50%) translateX(${xEnd}px) ${baseTransform}` }
-          ]
-        },
-        // These properties are shared across all panel effects
-        rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 } },
-        rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 } },
-        easing: 'linear',
-        fill: 'both'
-      });
-    });
+    const progress = totalPanels > 1 ? i / (totalPanels - 1) : 1;
 
-    // --- @wix/interact Configuration ---
-    const config = {
-      interactions: [{
-        key: 'intro-section',
-        trigger: 'viewProgress',
-        effects: [
-          // Effect for the main wrapper rotation
-          {
-            key: 'panel-wrapper',
-            keyframeEffect: {
-              name: 'wrapper-rotation',
-              keyframes: [
-                { transform: 'translateY(-50%) rotateY(-90deg)' },
-                { transform: 'translateY(-50%) rotateY(0deg)' }
-              ]
-            },
-            rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 } },
-            rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 50 } },
-            easing: 'ease-out',
-            fill: 'both'
-          },
-          // Add all the individual panel movement effects
-          ...panelEffects
+    panel.style.width = `${45 + progress * 20}vw`;
+    panel.style.height = `${30 + progress * 12}vw`;
+
+    const scale = 0.75 + progress * 0.4;
+    const zPos = -i * 120;
+    const xStart = (i - (totalPanels - 1) / 2) * 50; // subtle spacing start
+    const baseTransform = `translateZ(${zPos}px) scale(${scale})`;
+
+    panelEffects.push({
+      key: `#${id}`,
+      keyframeEffect: {
+        name: `panel-move-${i}`,
+        keyframes: [
+          { transform: `translateX(-50%) translateX(${xStart}px) ${baseTransform}` }, // spaced start
+          { transform: `translateX(-50%) translateX(0px) ${baseTransform}` }         // centered at end
         ]
-      }]
-    };
-
-    // Initialize Interact
-    Interact.create(config);
+      },
+      rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 }},
+      rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 }},
+      easing: 'ease-out',
+      fill: 'both'
+    });
   });
+
+  const config = {
+    interactions: [{
+      key: 'intro-section',
+      trigger: 'viewProgress',
+      effects: [
+        {
+          key: 'panel-wrapper',
+          keyframeEffect: {
+            name: 'wrapper-rotation',
+            keyframes: [
+              { transform: 'translateY(-50%) rotateY(-180deg)' },
+              { transform: 'translateY(-50%) rotateY(0deg)' }
+            ]
+          },
+          rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 }},
+          rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 50 }},
+          easing: 'ease-out',
+          fill: 'both'
+        },
+        ...panelEffects
+      ]
+    }]
+  };
+
+  Interact.create(config);
+});
 </script>
 
 </body>
