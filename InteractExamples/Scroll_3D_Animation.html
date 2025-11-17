@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>3D Scroll Panels Centering at End</title>
+<title>Scroll-Driven 3D Centered Panels with @wix/interact</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+<script type="module" src="https://esm.sh/@wix/interact@1.79.0"></script>
 
 <style>
 body {
@@ -49,6 +50,7 @@ body {
   position: absolute;
   left: 50%;
   transform-style: preserve-3d;
+  transform: translateX(-50%);
 }
 
 .panel img {
@@ -72,7 +74,6 @@ wix-interact-element {
     text-align: center;
     transform: none;
   }
-
   .panel-wrapper {
     position: static;
     perspective: none;
@@ -83,7 +84,6 @@ wix-interact-element {
     align-items: center;
     gap: 20px;
   }
-
   .panel {
     position: relative;
     left: auto;
@@ -98,107 +98,106 @@ wix-interact-element {
 
 <body>
 
-<section class="intro">
-  <div class="text-block">
-    <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-2">Title 01</h1>
-    <p class="text-base md:text-lg leading-relaxed">
-      Scroll-driven 3D animation with horizontal spacing that centers at the end.
-    </p>
-  </div>
+<wix-interact-element data-wix-path="intro-section">
+  <section class="intro">
+    <div class="text-block">
+      <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-2">Title 01</h1>
+      <p class="text-base md:text-lg leading-relaxed">
+        Scroll-driven 3D animation with horizontal subtle movement.
+      </p>
+    </div>
 
-  <div class="panel-wrapper">
-    <div class="panel"><img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" alt=""></div>
-    <div class="panel"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80" alt=""></div>
-    <div class="panel"><img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&w=800&q=80" alt=""></div>
-    <div class="panel"><img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&w=800&q=80" alt=""></div>
-    <div class="panel"><img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&w=800&q=80" alt=""></div>
-    <div class="panel"><img src="https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?auto=format&w=800&q=80" alt=""></div>
-    <div class="panel"><img src="https://images.unsplash.com/photo-1496483353456-90997957cf99?auto=format&w=800&q=80" alt=""></div>
-  </div>
-</section>
+    <wix-interact-element data-wix-path="panel-wrapper">
+      <div class="panel-wrapper">
+        <wix-interact-element data-wix-path="#panel-0"><div class="panel" id="panel-0"><img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" alt="Landscape 1"></div></wix-interact-element>
+        <wix-interact-element data-wix-path="#panel-1"><div class="panel" id="panel-1"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80" alt="Landscape 2"></div></wix-interact-element>
+        <wix-interact-element data-wix-path="#panel-2"><div class="panel" id="panel-2"><img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&w=800&q=80" alt="Landscape 3"></div></wix-interact-element>
+        <wix-interact-element data-wix-path="#panel-3"><div class="panel" id="panel-3"><img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&w=800&q=80" alt="Landscape 4"></div></wix-interact-element>
+        <wix-interact-element data-wix-path="#panel-4"><div class="panel" id="panel-4"><img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&w=800&q=80" alt="Landscape 5"></div></wix-interact-element>
+        <wix-interact-element data-wix-path="#panel-5"><div class="panel" id="panel-5"><img src="https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?auto=format&w=800&q=80" alt="Landscape 6"></div></wix-interact-element>
+        <wix-interact-element data-wix-path="#panel-6"><div class="panel" id="panel-6"><img src="https://images.unsplash.com/photo-1496483353456-90997957cf99?auto=format&w=800&q=80" alt="Landscape 7"></div></wix-interact-element>
+      </div>
+    </wix-interact-element>
+  </section>
+</wix-interact-element>
+
 
 <script type="module">
-import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
+  import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
 
-document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', () => {
 
-  if (window.innerWidth <= 1280) return;
+    if (window.innerWidth <= 1280) {
+        // On smaller screens, the layout is static, so no animations are needed.
+        return;
+    }
 
-  const introSection = document.querySelector('.intro');
-  const panelWrapper = document.querySelector('.panel-wrapper');
-  const panels = Array.from(document.querySelectorAll('.panel'));
-  const totalPanels = panels.length;
+    const panels = Array.from(document.querySelectorAll('.panel'));
+    const totalPanels = panels.length;
+    const panelEffects = [];
 
-  const wrapElement = (el, path) => {
-    const wrapper = document.createElement('wix-interact-element');
-    wrapper.dataset.wixPath = path;
-    el.parentNode.insertBefore(wrapper, el);
-    wrapper.appendChild(el);
-    return wrapper;
-  };
+    // This loop generates the unique animation effect for each panel based on its position in the stack.
+    panels.forEach((panel, i) => {
+      const progress = totalPanels > 1 ? i / (totalPanels - 1) : 1;
 
-  wrapElement(introSection, 'intro-section');
-  wrapElement(panelWrapper, 'panel-wrapper');
+      // Set initial styles dynamically. This could also be done with CSS calc() and :nth-child if preferred.
+      panel.style.width = `${45 + progress * 20}vw`;
+      panel.style.height = `${30 + progress * 12}vw`;
 
-  const panelEffects = [];
+      const scale = 0.75 + progress * 0.4;
+      const zPos = -i * 120;
+      const xEnd = (i - (totalPanels - 1) / 2) * 20;
 
-  panels.forEach((panel, i) => {
-    const id = `panel-${i}`;
-    panel.id = id;
-    wrapElement(panel, `#${id}`);
+      // This combines the static 3D positioning (Z-axis and scale) with the animated X-axis movement.
+      const baseTransform = `translateZ(${zPos}px) scale(${scale})`;
 
-    const progress = totalPanels > 1 ? i / (totalPanels - 1) : 1;
-
-    panel.style.width = `${45 + progress * 20}vw`;
-    panel.style.height = `${30 + progress * 12}vw`;
-
-    const scale = 0.75 + progress * 0.4;
-    const zPos = -i * 120;
-    const xStart = (i - (totalPanels - 1) / 2) * 50; // subtle spacing start
-    const baseTransform = `translateZ(${zPos}px) scale(${scale})`;
-
-    panelEffects.push({
-      key: `#${id}`,
-      keyframeEffect: {
-        name: `panel-move-${i}`,
-        keyframes: [
-          { transform: `translateX(-50%) translateX(${xStart}px) ${baseTransform}` }, // spaced start
-          { transform: `translateX(-50%) translateX(0px) ${baseTransform}` }         // centered at end
-        ]
-      },
-      rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 }},
-      rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 }},
-      easing: 'ease-out',
-      fill: 'both'
-    });
-  });
-
-  const config = {
-    interactions: [{
-      key: 'intro-section',
-      trigger: 'viewProgress',
-      effects: [
-        {
-          key: 'panel-wrapper',
-          keyframeEffect: {
-            name: 'wrapper-rotation',
-            keyframes: [
-              { transform: 'translateY(-50%) rotateY(-180deg)' },
-              { transform: 'translateY(-50%) rotateY(0deg)' }
-            ]
-          },
-          rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 }},
-          rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 50 }},
-          easing: 'ease-out',
-          fill: 'both'
+      panelEffects.push({
+        key: `#${panel.id}`, // Target each panel by its ID
+        keyframeEffect: {
+          name: `panel-move-${i}`,
+          keyframes: [
+            { transform: `translateX(-50%) translateX(0px) ${baseTransform}` },
+            { transform: `translateX(-50%) translateX(${xEnd}px) ${baseTransform}` }
+          ]
         },
-        ...panelEffects
-      ]
-    }]
-  };
+        // These effects scrub along the entire scroll range of the 'intro-section'
+        rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 }},
+        rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 }},
+        easing: 'linear', // Linear easing provides a direct mapping from scroll progress to animation progress
+        fill: 'both'
+      });
+    });
 
-  Interact.create(config);
-});
+    // Main configuration for all scroll-driven animations
+    const config = {
+      interactions: [{
+        key: 'intro-section', // The element that triggers the scroll animation
+        trigger: 'viewProgress',
+        effects: [
+          // Effect 1: Rotate the entire panel wrapper in the first half of the scroll
+          {
+            key: 'panel-wrapper',
+            keyframeEffect: {
+              name: 'wrapper-rotation',
+              keyframes: [
+                { transform: 'translateY(-50%) rotateY(-180deg)' },
+                { transform: 'translateY(-50%) rotateY(0deg)' }
+              ]
+            },
+            rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 }},
+            rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 50 }},
+            easing: 'ease-out',
+            fill: 'both'
+          },
+          // Spread in the dynamically generated effects for each panel
+          ...panelEffects
+        ]
+      }]
+    };
+
+    // Initialize the animations
+    Interact.create(config);
+  });
 </script>
 
 </body>
