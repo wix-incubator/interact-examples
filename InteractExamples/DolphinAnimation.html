@@ -40,8 +40,8 @@
         /* This is the MASK container for the particle */
         .particle {
             position: absolute;
-            width: 200px;
-            height: 325px;
+            /* width: 200px; */ /* REMOVED: Width will be set dynamically */
+            /* height: 325px; */ /* REMOVED: Height will be set dynamically */
             will-change: transform;
             pointer-events: none;
             overflow: hidden; /* This is the crucial property that creates the mask effect */
@@ -102,9 +102,11 @@
 
                                 // --- Configuration ---
                                 const PARTICLE_LIFESPAN = 80;
-                                const PARTICLE_WIDTH = 200;
-                                const PARTICLE_HEIGHT = 325;
-                                const PARTICLE_SPACING = 150; // Higher number = less frequent.
+                                // const PARTICLE_WIDTH = 200; // REMOVED
+                                // const PARTICLE_HEIGHT = 325; // REMOVED
+                                const BASE_PARTICLE_WIDTH = 180; // ADDED: 0.6 * 200
+                                const SIZE_VARIATION = 0.2; // ADDED: 20% smaller or larger (0.8 to 1.2)
+                                const PARTICLE_SPACING = 100; // Higher number = less frequent.
                                 const HOP_HEIGHT = 100;
                                 const HOP_WIDTH = 40;
 
@@ -123,6 +125,18 @@
                                     'https://static.wixstatic.com/media/9eca39_f4bbbb8da30b4951b24924aad5dbfed2~mv2.jpg',
                                     'https://static.wixstatic.com/media/9eca39_cb4b664a75934f89ac680625002ab076~mv2.jpg',
                                     'https://static.wixstatic.com/media/9eca39_fcb77553ba6842bc80afe7b8cae070a6~mv2.jpg',
+                                     'https://static.wixstatic.com/media/9eca39_bc8b7813d7474b8db690847acd574ebc~mv2.jpg',
+                'https://static.wixstatic.com/media/9eca39_e0af56b91bf64fbc9611afab61b96d96~mv2.jpg',
+                'https://static.wixstatic.com/media/9eca39_e824a437f7744180929afdd797603004~mv2.webp',
+                'https://static.wixstatic.com/media/9eca39_4834077538244734befe8dfdafb2bf52~mv2.jpg',
+                'https://static.wixstatic.com/media/9eca39_3f6aea6c9b914664b028f84f10b8c3d6~mv2.jpg',
+                'https://static.wixstatic.com/media/9eca39_f2559369489a42659e862b8d2cbf0789~mv2.jpg',
+                'https://static.wixstatic.com/media/9eca39_f3130cc17ba8447b8f803d846563f9f6~mv2.jpg',
+                'https://static.wixstatic.com/media/9eca39_8923188b5c0046709dada3d38f6e3dcf~mv2.jpg',
+                'https://static.wixstatic.com/media/9eca39_2057483f44894c84a447b85f900f4cde~mv2.jpg',
+                'https://static.wixstatic.com/media/9eca39_618bfeb93fcf4f5ca7a9f42733b3b61e~mv2.webp',
+                'https://static.wixstatic.com/media/9eca39_f2f224dca1fc48e3898fc9256e214502~mv2.jpg',
+                'https://static.wixstatic.com/media/9eca39_118b28ee9fcf4f83aff362a0f60e1ed8~mv2.jpg'
                                 ];
 
                                 // --- Global State ---
@@ -145,23 +159,19 @@
                                 function createParticle(x, y) {
                                     const particleContainer = document.createElement('div');
                                     particleContainer.classList.add('particle');
+                                    // Note: CSS size is removed, will be set in JS
 
                                     const particleImage = document.createElement('div');
                                     particleImage.classList.add('particle-image');
                                     
-                                    const randomImage = IMAGE_SOURCES[Math.floor(Math.random() * IMAGE_SOURCES.length)];
-                                    particleImage.style.backgroundImage = `url(${randomImage})`;
+                                    const randomImageSrc = IMAGE_SOURCES[Math.floor(Math.random() * IMAGE_SOURCES.length)];
                                     
-                                    particleContainer.appendChild(particleImage);
-                                    // We append to the document body so particles can float over everything
-                                    // document.body.appendChild(particleContainer);
-                                    
-                                    // FIX: Append to the 'element' (page-container) which has position: relative
-                                    // This aligns the particle's coordinate system with the mouse's coordinate system.
-                                    element.appendChild(particleContainer);
+                                    // Create an in-memory image to get dimensions
+                                    const img = new Image();
                                     
                                     const hopDirection = (Math.random() - 0.5) * 2;
                                     
+                                    // Create particle object with default vals, will be updated on load
                                     const particle = {
                                         container: particleContainer,
                                         image: particleImage,
@@ -171,9 +181,43 @@
                                         angle: hopDirection * 10,
                                         life: PARTICLE_LIFESPAN,
                                         initialLife: PARTICLE_LIFESPAN,
+                                        width: BASE_PARTICLE_WIDTH, // default width
+                                        height: BASE_PARTICLE_WIDTH * 1.625 // default ratio (325/200)
                                     };
 
-                                    particles.push(particle);
+                                    img.onload = () => {
+                                        // --- New Logic: Calculate size based on aspect ratio and variation ---
+                                        const ratio = img.naturalHeight / img.naturalWidth;
+                                        const variation = (Math.random() - 0.5) * SIZE_VARIATION + 1.0; // 0.8 to 1.2
+                                        const finalWidth = BASE_PARTICLE_WIDTH * variation;
+                                        const finalHeight = finalWidth * ratio;
+
+                                        // Set dimensions on the particle object for animation logic
+                                        particle.width = finalWidth;
+                                        particle.height = finalHeight;
+
+                                        // Set dimensions on the DOM element (the mask)
+                                        particleContainer.style.width = finalWidth + 'px';
+                                        particleContainer.style.height = finalHeight + 'px';
+                                        // --- End New Logic ---
+
+                                        particleImage.style.backgroundImage = `url(${randomImageSrc})`;
+                                        particleContainer.appendChild(particleImage);
+                                        
+                                        // FIX: Append to the 'element' (page-container) which has position: relative
+                                        // This aligns the particle's coordinate system with the mouse's coordinate system.
+                                        element.appendChild(particleContainer);
+                                        
+                                        particles.push(particle);
+                                    };
+                                    
+                                    img.onerror = () => {
+                                        // Handle error, e.g., skip this particle
+                                        console.warn("Could not load image for particle, skipping.");
+                                    };
+
+                                    // Start loading the image
+                                    img.src = randomImageSrc;
                                 }
 
                                 /**
@@ -212,10 +256,12 @@
 
                                         const targetX = p.startX + lifeProgress * p.hopWidth;
                                         const targetY = p.startY - hopArc * HOP_HEIGHT;
-                                        const translateX = targetX - (PARTICLE_WIDTH / 2);
-                                        const translateY = targetY - PARTICLE_HEIGHT;
-
-                                        const imageTranslateY = PARTICLE_HEIGHT * (1 - hopArc);
+                                        
+                                        // --- MODIFIED: Use dynamic particle width/height ---
+                                        const translateX = targetX - (p.width / 2);
+                                        const translateY = targetY - p.height;
+                                        const imageTranslateY = p.height * (1 - hopArc);
+                                        // --- END MODIFIED ---
 
                                         if (p.life <= 0) {
                                             p.container.remove();
