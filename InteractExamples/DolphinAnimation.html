@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursor Burst Animation</title>
+    <style>
+        /* Basic styling for the page */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Hide scrollbars */
+            background-color: #f0f0f0;
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            cursor: crosshair; /* Change cursor for better visibility */
+        }
+
+        /* This wrapper will be our interact trigger */
+        #page-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* Styling for the info text */
+        .info-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #aaa;
+            font-size: 1.5rem;
+            text-align: center;
+            pointer-events: none; /* Make sure text doesn't interfere with mouse events */
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        /* This is the MASK container for the particle */
+        .particle {
+            position: absolute;
+            width: 200px;
+            height: 325px;
+            will-change: transform;
+            pointer-events: none;
+            overflow: hidden; /* This is the crucial property that creates the mask effect */
+            /* The transform origin is adjusted to be the bottom center for a more natural pop-up effect */
+            transform-origin: bottom center;
+        }
+
+        /* This is the actual image element that moves inside the mask */
+        .particle-image {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            /* MODIFIED: Softer, deeper shadow for a more realistic feel */
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            will-change: transform;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- 
+      This wix-interact-element wraps our entire page.
+      We will use it as the trigger for the 'pageVisible' event 
+      to kick off our custom animation script.
+    -->
+    <wix-interact-element data-wix-path="page-container">
+        <div id="page-container">
+            <div class="info-text" id="infoText">Move your cursor to start the animation.</div>
+        </div>
+    </wix-interact-element>
+
+    <script type="module">
+        // Import the Interact library
+        import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
+
+        // Define the configuration for @wix/interact
+        const interactConfig = {
+            interactions: [
+                {
+                    key: 'page-container', // The data-wix-path of our wrapper
+                    trigger: 'pageVisible', // Trigger once when the element is visible
+                    params: {
+                        type: 'once'
+                    },
+                    effects: [
+                        {
+                            key: 'page-container', // The effect targets the same element
+                            
+                            // We use a customEffect because this animation is generative
+                            // (creates new elements) and runs its own animation loop,
+                            // which doesn't fit the standard effect types.
+                            customEffect: (element) => {
+                                // --- All of the original JavaScript logic is now placed inside this customEffect ---
+
+                                // --- Configuration ---
+                                const PARTICLE_LIFESPAN = 80;
+                                const PARTICLE_WIDTH = 200;
+                                const PARTICLE_HEIGHT = 325;
+                                const PARTICLE_SPACING = 150; // Higher number = less frequent.
+                                const HOP_HEIGHT = 100;
+                                const HOP_WIDTH = 40;
+
+                                const IMAGE_SOURCES = [
+                                    'https://static.wixstatic.com/media/9eca39_2fa2f1a0c40e452d8daa09d09459e275~mv2.jpg',
+                                    'https://static.wixstatic.com/media/9eca39_ebda7ab78f9c4009af3bba3ed53ff151~mv2.jpg',
+                                    'https://static.wixstatic.com/media/9eca39_efb67cf117ae4ddea9f2b0bc134c26d0~mv2.jpg',
+                                    'https://static.wixstatic.com/media/9eca39_37834a42d48547658ca5d3ca0046250a~mv2.webp',
+                                    'https://static.wixstatic.com/media/9eca39_565eb438708548da92653669027017a8~mv2.webp',
+                                    'https://static.wixstatic.com/media/9eca39_5a41dd4ed9284d6dacf0d2ec84697472~mv2.jpg',
+                                    'https://static.wixstatic.com/media/9eca39_7395272be5204349a59118f73926f266~mv2.jpg',
+                                    'https://static.wixstatic.com/media/9eca39_76de18515def47789ddab891e3ce12fa~mv2.jpg',
+                                    'https://static.wixstatic.com/media/9eca39_099bae5648814dce8bb05379af044ecc~mv2.jpg',
+                                    'https://static.wixstatic.com/media/9eca39_6b14cf5bce1044db9a807dd3c5cc9028~mv2.jpg',
+                                    'https://static.wixstatic.com/media/9eca39_e6d98be6268347e48cff39f5c20fb0f8~mv2.jpg',
+                                    'https://static.wixstatic.com/media/9eca39_f4bbbb8da30b4951b24924aad5dbfed2~mv2.jpg',
+                                    'https://static.wixstatic.com/media/9eca39_cb4b664a75934f89ac680625002ab076~mv2.jpg',
+                                    'https://static.wixstatic.com/media/9eca39_fcb77553ba6842bc80afe7b8cae070a6~mv2.jpg',
+                                ];
+
+                                // --- Global State ---
+                                const particles = [];
+                                let currentMousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+                                let lastDrawnMousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+                                let hasMoved = false;
+                                const infoText = document.getElementById('infoText');
+                                
+                                // --- Easing Function ---
+                                function easeOutCubic(t) {
+                                    return 1 - Math.pow(1 - t, 3);
+                                }
+
+                                /**
+                                 * Creates a single new particle with a choreographed hop animation.
+                                 * @param {number} x The starting horizontal position.
+                                 * @param {number} y The starting vertical position.
+                                 */
+                                function createParticle(x, y) {
+                                    const particleContainer = document.createElement('div');
+                                    particleContainer.classList.add('particle');
+
+                                    const particleImage = document.createElement('div');
+                                    particleImage.classList.add('particle-image');
+                                    
+                                    const randomImage = IMAGE_SOURCES[Math.floor(Math.random() * IMAGE_SOURCES.length)];
+                                    particleImage.style.backgroundImage = `url(${randomImage})`;
+                                    
+                                    particleContainer.appendChild(particleImage);
+                                    // We append to the document body so particles can float over everything
+                                    // document.body.appendChild(particleContainer);
+                                    
+                                    // FIX: Append to the 'element' (page-container) which has position: relative
+                                    // This aligns the particle's coordinate system with the mouse's coordinate system.
+                                    element.appendChild(particleContainer);
+                                    
+                                    const hopDirection = (Math.random() - 0.5) * 2;
+                                    
+                                    const particle = {
+                                        container: particleContainer,
+                                        image: particleImage,
+                                        startX: x,
+                                        startY: y,
+                                        hopWidth: HOP_WIDTH * hopDirection,
+                                        angle: hopDirection * 10,
+                                        life: PARTICLE_LIFESPAN,
+                                        initialLife: PARTICLE_LIFESPAN,
+                                    };
+
+                                    particles.push(particle);
+                                }
+
+                                /**
+                                 * The main animation loop.
+                                 */
+                                function animate() {
+                                    // --- Particle creation logic ---
+                                    const dx = currentMousePos.x - lastDrawnMousePos.x;
+                                    const dy = currentMousePos.y - lastDrawnMousePos.y;
+                                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                                    if (distance >= PARTICLE_SPACING) {
+                                        const numParticles = Math.floor(distance / PARTICLE_SPACING);
+                                        const angle = Math.atan2(dy, dx);
+
+                                        for (let i = 1; i <= numParticles; i++) {
+                                            const newX = lastDrawnMousePos.x + Math.cos(angle) * PARTICLE_SPACING * i;
+                                            const newY = lastDrawnMousePos.y + Math.sin(angle) * PARTICLE_SPACING * i;
+                                            createParticle(newX, newY);
+                                        }
+                                        
+                                        lastDrawnMousePos = {
+                                            x: lastDrawnMousePos.x + Math.cos(angle) * PARTICLE_SPACING * numParticles,
+                                            y: lastDrawnMousePos.y + Math.sin(angle) * PARTICLE_SPACING * numParticles
+                                        };
+                                    }
+
+                                    // --- Animate existing particles ---
+                                    for (let i = particles.length - 1; i >= 0; i--) {
+                                        const p = particles[i];
+                                        p.life--;
+
+                                        const lifeProgress = (p.initialLife - p.life) / p.initialLife;
+                                        const sinProgress = Math.sin(lifeProgress * Math.PI);
+                                        const hopArc = easeOutCubic(sinProgress);
+
+                                        const targetX = p.startX + lifeProgress * p.hopWidth;
+                                        const targetY = p.startY - hopArc * HOP_HEIGHT;
+                                        const translateX = targetX - (PARTICLE_WIDTH / 2);
+                                        const translateY = targetY - PARTICLE_HEIGHT;
+
+                                        const imageTranslateY = PARTICLE_HEIGHT * (1 - hopArc);
+
+                                        if (p.life <= 0) {
+                                            p.container.remove();
+                                            particles.splice(i, 1);
+                                            continue;
+                                        }
+
+                                        p.container.style.transform = `translate(${translateX}px, ${translateY}px) rotate(${p.angle}deg)`;
+                                        p.image.style.transform = `translateY(${imageTranslateY}px)`;
+                                    }
+
+                                    // Keep the loop running
+                                    requestAnimationFrame(animate);
+                                }
+                                
+                                /**
+                                 * Updates the current mouse position.
+                                 */
+                                function handleMovement(x, y) {
+                                    if (!hasMoved) {
+                                        hasMoved = true;
+                                        if (infoText) {
+                                          infoText.style.opacity = '0';
+                                        }
+                                        // On first move, sync both positions
+                                        lastDrawnMousePos = { x, y };
+                                    }
+                                    currentMousePos = { x, y };
+                                }
+
+                                // --- Attach event listeners ---
+                                // We attach to the document to capture movement anywhere on the page
+                                document.addEventListener('mousemove', (e) => handleMovement(e.clientX, e.clientY));
+                                document.addEventListener('touchmove', (e) => {
+                                    if (e.touches.length > 0) handleMovement(e.touches[0].clientX, e.touches[0].clientY);
+                                });
+
+                                // --- Start the main animation loop ---
+                                animate();
+
+                                // No return value is needed; the customEffect just kicks off the loop.
+                            }
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // Initialize the @wix/interact library with our configuration
+        Interact.create(interactConfig);
+
+    </script>
+</body>
+</html>
