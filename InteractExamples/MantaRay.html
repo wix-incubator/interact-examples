@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breathing Image Gallery - Wix Interact</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        /* Hide elements before they are initialized to prevent flash */
+        wix-interact-element:not(:defined) { opacity: 0; }
+        
+        /* Base styles to ensure smooth layout */
+        .gallery-wrapper {
+            perspective: 1000px;
+        }
+
+        /* CRITICAL FIX: Z-Index Layering 
+           We use CSS !important to ensure the hovered element ALWAYS sits on top 
+           of its siblings, overriding any inline styles or default stacking order.
+        */
+        wix-interact-element {
+            position: relative;
+            z-index: 1; /* Default base layer */
+            transition: z-index 0s; /* Instant switch */
+        }
+        wix-interact-element:hover {
+            z-index: 9999 !important; /* Force to front */
+        }
+
+        /* Tooltip transition classes */
+        .tooltip-visible { opacity: 1 !important; transform: translateY(0) !important; }
+        .tooltip-hidden { opacity: 0 !important; transform: translateY(16px) !important; }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Main Section --><section class="min-h-screen flex items-center justify-center py-12 px-[10px] overflow-hidden">
+        <!-- Container for dynamic injection --><div id="gallery-container" class="flex flex-nowrap justify-center items-center w-full space-x-[-8vw] gallery-wrapper">
+            <!-- Items will be injected here by JS --></div>
+    </section>
+
+    <!-- Tooltip Element --><wix-interact-element data-wix-path="tooltip-wrapper" class="fixed bottom-4 left-4 pointer-events-none z-[99999]">
+        <div id="image-tooltip" class="text-black opacity-0 transform translate-y-4 transition-all duration-300 ease-out">
+            <h3 id="tooltip-title" class="font-extrabold text-2xl text-gray-900"></h3>
+            <p id="tooltip-subtitle" class="text-lg text-gray-600"></p>
+        </div>
+    </wix-interact-element>
+
+    <!-- Import Wix Interact --><script type="module">
+        import { Interact, add } from 'https://esm.sh/@wix/interact@1.79.0';
+
+        // --- 1. Data Configuration ---
+        const imageData = [
+            { title: "Crimson Bloom", sub: "By Artist Name 1", src: "https://static.wixstatic.com/media/9eca39_2fa2f1a0c40e452d8daa09d09459e275~mv2.jpg" },
+            { title: "Azure Waves", sub: "By Artist Name 2", src: "https://static.wixstatic.com/media/9eca39_ebda7ab78f9c4009af3bba3ed53ff151~mv2.jpg" },
+            { title: "Golden Fields", sub: "By Artist Name 3", src: "https://static.wixstatic.com/media/9eca39_efb67cf117ae4ddea9f2b0bc134c26d0~mv2.jpg" },
+            { title: "Forest Deep", sub: "By Artist Name 4", src: "https://static.wixstatic.com/media/9eca39_37834a42d48547658ca5d3ca0046250a~mv2.webp" },
+            { title: "Urban Lines", sub: "By Artist Name 5", src: "https://static.wixstatic.com/media/9eca39_565eb438708548da92653669027017a8~mv2.webp" },
+            { title: "Pastel Sky", sub: "By Artist Name 6", src: "https://static.wixstatic.com/media/9eca39_5a41dd4ed9284d6dacf0d2ec84697472~mv2.jpg" },
+            { title: "Desert Warmth", sub: "By Artist Name 7", src: "https://static.wixstatic.com/media/9eca39_7395272be5204349a59118f73926f266~mv2.jpg" },
+            { title: "Monochrome", sub: "By Artist Name 8", src: "https://static.wixstatic.com/media/9eca39_76de18515def47789ddab891e3ce12fa~mv2.jpg" },
+            { title: "River Bend", sub: "By Artist Name 9", src: "https://static.wixstatic.com/media/9eca39_099bae5648814dce8bb05379af044ecc~mv2.jpg" },
+            { title: "Mountain Peak", sub: "By Artist Name 10", src: "https://static.wixstatic.com/media/9eca39_6b14cf5bce1044db9a807dd3c5cc9028~mv2.jpg" },
+            { title: "Ocean Spray", sub: "By Artist Name 11", src: "https://static.wixstatic.com/media/9eca39_e6d98be6268347e48cff39f5c20fb0f8~mv2.jpg" },
+            { title: "Autumn Leaves", sub: "By Artist Name 12", src: "https://static.wixstatic.com/media/9eca39_f4bbbb8da30b4951b24924aad5dbfed2~mv2.jpg" },
+            { title: "Winter's Touch", sub: "By Artist Name 13", src: "https://static.wixstatic.com/media/9eca39_cb4b664a75934f89ac680625002ab076~mv2.jpg" },
+            { title: "Spring Fling", sub: "By Artist Name 14", src: "https://static.wixstatic.com/media/9eca39_fcb77553ba6842bc80afe7b8cae070a6~mv2.jpg" },
+            { title: "Summer Haze", sub: "By Artist Name 15", src: "https://static.wixstatic.com/media/9eca39_bc8b7813d7474b8db690847acd574ebc~mv2.jpg" },
+            { title: "City Lights", sub: "By Artist Name 16", src: "https://static.wixstatic.com/media/9eca39_e0af56b91bf64fbc9611afab61b96d96~mv2.jpg" },
+            { title: "Country Road", sub: "By Artist Name 17", src: "https://static.wixstatic.com/media/9eca39_e824a437f7744180929afdd797603004~mv2.webp" },
+            { title: "Starry Night", sub: "By Artist Name 18", src: "https://static.wixstatic.com/media/9eca39_4834077538244734befe8dfdafb2bf52~mv2.jpg" },
+            { title: "Calm Waters", sub: "By Artist Name 19", src: "https://static.wixstatic.com/media/9eca39_3f6aea6c9b914664b028f84f10b8c3d6~mv2.jpg" },
+            { title: "Wild Flower", sub: "By Artist Name 20", src: "https://static.wixstatic.com/media/9eca39_f2559369489a42659e862b8d2cbf0789~mv2.jpg" },
+            { title: "Ancient Stone", sub: "By Artist Name 21", src: "https://static.wixstatic.com/media/9eca39_f3130cc17ba8447b8f803d846563f9f6~mv2.jpg" },
+            { title: "Blue Hue", sub: "By Artist Name 22", src: "https://static.wixstatic.com/media/9eca39_8923188b5c0046709dada3d38f6e3dcf~mv2.jpg" },
+            { title: "Red Barn", sub: "By Artist Name 23", src: "https://static.wixstatic.com/media/9eca39_2057483f44894c84a447b85f900f4cde~mv2.jpg" },
+            { title: "Morning Mist", sub: "By Artist Name 24", src: "https://static.wixstatic.com/media/9eca39_618bfeb93fcf4f5ca7a9f42733b3b61e~mv2.webp" },
+            { title: "Evening Glow", sub: "By Artist Name 25", src: "https://static.wixstatic.com/media/9eca39_f2f224dca1fc48e3898fc9256e214502~mv2.jpg" },
+            { title: "Final Piece", sub: "By Artist Name 26", src: "https://static.wixstatic.com/media/9eca39_118b28ee9fcf4f83aff362a0f60e1ed8~mv2.jpg" }
+        ];
+
+        // --- 2. Setup Config Structure ---
+        const container = document.getElementById('gallery-container');
+        
+        // Define reusable effects in the config
+        const interactConfig = {
+            effects: {
+                // The infinite breathing loop
+                'breathe-vertical': {
+                    keyframeEffect: {
+                        name: 'breathe',
+                        keyframes: [
+                            { transform: 'translateY(-62px)' },
+                            { transform: 'translateY(262px)' }
+                        ]
+                    },
+                    duration: 2000,
+                    easing: 'ease-in-out',
+                    iterations: Infinity,
+                    alternate: true
+                },
+                // The hover scaling for the image
+                'scale-up-image': {
+                    keyframeEffect: {
+                        name: 'scale-up',
+                        keyframes: [
+                            { transform: 'scale(1)' },
+                            { transform: 'scale(2.5)' }
+                        ]
+                    },
+                    duration: 300,
+                    easing: 'ease-out',
+                    fill: 'both'
+                }
+            },
+            interactions: []
+        };
+
+        // --- 3. Build DOM and Interactions ---
+        const tooltipEl = document.getElementById('image-tooltip');
+        const tooltipTitle = document.getElementById('tooltip-title');
+        const tooltipSub = document.getElementById('tooltip-subtitle');
+
+        imageData.forEach((data, index) => {
+            const wrapperId = `img-wrapper-${index}`;
+            
+            // Create elements
+            const wrapper = document.createElement('wix-interact-element');
+            wrapper.setAttribute('data-wix-path', wrapperId);
+            // Tailwind classes + CSS handles z-index now
+            wrapper.className = 'w-[12vw] pointer-events-auto cursor-pointer'; 
+            
+            // Create Image
+            const img = document.createElement('img');
+            img.src = data.src;
+            img.alt = data.title;
+            img.className = 'w-full h-auto shadow-md rounded-sm';
+            img.onerror = function() { this.src = 'https://placehold.co/160x160/f0f0f0/999?text=Error'; };
+            
+            // Tooltip Logic (Via JS for stability)
+            wrapper.addEventListener('mouseenter', () => {
+                tooltipTitle.textContent = data.title;
+                tooltipSub.textContent = data.sub;
+                tooltipEl.classList.remove('opacity-0', 'translate-y-4');
+                tooltipEl.classList.add('opacity-100', 'translate-y-0');
+            });
+            
+            wrapper.addEventListener('mouseleave', () => {
+                tooltipEl.classList.remove('opacity-100', 'translate-y-0');
+                tooltipEl.classList.add('opacity-0', 'translate-y-4');
+            });
+
+            wrapper.appendChild(img);
+            container.appendChild(wrapper);
+
+            // --- Add Interactions for this item ---
+
+            // 1. The Breathing Animation
+            interactConfig.interactions.push({
+                key: wrapperId,
+                trigger: 'viewEnter',
+                params: { type: 'once', threshold: 0 },
+                effects: [
+                    {
+                        key: wrapperId,
+                        effectId: 'breathe-vertical',
+                        delay: index * 150,
+                        composite: 'add'
+                    }
+                ]
+            });
+
+            // 2. The Hover Effect (Only scales the image now; z-index is CSS)
+            interactConfig.interactions.push({
+                key: wrapperId,
+                trigger: 'hover',
+                params: { type: 'alternate' },
+                effects: [
+                    {
+                        key: wrapperId, 
+                        selector: 'img',
+                        effectId: 'scale-up-image',
+                        composite: 'add'
+                    }
+                ]
+            });
+        });
+
+        // --- 4. Initialize Interact ---
+        Interact.create(interactConfig);
+
+        // --- 5. Register Elements ---
+        imageData.forEach((_, index) => {
+            const wrapperId = `img-wrapper-${index}`;
+            const el = document.querySelector(`[data-wix-path="${wrapperId}"]`);
+            if(el) add(el, wrapperId);
+        });
+
+    </script>
+</body>
+</html>
