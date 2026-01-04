@@ -14,7 +14,7 @@ const Fonts = () => (
       
       /* Custom selection color for that retro feel */
       ::selection {
-        background-color: #D93025;
+        background-color: #000000;
         color: #fff;
       }
 
@@ -86,16 +86,14 @@ const FashionSection = () => {
 
     const imageKeyframes = getInverseScaleKeyframes();
 
-    const effects = [];
-
+    // -- 1. Grid Scroll Effects --
+    const scrollEffects = [];
     gridCells.forEach(cell => {
       // CELL EFFECT
-      effects.push({
+      scrollEffects.push({
         key: `cell-${cell.id}`, 
-        // LEAN RULES: Explicitly set composite and fill
         fill: 'both',
         composite: 'replace',
-        // LEAN RULES: Strict structure for rangeStart/rangeEnd
         rangeStart: { name: 'entry', offset: { value: 0, type: 'percentage' } },
         rangeEnd: { name: 'exit', offset: { value: -10, type: 'percentage' } },
         keyframeEffect: {
@@ -109,7 +107,7 @@ const FashionSection = () => {
       });
 
       // IMAGE EFFECT (Counter-Scale)
-      effects.push({
+      scrollEffects.push({
         key: `img-${cell.id}`,
         fill: 'both',
         composite: 'replace',
@@ -122,14 +120,53 @@ const FashionSection = () => {
       });
     });
 
+    // -- 2. Text Entrance Interactions --
+    // We create separate interactions for each text element to stagger them
+    const getTextInteractions = () => {
+        const elements = [
+            { key: 'intro-subtitle', delay: 0 },
+            { key: 'intro-title-main', delay: 200 },
+            { key: 'intro-title-sub', delay: 400 },
+            { key: 'intro-divider', delay: 600, type: 'expand' },
+            { key: 'intro-desc', delay: 800 },
+            { key: 'intro-btn', delay: 1000 },
+        ];
+
+        return elements.map(el => {
+            let keyframes = [{ opacity: 0, transform: 'translateY(30px)' }, { opacity: 1, transform: 'translateY(0)' }];
+            if (el.type === 'expand') {
+                keyframes = [{ transform: 'scaleX(0)', transformOrigin: 'left' }, { transform: 'scaleX(1)', transformOrigin: 'left' }];
+            }
+
+            return {
+                key: el.key,
+                trigger: 'pageVisible', // Triggers when element is visible on load/scroll
+                params: { type: 'once' },
+                effects: [{
+                    keyframeEffect: {
+                        name: `entrance-${el.key}`,
+                        keyframes: keyframes
+                    },
+                    duration: 1000,
+                    delay: el.delay,
+                    easing: 'cubic-bezier(0.16, 1, 0.3, 1)', // Elegant ease out
+                    fill: 'both',
+                    composite: 'replace'
+                }]
+            };
+        });
+    };
+
     const config = {
       interactions: [
+        // The Scroll Interaction
         {
           key: 'fashion-container',
           trigger: 'viewProgress',
-          // No specific triggerParams needed for default viewProgress (0->1)
-          effects: effects
-        }
+          effects: scrollEffects
+        },
+        // The Text Entrance Interactions
+        ...getTextInteractions()
       ]
     };
 
@@ -183,7 +220,7 @@ const FashionSection = () => {
              - 'overflow: hidden' on ancestors/containers can sometimes break viewProgress timelines.
              - 'overflow: clip' provides the same visual clipping but is safer for timelines.
           */}
-          <div className="sticky top-0 h-screen w-full overflow-clip flex items-center justify-center text-[#1a1a1a]">
+          <div className="sticky top-0 h-screen w-full overflow-clip flex items-center justify-center text-black">
             
             <div className="absolute top-0 left-0 w-64 h-64 bg-[#E8DCC4] rounded-full blur-3xl opacity-50 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
             <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#FFCDD2] rounded-full blur-3xl opacity-30 translate-x-1/3 translate-y-1/3 pointer-events-none" />
@@ -193,28 +230,42 @@ const FashionSection = () => {
                 
                 <div className="w-full lg:w-5/12 space-y-8 order-2 lg:order-1">
                   <div className="relative">
-                    <span className="font-montserrat text-[#D93025] tracking-[0.3em] text-xs font-bold uppercase mb-4 block">
-                      The Winter Collection
-                    </span>
+                    <interact-element data-interact-key="intro-subtitle">
+                        <span className="font-montserrat text-black tracking-[0.3em] text-xs font-bold uppercase mb-4 block">
+                        The Winter Collection
+                        </span>
+                    </interact-element>
+                    
                     <h2 className="font-playfair text-5xl lg:text-7xl font-bold leading-[1.1] text-black">
-                      Timeless <br/>
-                      <span className="italic font-light text-[#D93025]">Silhouette</span>
+                      <interact-element data-interact-key="intro-title-main">
+                        <span className="block">Timeless</span>
+                      </interact-element>
+                      <interact-element data-interact-key="intro-title-sub">
+                         <span className="italic font-light text-black block">Silhouette</span>
+                      </interact-element>
                     </h2>
-                    <div className="h-1 bg-black mt-6 mb-8 w-24"></div>
+                    
+                    <interact-element data-interact-key="intro-divider">
+                        <div className="h-1 bg-black mt-6 mb-8 w-24 origin-left"></div>
+                    </interact-element>
                   </div>
 
-                  <p className="font-montserrat text-lg leading-relaxed text-gray-700 font-light max-w-md">
-                    Step back into an era of unapologetic glamour. Defined by cinched waists, 
-                    full skirts, and sharp tailoring, the 1950s reimagined elegance for the modern woman. 
-                    Our latest editorial explores the architectural beauty of mid-century couture in the cold.
-                  </p>
+                  <interact-element data-interact-key="intro-desc">
+                    <p className="font-montserrat text-lg leading-relaxed text-black font-light max-w-md">
+                        Step back into an era of unapologetic glamour. Defined by cinched waists, 
+                        full skirts, and sharp tailoring, the 1950s reimagined elegance for the modern woman. 
+                        Our latest editorial explores the architectural beauty of mid-century couture in the cold.
+                    </p>
+                  </interact-element>
 
                   <div>
-                    <button className="group relative px-8 py-3 bg-transparent border border-black overflow-hidden hover:bg-black transition-colors duration-300">
-                      <span className="relative z-10 font-montserrat text-sm font-semibold tracking-widest uppercase group-hover:text-white transition-colors duration-300">
-                        View Lookbook
-                      </span>
-                    </button>
+                    <interact-element data-interact-key="intro-btn">
+                        <button className="group relative px-8 py-3 bg-transparent border border-black overflow-hidden hover:bg-black transition-colors duration-300">
+                        <span className="relative z-10 font-montserrat text-sm font-semibold tracking-widest uppercase group-hover:text-white transition-colors duration-300">
+                            View Lookbook
+                        </span>
+                        </button>
+                    </interact-element>
                   </div>
                 </div>
 
