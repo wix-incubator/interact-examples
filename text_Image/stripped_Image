@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concept 3: Sliced Chromatic (Sticky Fix)</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #111;
+            
+            /* --- CONFIGURATION --- */
+            /* Higher count = smoother wave, but more CPU intensive */
+            /* Increased from 24 to 48 for thinner strips */
+            --slice-count: 48; 
+            
+            /* Image Source */
+            --img-url: url('https://images.unsplash.com/photo-1535295972055-1c762f4483e5?q=80&w=1200&auto=format&fit=crop');
+            
+            /* Aspect Ratio */
+            --img-ratio: 4/5;
+            
+            /* Strip color matches the darks of the image */
+            --strip-color: #1a1a1a; 
+            
+            --font-main: 'Helvetica Neue', Arial, sans-serif;
+            --font-mono: 'Courier New', Courier, monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg-color); color: var(--text-color); font-family: var(--font-main); overflow-x: hidden; }
+
+        interact-element { display: contents; }
+
+        /* Standard content sections before/after to demonstrate the stickiness */
+        .content-block {
+            height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #ccc;
+            background: var(--bg-color);
+            position: relative;
+            z-index: 20; /* Above the sticky content if they overlap */
+        }
+
+        /* THE SCROLL TRACK 
+           This element determines how long the sticky section stays pinned.
+           400vh = The user has to scroll 4 screens worth of distance to get past this section.
+        */
+        .scroll-track {
+            height: 400vh; 
+            position: relative;
+            z-index: 10;
+        }
+
+        /* THE STICKY VIEWPORT
+           This stays pinned (sticky) at the top of the screen while we scroll through the track.
+        */
+        .sticky-viewport {
+            height: 100vh;
+            width: 100%;
+            position: sticky;
+            top: 0;
+            display: flex;
+            align-items: center; /* Center vertically */
+            justify-content: center;
+            /* COMPLIANCE FIX: Use 'clip' instead of 'hidden' to protect ViewTimeline */
+            overflow: clip; 
+            background: var(--bg-color);
+        }
+
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center; /* Align items center for better look */
+            padding: 2rem;
+        }
+
+        /* Responsive Layout */
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; gap: 3rem; text-align: center; }
+            .text-col { align-items: center; order: 2; }
+            .image-col { order: 1; max-width: 500px; margin: 0 auto; }
+            h2 { font-size: 3rem; }
+        }
+
+        .text-col {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            z-index: 2;
+        }
+
+        /* Initial hidden states - REMOVED .meta and h2 so they are visible immediately */
+        .btn, .char { opacity: 0; }
+
+        .meta {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #666;
+            margin-bottom: -0.5rem;
+        }
+
+        h2 {
+            font-size: 5rem;
+            line-height: 0.9;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .typewriter-text { 
+            display: block; 
+            line-height: 1.4; 
+            font-size: 1.1rem; 
+            max-width: 90%; 
+        }
+        .word { display: inline-block; white-space: nowrap; margin-right: 0.25em; }
+        .char { display: inline-block; }
+
+        .btn {
+            margin-top: 1rem;
+            padding: 1rem 2rem;
+            background: transparent;
+            border: 2px solid #000;
+            color: #000;
+            font-family: var(--font-mono);
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            width: fit-content;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        /* IMAGE & SLICES */
+        .image-col {
+            position: relative;
+            width: 100%;
+            aspect-ratio: var(--img-ratio);
+        }
+        
+        .image-wrapper { 
+            width: 100%; 
+            height: 100%; 
+            position: relative;
+            /* COMPLIANCE FIX: Use 'clip' instead of 'hidden' */
+            overflow: clip; 
+        }
+
+        .slices-container { position: absolute; inset: 0; z-index: 10; }
+
+        .slice {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: calc(100% / var(--slice-count) + 1px); /* +1px to fix sub-pixel gaps */
+            left: calc(var(--i) * (100% / var(--slice-count)));
+            overflow: clip; 
+            will-change: transform;
+            background-color: var(--strip-color);
+            transform: translateY(0); 
+        }
+
+        .slice-inner {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: calc(var(--slice-count) * 100%);
+            left: calc(var(--i) * -100%);
+            background-image: var(--img-url);
+            background-size: cover;
+            background-position: center;
+            opacity: 0; 
+            will-change: opacity;
+        }
+        
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 1. The Track: Defines the height of the scroll interaction -->
+    <interact-element data-interact-key="scroll-track">
+        <div class="scroll-track">
+            
+            <!-- 2. The Sticky Viewport: Stays pinned while inside the track -->
+            <div class="sticky-viewport">
+                <div class="container">
+                    
+                    <!-- Text Side -->
+                    <div class="text-col">
+                        <interact-element data-interact-key="meta">
+                            <span class="meta">Architectural Study</span>
+                        </interact-element>
+
+                        <interact-element data-interact-key="headline">
+                            <h2>Vertical<br>Horizon</h2>
+                        </interact-element>
+                        
+                        <p class="visually-hidden">Between the static lines of the city, a blue silence emerges.</p>
+                        
+                        <div class="typewriter-text" aria-hidden="true" id="typewriterContainer">
+                            <!-- Chars injected by JS -->
+                        </div>
+                        
+                        <interact-element data-interact-key="btn">
+                            <a href="#" class="btn">View Gallery</a>
+                        </interact-element>
+                    </div>
+
+                    <!-- Image Side -->
+                    <interact-element data-interact-key="image-container">
+                        <div class="image-col">
+                            <div class="image-wrapper">
+                                <div class="slices-container" id="slicesContainer">
+                                    <!-- Slices injected by JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </interact-element>
+
+                </div>
+            </div>
+        </div>
+    </interact-element>
+
+    <section class="content-block">
+        <p>Next Section</p>
+    </section>
+
+    <!-- Inject Interact Runtime -->
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+
+        // --- DOM GENERATION ---
+        const textContent = [
+            "Between", "the", "static", "lines", "of", "the", "city,", 
+            "a", "blue", "silence", "emerges.", "Concrete", "and", "light", "merge."
+        ];
+        
+        const typewriterContainer = document.getElementById('typewriterContainer');
+        let globalCharIndex = 0;
+
+        textContent.forEach(wordStr => {
+            const wordSpan = document.createElement('span');
+            wordSpan.className = 'word';
+            const chars = wordStr.split('');
+            chars.forEach(charStr => {
+                const charWrapper = document.createElement('interact-element');
+                charWrapper.setAttribute('data-interact-key', `char-${globalCharIndex}`);
+                const charSpan = document.createElement('span');
+                charSpan.className = 'char';
+                charSpan.textContent = charStr;
+                charWrapper.appendChild(charSpan);
+                wordSpan.appendChild(charWrapper);
+                globalCharIndex++;
+            });
+            typewriterContainer.appendChild(wordSpan);
+            typewriterContainer.appendChild(document.createTextNode(' '));
+        });
+
+        const sliceCount = 48; // Matches CSS var (increased for thinner strips)
+        const slicesContainer = document.getElementById('slicesContainer');
+        
+        for (let i = 0; i < sliceCount; i++) {
+            const sliceWrapper = document.createElement('interact-element');
+            sliceWrapper.setAttribute('data-interact-key', `slice-${i}`);
+            
+            const slice = document.createElement('div');
+            slice.className = 'slice';
+            slice.style.setProperty('--i', i);
+            
+            const innerWrapper = document.createElement('interact-element');
+            innerWrapper.setAttribute('data-interact-key', `slice-inner-${i}`);
+            
+            const inner = document.createElement('div');
+            inner.className = 'slice-inner';
+            
+            innerWrapper.appendChild(inner);
+            slice.appendChild(innerWrapper);
+            sliceWrapper.appendChild(slice);
+            slicesContainer.appendChild(sliceWrapper);
+        }
+
+        // --- INTERACTION CONFIG ---
+        const interactions = [];
+        const scrollKey = 'scroll-track';
+
+        // 1. AUTO REVEAL (Meta & Headline)
+        // Correction: Using 'pageVisible' trigger as 'entry' is not a valid top-level trigger.
+        interactions.push({
+            key: 'meta', 
+            trigger: 'pageVisible',
+            effects: [{
+                // Correction: duration/easing/fill are siblings of keyframeEffect, not inside options
+                duration: 1000, 
+                easing: 'ease-out', 
+                fill: 'both',
+                keyframeEffect: { 
+                    name: 'FadeUpRun', 
+                    keyframes: [{ opacity: 0, transform: 'translateY(50px)' }, { opacity: 1, transform: 'translateY(0)' }]
+                }
+            }]
+        });
+
+        interactions.push({
+            key: 'headline', 
+            trigger: 'pageVisible',
+            effects: [{
+                // Correction: duration/easing/fill/delay are siblings of keyframeEffect
+                duration: 1000, 
+                delay: 200, 
+                easing: 'ease-out', 
+                fill: 'both',
+                keyframeEffect: { 
+                    name: 'FadeUpRun', 
+                    keyframes: [{ opacity: 0, transform: 'translateY(50px)' }, { opacity: 1, transform: 'translateY(0)' }]
+                }
+            }]
+        });
+
+        // 2. SCROLL REVEAL (Button & Char) - Triggered by scroll progress
+        const textEffects = [
+            { 
+                key: 'btn', 
+                rangeStart: { name: 'cover', offset: { value: 50, type: 'percentage' }},
+                rangeEnd: { name: 'cover', offset: { value: 70, type: 'percentage' }},
+                keyframeEffect: { 
+                    name: 'FadeUp', 
+                    keyframes: [{ opacity: 0, transform: 'translateY(80px)' }, { opacity: 1, transform: 'translateY(0)' }]
+                },
+                fill: 'both',
+                composite: 'add'
+            }
+        ];
+
+        // Staggered Characters (Updated logic)
+        for (let i = 0; i < globalCharIndex; i++) {
+            textEffects.push({
+                key: `char-${i}`,
+                rangeStart: { name: 'cover', offset: { value: 25 + (i * 0.3), type: 'percentage' }},
+                rangeEnd: { name: 'cover', offset: { value: 50 + (i * 0.3), type: 'percentage' }},
+                keyframeEffect: {
+                    name: 'CharFade',
+                    keyframes: [{ opacity: 0, transform: 'translateY(50px)' }, { opacity: 1, transform: 'translateY(0)' }]
+                },
+                fill: 'both',
+                composite: 'add'
+            });
+        }
+
+        // 3. Slice Effects (Scroll based)
+        const sliceEffects = [];
+        for (let i = 0; i < sliceCount; i++) {
+            const isOdd = i % 2 !== 0;
+            // Increased to 200% to ensure they are fully outside the frame
+            const startY = isOdd ? '-200%' : '200%';
+            
+            // Stagger logic
+            // Reduced stagger from 1.0 to 0.5 to keep the total wave duration similar with more slices
+            const stagger = i * 0.5; 
+            const baseStart = 15; 
+            
+            // Slide Movement
+            sliceEffects.push({
+                key: `slice-${i}`,
+                rangeStart: { name: 'cover', offset: { value: baseStart + stagger, type: 'percentage' }},
+                // REDUCED END: Finishes earlier so there is a "pause" at the end of the scroll
+                // Was 70, now 55. Max end = 55 + 23 = 78%
+                rangeEnd: { name: 'cover', offset: { value: 55 + stagger, type: 'percentage' }},
+                keyframeEffect: {
+                    name: 'SliceSlide',
+                    keyframes: [{ transform: `translateY(${startY})` }, { transform: 'translateY(0)' }]
+                },
+                easing: 'cubic-bezier(0.25, 1, 0.5, 1)', 
+                fill: 'both',
+                composite: 'add'
+            });
+
+            // Inner Texture Reveal
+            sliceEffects.push({
+                key: `slice-inner-${i}`,
+                rangeStart: { name: 'cover', offset: { value: baseStart + 10 + stagger, type: 'percentage' }},
+                // REDUCED END: Was 75, now 60. Max end = 60 + 23 = 83%
+                // This leaves ~17% of the scroll track as a static "viewing" buffer.
+                rangeEnd: { name: 'cover', offset: { value: 60 + stagger, type: 'percentage' }},
+                keyframeEffect: {
+                    name: 'TextureReveal',
+                    keyframes: [{ opacity: 0 }, { opacity: 1 }]
+                },
+                fill: 'both',
+                composite: 'add'
+            });
+        }
+
+        interactions.push({
+            key: scrollKey,
+            trigger: 'viewProgress',
+            effects: [...textEffects, ...sliceEffects]
+        });
+
+        // Button Hover
+        interactions.push({
+            key: 'btn',
+            trigger: 'hover',
+            effects: [{
+                transition: {
+                    duration: 300,
+                    easing: 'ease',
+                    styleProperties: [
+                        { name: 'background-color', value: '#000000' },
+                        { name: 'color', value: '#ffffff' }
+                    ]
+                },
+                composite: 'replace'
+            }]
+        });
+
+        Interact.create({ interactions });
+    </script>
+</body>
+</html>
