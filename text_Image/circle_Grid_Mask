@@ -1,0 +1,285 @@
+import React, { useEffect, useMemo } from 'react';
+
+// Using inline styles for Google Fonts to ensure 50s aesthetic
+const Fonts = () => (
+  <style>
+    {`
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600&display=swap');
+      
+      .font-playfair { font-family: 'Playfair Display', serif; }
+      .font-montserrat { font-family: 'Montserrat', sans-serif; }
+      
+      /* Smooth scrolling for the whole page */
+      html { scroll-behavior: smooth; }
+      
+      /* Custom selection color for that retro feel */
+      ::selection {
+        background-color: #D93025;
+        color: #fff;
+      }
+
+      /* Essential styles for interact elements to behave like block/divs by default */
+      interact-element {
+        display: contents;
+      }
+    `}
+  </style>
+);
+
+const FashionSection = () => {
+  // Configuration for the grid
+  const GRID_ROWS = 5; 
+  const GRID_COLS = 4; 
+  
+  // Image to reveal (Winter Fashion Model)
+  const IMAGE_URL = "https://vintage-vogue.shop/wp-content/uploads/2025/10/Bordeaux-Roter-Vintage-Wollmantel-Damen-Mantel-Wintermantel-Caroline-Swing-Coat-von-Forever-Fifties-001.jpg";
+
+  // Generate grid cells
+  const gridCells = useMemo(() => {
+    const cells = [];
+    for (let r = 0; r < GRID_ROWS; r++) {
+      for (let c = 0; c < GRID_COLS; c++) {
+        cells.push({ r, c, id: `${r}-${c}` });
+      }
+    }
+    return cells;
+  }, []);
+
+  // Initialize @wix/interact via Script Injection
+  useEffect(() => {
+    // Animation Constants
+    const MIN_SCALE = 0.15;  // Start visible as small circles
+    const MAX_SCALE = 1.005; // Slightly over 1.0 to seal gaps
+    
+    // Animation Timing
+    const MORPH_START = 0.75; // The point where it stops being a circle (0.0 to 1.0)
+    const SCALE_AT_MORPH = 0.5; // Circles grow larger before squaring off
+
+    // Helper to calculate scale based on the two-phase animation
+    const calculateScale = (progress) => {
+      if (progress <= MORPH_START) {
+        // Phase 1: Grow slowly from 0 to SCALE_AT_MORPH
+        const t = progress / MORPH_START;
+        return MIN_SCALE + (t * (SCALE_AT_MORPH - MIN_SCALE));
+      } else {
+        // Phase 2: Grow quickly from SCALE_AT_MORPH to MAX_SCALE
+        const t = (progress - MORPH_START) / (1 - MORPH_START);
+        return SCALE_AT_MORPH + (t * (MAX_SCALE - SCALE_AT_MORPH));
+      }
+    };
+
+    const getInverseScaleKeyframes = () => {
+      const frames = [];
+      const steps = 30; 
+      for (let i = 0; i <= steps; i++) {
+        const progress = i / steps;
+        const cellScale = calculateScale(progress);
+        const invScale = 1 / Math.max(cellScale, 0.001);
+        
+        frames.push({ 
+          offset: progress, 
+          transform: `scale(${invScale})` 
+        });
+      }
+      return frames;
+    };
+
+    const imageKeyframes = getInverseScaleKeyframes();
+
+    const effects = [];
+
+    gridCells.forEach(cell => {
+      // CELL EFFECT
+      effects.push({
+        key: `cell-${cell.id}`, 
+        // LEAN RULES: Explicitly set composite and fill
+        fill: 'both',
+        composite: 'replace',
+        // LEAN RULES: Strict structure for rangeStart/rangeEnd
+        rangeStart: { name: 'entry', offset: { value: 0, type: 'percentage' } },
+        rangeEnd: { name: 'exit', offset: { value: -10, type: 'percentage' } },
+        keyframeEffect: {
+          name: `grow-cell-${cell.id}`,
+          keyframes: [
+            { offset: 0, transform: `scale(${MIN_SCALE})`, borderRadius: '50%' },
+            { offset: MORPH_START, transform: `scale(${SCALE_AT_MORPH})`, borderRadius: '50%' },
+            { offset: 1, transform: `scale(${MAX_SCALE})`, borderRadius: '0%' }
+          ]
+        }
+      });
+
+      // IMAGE EFFECT (Counter-Scale)
+      effects.push({
+        key: `img-${cell.id}`,
+        fill: 'both',
+        composite: 'replace',
+        rangeStart: { name: 'entry', offset: { value: 0, type: 'percentage' } },
+        rangeEnd: { name: 'exit', offset: { value: -10, type: 'percentage' } },
+        keyframeEffect: {
+          name: `counter-scale-${cell.id}`,
+          keyframes: imageKeyframes
+        }
+      });
+    });
+
+    const config = {
+      interactions: [
+        {
+          key: 'fashion-container',
+          trigger: 'viewProgress',
+          // No specific triggerParams needed for default viewProgress (0->1)
+          effects: effects
+        }
+      ]
+    };
+
+    const initInteract = async () => {
+      if (!window.WixInteract) {
+        const script = document.createElement('script');
+        script.type = 'module';
+        // LEAN RULES: Updated to v1.93.0 as per documentation
+        script.innerHTML = `
+          import { Interact } from 'https://esm.sh/@wix/interact@1.93.0';
+          window.WixInteract = Interact;
+        `;
+        document.body.appendChild(script);
+      }
+
+      const checkInterval = setInterval(() => {
+        if (window.WixInteract) {
+          clearInterval(checkInterval);
+          if (window.interactInstance) {
+             window.interactInstance.destroy();
+          }
+          window.interactInstance = window.WixInteract.create(config);
+        }
+      }, 50);
+      
+      return () => {
+        clearInterval(checkInterval);
+        if (window.interactInstance) {
+           // Cleanup handled by destroy logic on re-mount usually
+        }
+      };
+    };
+
+    initInteract();
+
+  }, [gridCells]); 
+
+  return (
+    <div className="relative w-full bg-[#FDFBF7]">
+      <Fonts />
+      
+      {/* LEAN RULES: 
+         - interact-element wraps the scroll container (the 'source').
+         - key matches config.interactions[0].key
+      */}
+      <interact-element data-interact-key="fashion-container">
+        <div className="relative h-[400vh] w-full">
+          
+          {/* LEAN RULES: 
+             - Using 'overflow-clip' instead of 'overflow-hidden'.
+             - 'overflow: hidden' on ancestors/containers can sometimes break viewProgress timelines.
+             - 'overflow: clip' provides the same visual clipping but is safer for timelines.
+          */}
+          <div className="sticky top-0 h-screen w-full overflow-clip flex items-center justify-center text-[#1a1a1a]">
+            
+            <div className="absolute top-0 left-0 w-64 h-64 bg-[#E8DCC4] rounded-full blur-3xl opacity-50 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#FFCDD2] rounded-full blur-3xl opacity-30 translate-x-1/3 translate-y-1/3 pointer-events-none" />
+
+            <div className="container mx-auto px-6 lg:px-12 relative z-10">
+              <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+                
+                <div className="w-full lg:w-5/12 space-y-8 order-2 lg:order-1">
+                  <div className="relative">
+                    <span className="font-montserrat text-[#D93025] tracking-[0.3em] text-xs font-bold uppercase mb-4 block">
+                      The Winter Collection
+                    </span>
+                    <h2 className="font-playfair text-5xl lg:text-7xl font-bold leading-[1.1] text-black">
+                      Timeless <br/>
+                      <span className="italic font-light text-[#D93025]">Silhouette</span>
+                    </h2>
+                    <div className="h-1 bg-black mt-6 mb-8 w-24"></div>
+                  </div>
+
+                  <p className="font-montserrat text-lg leading-relaxed text-gray-700 font-light max-w-md">
+                    Step back into an era of unapologetic glamour. Defined by cinched waists, 
+                    full skirts, and sharp tailoring, the 1950s reimagined elegance for the modern woman. 
+                    Our latest editorial explores the architectural beauty of mid-century couture in the cold.
+                  </p>
+
+                  <div>
+                    <button className="group relative px-8 py-3 bg-transparent border border-black overflow-hidden hover:bg-black transition-colors duration-300">
+                      <span className="relative z-10 font-montserrat text-sm font-semibold tracking-widest uppercase group-hover:text-white transition-colors duration-300">
+                        View Lookbook
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="w-full lg:w-7/12 aspect-[4/5] relative order-1 lg:order-2">
+                  <div className="relative w-full h-full">
+                    {gridCells.map((cell) => {
+                      const currentLeft = (cell.c / GRID_COLS) * 100;
+                      const currentTop = (cell.r / GRID_ROWS) * 100;
+
+                      return (
+                        <interact-element key={cell.id} data-interact-key={`cell-${cell.id}`}>
+                          <div 
+                            className="absolute overflow-hidden"
+                            style={{
+                              left: `${currentLeft}%`,
+                              top: `${currentTop}%`,
+                              width: `${100 / GRID_COLS}%`,
+                              height: `${100 / GRID_ROWS}%`,
+                              willChange: 'transform, border-radius',
+                              transform: 'scale(0.15)', // Matches MIN_SCALE
+                              borderRadius: '50%',
+                            }}
+                          >
+                            <interact-element data-interact-key={`img-${cell.id}`}>
+                              <div 
+                                className="absolute"
+                                style={{
+                                  width: `${GRID_COLS * 100}%`,
+                                  height: `${GRID_ROWS * 100}%`,
+                                  backgroundImage: `url(${IMAGE_URL})`,
+                                  backgroundSize: '100% 100%',
+                                  backgroundPosition: 'center',
+                                  left: `${-currentLeft * GRID_COLS}%`,
+                                  top: `${-currentTop * GRID_ROWS}%`,
+                                  transformOrigin: `${((cell.c + 0.5) / GRID_COLS) * 100}% ${((cell.r + 0.5) / GRID_ROWS) * 100}%`,
+                                  willChange: 'transform',
+                                }}
+                              />
+                            </interact-element>
+                          </div>
+                        </interact-element>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </interact-element>
+      
+      <div className="h-screen bg-[#1a1a1a] flex items-center justify-center text-[#FDFBF7]">
+          <div className="text-center font-playfair">
+              <p className="text-3xl italic">Fin.</p>
+              <p className="text-sm font-montserrat mt-4 opacity-60">Scroll up to replay</p>
+          </div>
+      </div>
+    </div>
+  );
+};
+
+export default function App() {
+  return (
+    <div className="w-full h-full">
+      <FashionSection />
+    </div>
+  );
+}
