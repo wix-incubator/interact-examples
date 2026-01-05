@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wix Interact - Skew Scroll</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Basic cleanup for smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden; /* Prevent horizontal scrollbar from skew */
+        }
+        
+        /* Utility to stack elements in the same grid cell */
+        .stack-cell {
+            grid-column: 1 / -1;
+            grid-row: 1 / -1;
+        }
+    </style>
+</head>
+<body class="bg-zinc-950 text-white">
+
+    <!-- Spacer -->
+    <div class="h-[60vh] flex items-center justify-center bg-zinc-950">
+        <p class="text-gray-600">Scroll down to see the interaction ↓</p>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="min-h-screen flex flex-col items-center justify-center max-w-4xl mx-auto px-6 py-24 gap-24">
+        
+        <!-- 
+          Header Stack
+          11 Layers creating a gradient from Dark (Back) to White (Front)
+        -->
+        <div class="grid place-items-center w-full relative perspective-1000">
+            
+            <!-- Layer 11: Ghost 10 (Zinc-950) -->
+            <div class="stack-cell z-0 pointer-events-none">
+                <interact-element data-interact-key="header-ghost-10">
+                    <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-tight text-zinc-950 whitespace-nowrap text-center">
+                        WARPING<br>REALITY
+                    </h1>
+                </interact-element>
+            </div>
+
+            <!-- Layer 10: Ghost 9 (Zinc-900) -->
+            <div class="stack-cell z-0 pointer-events-none">
+                <interact-element data-interact-key="header-ghost-9">
+                    <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-tight text-zinc-900 whitespace-nowrap text-center">
+                        WARPING<br>REALITY
+                    </h1>
+                </interact-element>
+            </div>
+
+            <!-- Layer 9: Ghost 8 (Zinc-800) -->
+            <div class="stack-cell z-0 pointer-events-none">
+                <interact-element data-interact-key="header-ghost-8">
+                    <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-tight text-zinc-800 whitespace-nowrap text-center">
+                        WARPING<br>REALITY
+                    </h1>
+                </interact-element>
+            </div>
+
+            <!-- Layer 8: Ghost 7 (Zinc-700) -->
+            <div class="stack-cell z-0 pointer-events-none">
+                <interact-element data-interact-key="header-ghost-7">
+                    <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-tight text-zinc-700 whitespace-nowrap text-center">
+                        WARPING<br>REALITY
+                    </h1>
+                </interact-element>
+            </div>
+
+            <!-- Layer 7: Ghost 6 (Zinc-600) -->
+            <div class="stack-cell z-0 pointer-events-none">
+                <interact-element data-interact-key="header-ghost-6">
+                    <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-tight text-zinc-600 whitespace-nowrap text-center">
+                        WARPING<br>REALITY
+                    </h1>
+                </interact-element>
+            </div>
+
+            <!-- Layer 6: Ghost 5 (Zinc-500) -->
+            <div class="stack-cell z-0 pointer-events-none">
+                <interact-element data-interact-key="header-ghost-5">
+                    <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-tight text-zinc-500 whitespace-nowrap text-center">
+                        WARPING<br>REALITY
+                    </h1>
+                </interact-element>
+            </div>
+
+            <!-- Layer 5: Ghost 4 (Zinc-400) -->
+            <div class="stack-cell z-0 pointer-events-none">
+                <interact-element data-interact-key="header-ghost-4">
+                    <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-tight text-zinc-400 whitespace-nowrap text-center">
+                        WARPING<br>REALITY
+                    </h1>
+                </interact-element>
+            </div>
+
+            <!-- Layer 4: Ghost 3 (Zinc-300) -->
+            <div class="stack-cell z-10 pointer-events-none">
+                <interact-element data-interact-key="header-ghost-3">
+                    <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-tight text-zinc-300 whitespace-nowrap text-center">
+                        WARPING<br>REALITY
+                    </h1>
+                </interact-element>
+            </div>
+
+            <!-- Layer 3: Ghost 2 (Zinc-200) -->
+            <div class="stack-cell z-20 pointer-events-none">
+                <interact-element data-interact-key="header-ghost-2">
+                    <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-tight text-zinc-200 whitespace-nowrap text-center">
+                        WARPING<br>REALITY
+                    </h1>
+                </interact-element>
+            </div>
+
+            <!-- Layer 2: Ghost 1 (Zinc-100) -->
+            <div class="stack-cell z-30 pointer-events-none">
+                <interact-element data-interact-key="header-ghost-1">
+                    <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-tight text-zinc-100 whitespace-nowrap text-center">
+                        WARPING<br>REALITY
+                    </h1>
+                </interact-element>
+            </div>
+
+            <!-- Layer 1: Front (White) -->
+            <div class="stack-cell z-40">
+                <interact-element data-interact-key="skew-header">
+                    <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-tight text-white whitespace-nowrap drop-shadow-2xl text-center">
+                        WARPING<br>REALITY
+                    </h1>
+                </interact-element>
+            </div>
+
+        </div>
+
+        <!-- Paragraph Wrapper -->
+        <interact-element data-interact-key="skew-text" class="block max-w-xl mx-auto z-50 relative">
+            <p class="text-xl md:text-2xl text-gray-300 text-center leading-relaxed">
+                As this text moves through the viewport, it bends under the pressure of the scroll. 
+                Gravity pulls the angles in opposing directions, finding perfect alignment only 
+                when centered in your view.
+            </p>
+        </interact-element>
+
+    </div>
+
+    <!-- Spacer -->
+    <div class="h-[50vh] flex items-center justify-center bg-zinc-950">
+        <p class="text-gray-600">Scroll up ↑</p>
+    </div>
+
+    <!-- Wix Interact Library -->
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+
+        const config = {
+            interactions: [
+                // ---------------------------
+                // 1. Main Header (Front - White)
+                // Skew: +/- 45deg
+                // Offset: 0
+                // ---------------------------
+                {
+                    key: 'skew-header',
+                    trigger: 'viewProgress',
+                    effects: [{
+                        rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
+                        rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                        fill: 'both',
+                        composite: 'add',
+                        keyframeEffect: {
+                            name: 'header-main-skew',
+                            keyframes: [
+                                { transform: 'skewX(45deg)' },
+                                { transform: 'skewX(-45deg)' }
+                            ]
+                        }
+                    }]
+                },
+
+                // ---------------------------
+                // 2. Ghost 1 (Zinc-100)
+                // Skew: +/- 48deg (+3)
+                // Offset: +/- 8px
+                // ---------------------------
+                {
+                    key: 'header-ghost-1',
+                    trigger: 'viewProgress',
+                    effects: [{
+                        rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
+                        rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                        fill: 'both',
+                        composite: 'add',
+                        keyframeEffect: {
+                            name: 'header-ghost-1-skew',
+                            keyframes: [
+                                { transform: 'skewX(48deg) translateX(-8px)' },
+                                { transform: 'skewX(-48deg) translateX(8px)' }
+                            ]
+                        }
+                    }]
+                },
+
+                // ---------------------------
+                // 3. Ghost 2 (Zinc-200)
+                // Skew: +/- 51deg (+3)
+                // Offset: +/- 16px
+                // ---------------------------
+                {
+                    key: 'header-ghost-2',
+                    trigger: 'viewProgress',
+                    effects: [{
+                        rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
+                        rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                        fill: 'both',
+                        composite: 'add',
+                        keyframeEffect: {
+                            name: 'header-ghost-2-skew',
+                            keyframes: [
+                                { transform: 'skewX(51deg) translateX(-16px)' },
+                                { transform: 'skewX(-51deg) translateX(16px)' }
+                            ]
+                        }
+                    }]
+                },
+
+                // ---------------------------
+                // 4. Ghost 3 (Zinc-300)
+                // Skew: +/- 54deg (+3)
+                // Offset: +/- 24px
+                // ---------------------------
+                {
+                    key: 'header-ghost-3',
+                    trigger: 'viewProgress',
+                    effects: [{
+                        rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
+                        rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                        fill: 'both',
+                        composite: 'add',
+                        keyframeEffect: {
+                            name: 'header-ghost-3-skew',
+                            keyframes: [
+                                { transform: 'skewX(54deg) translateX(-24px)' },
+                                { transform: 'skewX(-54deg) translateX(24px)' }
+                            ]
+                        }
+                    }]
+                },
+
+                // ---------------------------
+                // 5. Ghost 4 (Zinc-400)
+                // Skew: +/- 57deg (+3)
+                // Offset: +/- 32px
+                // ---------------------------
+                {
+                    key: 'header-ghost-4',
+                    trigger: 'viewProgress',
+                    effects: [{
+                        rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
+                        rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                        fill: 'both',
+                        composite: 'add',
+                        keyframeEffect: {
+                            name: 'header-ghost-4-skew',
+                            keyframes: [
+                                { transform: 'skewX(57deg) translateX(-32px)' },
+                                { transform: 'skewX(-57deg) translateX(32px)' }
+                            ]
+                        }
+                    }]
+                },
+
+                // ---------------------------
+                // 6. Ghost 5 (Zinc-500)
+                // Skew: +/- 60deg (+3)
+                // Offset: +/- 40px
+                // ---------------------------
+                {
+                    key: 'header-ghost-5',
+                    trigger: 'viewProgress',
+                    effects: [{
+                        rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
+                        rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                        fill: 'both',
+                        composite: 'add',
+                        keyframeEffect: {
+                            name: 'header-ghost-5-skew',
+                            keyframes: [
+                                { transform: 'skewX(60deg) translateX(-40px)' },
+                                { transform: 'skewX(-60deg) translateX(40px)' }
+                            ]
+                        }
+                    }]
+                },
+
+                // ---------------------------
+                // 7. Ghost 6 (Zinc-600)
+                // Skew: +/- 63deg (+3)
+                // Offset: +/- 48px
+                // ---------------------------
+                {
+                    key: 'header-ghost-6',
+                    trigger: 'viewProgress',
+                    effects: [{
+                        rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
+                        rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                        fill: 'both',
+                        composite: 'add',
+                        keyframeEffect: {
+                            name: 'header-ghost-6-skew',
+                            keyframes: [
+                                { transform: 'skewX(63deg) translateX(-48px)' },
+                                { transform: 'skewX(-63deg) translateX(48px)' }
+                            ]
+                        }
+                    }]
+                },
+
+                // ---------------------------
+                // 8. Ghost 7 (Zinc-700)
+                // Skew: +/- 66deg (+3)
+                // Offset: +/- 56px
+                // ---------------------------
+                {
+                    key: 'header-ghost-7',
+                    trigger: 'viewProgress',
+                    effects: [{
+                        rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
+                        rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                        fill: 'both',
+                        composite: 'add',
+                        keyframeEffect: {
+                            name: 'header-ghost-7-skew',
+                            keyframes: [
+                                { transform: 'skewX(66deg) translateX(-56px)' },
+                                { transform: 'skewX(-66deg) translateX(56px)' }
+                            ]
+                        }
+                    }]
+                },
+
+                // ---------------------------
+                // 9. Ghost 8 (Zinc-800)
+                // Skew: +/- 69deg (+3)
+                // Offset: +/- 64px
+                // ---------------------------
+                {
+                    key: 'header-ghost-8',
+                    trigger: 'viewProgress',
+                    effects: [{
+                        rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
+                        rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                        fill: 'both',
+                        composite: 'add',
+                        keyframeEffect: {
+                            name: 'header-ghost-8-skew',
+                            keyframes: [
+                                { transform: 'skewX(69deg) translateX(-64px)' },
+                                { transform: 'skewX(-69deg) translateX(64px)' }
+                            ]
+                        }
+                    }]
+                },
+
+                // ---------------------------
+                // 10. Ghost 9 (Zinc-900)
+                // Skew: +/- 72deg (+3)
+                // Offset: +/- 72px
+                // ---------------------------
+                {
+                    key: 'header-ghost-9',
+                    trigger: 'viewProgress',
+                    effects: [{
+                        rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
+                        rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                        fill: 'both',
+                        composite: 'add',
+                        keyframeEffect: {
+                            name: 'header-ghost-9-skew',
+                            keyframes: [
+                                { transform: 'skewX(72deg) translateX(-72px)' },
+                                { transform: 'skewX(-72deg) translateX(72px)' }
+                            ]
+                        }
+                    }]
+                },
+
+                // ---------------------------
+                // 11. Ghost 10 (Zinc-950)
+                // Skew: +/- 75deg (+3)
+                // Offset: +/- 80px
+                // ---------------------------
+                {
+                    key: 'header-ghost-10',
+                    trigger: 'viewProgress',
+                    effects: [{
+                        rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
+                        rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                        fill: 'both',
+                        composite: 'add',
+                        keyframeEffect: {
+                            name: 'header-ghost-10-skew',
+                            keyframes: [
+                                { transform: 'skewX(75deg) translateX(-80px)' },
+                                { transform: 'skewX(-75deg) translateX(80px)' }
+                            ]
+                        }
+                    }]
+                },
+
+                // ---------------------------
+                // 12. Paragraph Interaction
+                // ---------------------------
+                {
+                    key: 'skew-text',
+                    trigger: 'viewProgress',
+                    effects: [{
+                        rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
+                        rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                        fill: 'both',
+                        composite: 'add',
+                        keyframeEffect: {
+                            name: 'text-skew',
+                            keyframes: [
+                                { transform: 'skewX(-45deg)' },
+                                { transform: 'skewX(45deg)' }
+                            ]
+                        }
+                    }]
+                }
+            ]
+        };
+
+        Interact.create(config);
+    </script>
+</body>
+</html>
