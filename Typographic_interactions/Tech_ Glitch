@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wix Interact - Glitch Text</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+        body {
+            /* Dark Grey Background */
+            background-color: #141414;
+            color: #e0e0e0;
+            font-family: 'Space Mono', monospace;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Initial state: Opacity 0 via CSS. */
+        .glitch-word {
+            opacity: 0;
+            display: inline-block;
+            white-space: pre; 
+            will-change: transform, clip-path;
+        }
+
+        /* ACCESSIBILITY: Reduced Motion Override */
+        @media (prefers-reduced-motion: reduce) {
+            .glitch-word {
+                opacity: 1 !important;
+                clip-path: inset(0 0 0 0) !important;
+                transform: none !important;
+                text-shadow: none !important;
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="no-scrollbar">
+
+    <!-- Spacer -->
+    <div class="h-screen flex items-center justify-center text-center px-4">
+        <div class="opacity-50">
+            <p class="mb-4 text-base">SYSTEM_STATUS: ONLINE</p>
+            <p class="text-sm">SCROLL_DOWN_TO_INITIATE_DATA_STREAM</p>
+            <div class="mt-8 animate-bounce">↓</div>
+        </div>
+    </div>
+
+    <!-- Main Section -->
+    <main class="max-w-7xl mx-auto px-12 pb-80 space-y-96">
+
+        <!-- Pair 1: Left Aligned -->
+        <div class="flex flex-col items-start w-full max-w-3xl">
+            <h1 id="h1-01" class="text-splitter text-2xl uppercase tracking-tighter text-[#e0e0e0]/70 mb-5">
+                01_CRITICAL_FAILURE
+            </h1>
+            <p id="p-01" class="text-splitter text-base leading-relaxed text-[#e0e0e0]/70 uppercase font-light">
+                Data corruption detected in sector 7G. The visual cortex is failing to render transparency layers. Retrying connection via hard-line protocol.
+            </p>
+        </div>
+
+        <!-- Pair 2: Right Aligned -->
+        <div class="flex flex-col items-end text-right w-full ml-auto max-w-3xl">
+            <h1 id="h1-02" class="text-splitter text-2xl uppercase tracking-tighter text-[#e0e0e0]/70 mb-5">
+                02_SYNTAX_ERROR
+            </h1>
+            <p id="p-02" class="text-splitter text-base leading-relaxed text-[#e0e0e0]/70 uppercase font-light">
+                Unexpected token in input stream. System forcing raw buffer output. Rendering artifacts expected. Do not power down the console.
+            </p>
+        </div>
+
+        <!-- Pair 3: Left Aligned -->
+        <div class="flex flex-col items-start w-full max-w-3xl">
+            <h1 id="h1-03" class="text-splitter text-2xl uppercase tracking-tighter text-[#e0e0e0]/70 mb-5">
+                03_OVERRIDE_INIT
+            </h1>
+            <p id="p-03" class="text-splitter text-base leading-relaxed text-[#e0e0e0]/70 uppercase font-light">
+                Manual override engaged. Bypassing opacity engines. Visual integrity compromised but readable. Uploading final patch sequence now.
+            </p>
+        </div>
+
+    </main>
+
+    <div class="h-screen"></div>
+
+    <!-- Wix Interact Logic -->
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // --- 1. Keyframe Generator ---
+        const getGlitchKeyframes = (direction) => {
+            let startClip = '';
+            switch(direction) {
+                case 0: startClip = 'inset(0 100% 0 0)'; break; // LTR
+                case 1: startClip = 'inset(0 0 0 100%)'; break; // RTL
+                case 2: startClip = 'inset(100% 0 0 0)'; break; // TopDown
+                case 3: startClip = 'inset(0 0 100% 0)'; break; // BottomUp
+            }
+
+            const red = 'rgba(255,0,0,0.7)';
+            const blue = 'rgba(0,255,255,0.7)';
+
+            return [
+                { 
+                    offset: 0, 
+                    clipPath: startClip, 
+                    transform: 'skewX(10deg) translateX(-5px)',
+                    textShadow: `2px 0 ${red}, -2px 0 ${blue}`
+                },
+                { 
+                    offset: 0.1, 
+                    clipPath: startClip.replace('100%', '80%'), 
+                    transform: 'skewX(-10deg) translateX(3px)',
+                    textShadow: `-2px 0 ${red}, 2px 0 ${blue}`
+                },
+                { 
+                    offset: 0.2, 
+                    clipPath: startClip.replace('100%', '90%'), 
+                    transform: 'skewX(20deg) translateX(-2px)',
+                    textShadow: `1px 1px ${red}, -1px -1px ${blue}`
+                },
+                { 
+                    offset: 0.3, 
+                    clipPath: startClip.replace('100%', '40%'), 
+                    transform: 'skewX(-5deg) translateX(2px)',
+                    textShadow: `0px 2px ${red}, 0px -2px ${blue}`
+                },
+                { 
+                    offset: 0.5, 
+                    clipPath: startClip.replace('100%', '60%'), 
+                    transform: 'skewX(0deg) translateX(0px)',
+                    textShadow: `3px 0 ${red}, -3px 0 ${blue}`
+                },
+                { 
+                    offset: 0.7, 
+                    clipPath: startClip.replace('100%', '20%'), 
+                    transform: 'skewX(5deg) translateX(-1px)',
+                    textShadow: `-1px 0 ${red}, 1px 0 ${blue}`
+                },
+                { 
+                    offset: 0.8, 
+                    clipPath: 'inset(0 0 0 0)', 
+                    transform: 'skewX(-2deg) translateX(1px)',
+                    textShadow: `0px 0px ${red}, 0px 0px ${blue}`
+                },
+                { 
+                    offset: 0.9, 
+                    clipPath: startClip.replace('100%', '10%'), 
+                    transform: 'skewX(0deg) translateX(0px)',
+                    textShadow: `1px 0 ${red}, -1px 0 ${blue}`
+                },
+                { 
+                    offset: 1, 
+                    clipPath: 'inset(0 0 0 0)', 
+                    transform: 'skewX(0deg) translateX(0px)',
+                    textShadow: 'none'
+                }
+            ];
+        };
+
+        // --- 2. Text Splitting & DOM Reconstruction ---
+        const interactions = [];
+        const targets = document.querySelectorAll('.text-splitter');
+
+        targets.forEach((el) => {
+            const originalText = el.innerText;
+            el.setAttribute('aria-label', originalText);
+            
+            const words = originalText.split(/\s+/); 
+            const baseId = el.id;
+            
+            el.innerHTML = '';
+
+            words.forEach((word, index) => {
+                if (!word) return;
+
+                const wordKey = `${baseId}-w-${index}`;
+
+                // Create Wrapper
+                const wrapper = document.createElement('interact-element');
+                wrapper.setAttribute('data-interact-key', wordKey);
+                wrapper.setAttribute('aria-hidden', 'true');
+                wrapper.style.display = 'inline-block'; 
+                wrapper.style.marginRight = '0.3em';
+
+                // Create Target Span
+                const span = document.createElement('span');
+                span.textContent = word;
+                span.className = 'glitch-word';
+                
+                // Random Direction
+                const dir = Math.floor(Math.random() * 4);
+                let startClip = '';
+                if (dir === 0) startClip = 'inset(0 100% 0 0)';
+                else if (dir === 1) startClip = 'inset(0 0 0 100%)';
+                else if (dir === 2) startClip = 'inset(100% 0 0 0)';
+                else if (dir === 3) startClip = 'inset(0 0 100% 0)';
+                
+                span.style.opacity = '1';
+                span.style.clipPath = startClip;
+
+                wrapper.appendChild(span);
+                el.appendChild(wrapper);
+
+                if (!prefersReducedMotion) {
+                    interactions.push({
+                        key: wordKey,
+                        trigger: 'viewEnter',
+                        params: { type: 'once', threshold: 0, inset: '20%' },
+                        effects: [
+                            {
+                                keyframeEffect: {
+                                    name: `glitch-${wordKey}`,
+                                    keyframes: getGlitchKeyframes(dir)
+                                },
+                                // Added 200ms base delay + random stagger
+                                duration: 600 + Math.random() * 400, 
+                                delay: 200 + Math.random() * 800,
+                                easing: `steps(${4 + Math.floor(Math.random() * 6)}, end)`,
+                                fill: 'both'
+                            }
+                        ]
+                    });
+                }
+            });
+        });
+
+        // --- 3. Initialize Interact ---
+        if (!prefersReducedMotion && interactions.length > 0) {
+            try {
+                Interact.create({ interactions });
+            } catch (e) {
+                console.error("Wix Interact Initialization Failed:", e);
+                document.querySelectorAll('.glitch-word').forEach(s => {
+                    s.style.clipPath = 'none';
+                    s.style.opacity = '1';
+                });
+            }
+        } else if (prefersReducedMotion) {
+             document.querySelectorAll('.glitch-word').forEach(s => {
+                s.style.clipPath = 'inset(0 0 0 0)';
+                s.style.opacity = '1';
+            });
+        }
+    </script>
+</body>
+</html>
