@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wix Interact Slot Machine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for a more distinct look */
+        /* Changed to Syne Bold (700) */
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700&family=Inter:wght@300;400&display=swap');
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            background-color: black;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .font-display {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+        }
+
+        /* Ensure masks are strictly clipped */
+        .clip-mask {
+            overflow: clip; 
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center text-white">
+
+    <section class="relative w-full max-w-6xl mx-auto flex flex-col items-center justify-center py-20 px-4">
+        
+        <!-- H1: Slot Machine Container -->
+        <!-- Added flex-wrap and justify-center for multi-line support -->
+        <!-- Removed -space-x from here, moved to word wrappers -->
+        <!-- Added gap-x/y for word spacing -->
+        <h1 class="font-display text-5xl md:text-7xl lg:text-8xl leading-none flex flex-wrap justify-center gap-x-[0.3em] gap-y-[0.1em] mb-8" id="h1-container" aria-label="Fortune Favors The Bold And Brave">
+            <!-- Content injected via JS for cleaner dynamic structure -->
+        </h1>
+
+        <!-- Paragraph: Staggered Lines -->
+        <div class="text-center text-gray-400 text-lg md:text-xl font-light space-y-1" id="p-container">
+            <!-- Content injected via JS -->
+        </div>
+
+    </section>
+
+    <!-- Import Wix Interact -->
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+
+        // --- Configuration Constants ---
+        const TEXT_H1 = "Fortune Favors The Bold And Brave";
+        const TEXT_P = [
+            "Experience the thrill of precision animation.",
+            "Powered by the declarative Wix Interact library.",
+            "Smooth performance on every device."
+        ];
+        
+        const START_DELAY = 1500; // 1.5s after load
+        const H1_DURATION = 1200; // Duration per letter
+        const P_DURATION = 800;   // Duration per line
+        
+        // Cubic Bezier as requested (Ease In Out)
+        const CUBIC_EASING = "cubic-bezier(0.65, 0, 0.35, 1)";
+
+        // --- DOM Generation Helpers ---
+
+        const h1Container = document.getElementById('h1-container');
+        const pContainer = document.getElementById('p-container');
+        const interactions = [];
+
+        // 1. Generate H1 (Slot Machine) with Word Grouping
+        const words = TEXT_H1.split(' ');
+        let globalCharIndex = 0; // Track cumulative index for smooth stagger across words
+
+        words.forEach((word) => {
+            // Create a wrapper for the word to keep letters together (prevents breaking mid-word)
+            const wordWrapper = document.createElement('div');
+            // Apply the tight tracking (-5%) to the letters within the word
+            wordWrapper.className = 'flex -space-x-[0.05em]';
+            
+            // Generate letters for this word
+            word.split('').forEach((char) => {
+                const key = `h1-char-${globalCharIndex}`;
+                
+                // Create Mask
+                const mask = document.createElement('div');
+                mask.className = 'clip-mask relative h-[1.1em]'; 
+                mask.setAttribute('aria-hidden', 'true');
+                
+                // Create Wrapper for Interact
+                const interactEl = document.createElement('interact-element');
+                interactEl.setAttribute('data-interact-key', key);
+                
+                // Create the Reel
+                const reel = document.createElement('div');
+                reel.className = 'flex flex-col items-center will-change-transform';
+                
+                // Add 4 copies
+                for(let i=0; i<4; i++) {
+                    const span = document.createElement('span');
+                    span.textContent = char;
+                    span.className = 'h-[1.1em] flex items-center justify-center'; 
+                    reel.appendChild(span);
+                }
+
+                interactEl.appendChild(reel);
+                mask.appendChild(interactEl);
+                wordWrapper.appendChild(mask);
+
+                // Add Interaction Config
+                const staggerDelay = globalCharIndex * 100; // 100ms stagger
+
+                interactions.push({
+                    key: key,
+                    trigger: 'viewEnter', 
+                    effects: [
+                        {
+                            keyframeEffect: {
+                                name: `slot-spin-${globalCharIndex}`,
+                                keyframes: [
+                                    { transform: 'translateY(0%)' },
+                                    { transform: 'translateY(-75%)' } 
+                                ]
+                            },
+                            duration: H1_DURATION,
+                            delay: START_DELAY + staggerDelay,
+                            easing: CUBIC_EASING,
+                            fill: 'both',
+                            composite: 'replace'
+                        }
+                    ]
+                });
+
+                globalCharIndex++;
+            });
+
+            // Append the complete word to the H1 container
+            h1Container.appendChild(wordWrapper);
+        });
+
+        // 3. Generate Paragraph (Line Reveals)
+        TEXT_P.forEach((lineText, index) => {
+            const key = `p-line-${index}`;
+
+            // Mask container
+            const mask = document.createElement('div');
+            mask.className = 'clip-mask';
+
+            // Interact Wrapper
+            const interactEl = document.createElement('interact-element');
+            interactEl.setAttribute('data-interact-key', key);
+
+            // The Text content
+            const p = document.createElement('p');
+            p.textContent = lineText;
+            p.className = 'will-change-transform';
+
+            interactEl.appendChild(p);
+            mask.appendChild(interactEl);
+            pContainer.appendChild(mask);
+
+            // 4. Build Interaction Config for this Line
+            interactions.push({
+                key: key,
+                trigger: 'viewEnter',
+                effects: [
+                    {
+                        keyframeEffect: {
+                            name: `line-rise-${index}`,
+                            keyframes: [
+                                { transform: 'translateY(100%)' },
+                                { transform: 'translateY(0%)' }
+                            ]
+                        },
+                        duration: P_DURATION,
+                        delay: START_DELAY + (index * 150), 
+                        easing: CUBIC_EASING,
+                        fill: 'both'
+                    }
+                ]
+            });
+        });
+
+        // --- Initialize Interact ---
+        const config = {
+            interactions: interactions
+        };
+
+        Interact.create(config);
+        
+        console.log("Interact Config Loaded:", config);
+
+    </script>
+</body>
+</html>
