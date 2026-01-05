@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gooey Inverted Animation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* THE GOOEY MASK/CONTAINER */
+        .gooey-filter {
+            filter: contrast(50); 
+            background-color: #fff; 
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* THE TEXT */
+        .gooey-text {
+            filter: blur(8px);
+            font-variation-settings: 'wght' 900;
+            letter-spacing: -0.05em;
+            color: black;
+            
+            /* ACCESSIBILITY: 
+               Ensure text is selectable and has a normal cursor.
+               Screen readers see this as a standard H1. 
+            */
+            user-select: text; 
+            cursor: text;
+            
+            z-index: 10;
+            position: relative;
+        }
+        
+        .gooey-text::selection {
+            background: #ff0055;
+            color: white;
+        }
+
+        /* THE MOVING CIRCLE */
+        .moving-circle {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 175px;
+            height: 175px;
+            border-radius: 50%;
+            pointer-events: none;
+            background-color: black;
+            
+            /* CHROMATIC ABERRATION (CIRCLE ONLY) */
+            box-shadow: -15px 0px 0px #00ffff, 15px 0px 0px #ff00ff;
+
+            filter: blur(30px);
+            transform: translateY(-50%);
+            z-index: 20;
+        }
+
+        /* ACCESSIBILITY: REDUCED MOTION */
+        @media (prefers-reduced-motion: reduce) {
+            .moving-circle {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen w-screen overflow-hidden">
+
+    <!-- REVERTED: Restored w-full h-full to the wrapper -->
+    <div class="relative w-full h-full flex items-center justify-center">
+        
+        <!-- REVERTED: Restored w-full h-full and absolute positioning to the interact root -->
+        <interact-element data-interact-key="scene-root" class="w-full h-full absolute inset-0 z-10">
+            
+            <!-- REVERTED: Restored w-full h-full to the filter container so it covers the screen -->
+            <div class="w-full h-full gooey-filter flex items-center justify-center relative">
+                
+                <h1 class="gooey-text text-[13rem] font-black leading-none">
+                    INTERACT
+                </h1>
+
+                <interact-element data-interact-key="auto-circle" aria-hidden="true">
+                    <div class="moving-circle"></div>
+                </interact-element>
+
+            </div>
+        </interact-element>
+
+    </div>
+
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+
+        const config = {
+            conditions: {
+                "motion-ok": { type: "media", predicate: "(prefers-reduced-motion: no-preference)" }
+            },
+            interactions: [
+                {
+                    key: 'scene-root',
+                    trigger: 'viewEnter',
+                    effects: [
+                        {
+                            key: 'auto-circle',
+                            keyframeEffect: {
+                                name: 'PassThrough',
+                                keyframes: [
+                                    // REVERTED: Back to -20% / 120% for full screen traversal
+                                    { left: '-20%' },
+                                    { left: '120%' }
+                                ]
+                            },
+                            duration: 4000, 
+                            easing: 'ease-in-out',
+                            iterations: Infinity, 
+                            fill: 'both',
+                            composite: 'replace',
+                            conditions: ['motion-ok']
+                        },
+                        {
+                            key: 'scene-root',
+                            namedEffect: { type: 'FadeIn', duration: 1000 },
+                            fill: 'both'
+                        }
+                    ]
+                }
+            ]
+        };
+
+        Interact.create(config);
+    </script>
+</body>
+</html>
