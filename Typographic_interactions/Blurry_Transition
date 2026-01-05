@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Pairings Transition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Goudy+Bookletter+1911&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            font-family: 'Goudy Bookletter 1911', serif;
+            color: #1a1a1a;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .main-scroll-wrapper {
+            height: 100vh;
+            width: 100vw;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            overscroll-behavior: none;
+        }
+
+        .timeline-container {
+            height: 600vh; 
+            position: relative;
+        }
+
+        .sticky-viewport {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        interact-element {
+            display: contents;
+        }
+
+        .text-pair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 80%;
+            max-width: 780px;
+            
+            /* Accessibility & Interaction Fixes: 
+               Start completely hidden and non-interactive. 
+               The animation will toggle these properties. */
+            opacity: 0; 
+            visibility: hidden;
+            pointer-events: none;
+
+            will-change: opacity, filter;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: normal;
+            letter-spacing: 2px;
+            color: #666666;
+        }
+
+        p {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            letter-spacing: 1px; 
+            color: #1a1a1a;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-scroll-wrapper">
+        
+        <interact-element data-interact-key="timeline-track">
+            <div class="timeline-container">
+                <div class="sticky-viewport">
+                    
+                    <!-- Pair 1 -->
+                    <interact-element data-interact-key="pair-1">
+                        <div class="text-pair">
+                            <h1>First Principle</h1>
+                            <p>We begin with the foundation. The idea emerges from the void, blurry at first, then sharpening into clarity as we focus our attention upon it.</p>
+                        </div>
+                    </interact-element>
+
+                    <!-- Pair 2 -->
+                    <interact-element data-interact-key="pair-2">
+                        <div class="text-pair">
+                            <h1>Second Thought</h1>
+                            <p>As the first idea fades into memory, a new perspective takes its place. It replaces what came before, offering a counterpoint to the original thesis.</p>
+                        </div>
+                    </interact-element>
+
+                    <!-- Pair 3 -->
+                    <interact-element data-interact-key="pair-3">
+                        <div class="text-pair">
+                            <h1>Final Conclusion</h1>
+                            <p>Finally, we arrive at the synthesis. The journey concludes here, with the last thought remaining visible as we complete the passage.</p>
+                        </div>
+                    </interact-element>
+
+                </div>
+            </div>
+        </interact-element>
+
+    </div>
+
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+
+        // --- KEYFRAME DEFINITIONS WITH ACCESSIBILITY TOGGLES ---
+        // We use offset: 0.01 and 0.99 to ensure visibility is 'visible' 
+        // as soon as opacity is non-zero, allowing selection/reading.
+
+        const timeInFrames = [
+            { opacity: 0, filter: 'blur(20px)', visibility: 'hidden', pointerEvents: 'none', offset: 0 },
+            { opacity: 0.01, filter: 'blur(19px)', visibility: 'visible', pointerEvents: 'auto', offset: 0.01 },
+            { opacity: 1, filter: 'blur(0px)', visibility: 'visible', pointerEvents: 'auto', offset: 1 }
+        ];
+
+        const scrollOutFrames = [
+            { opacity: 1, filter: 'blur(0px)', visibility: 'visible', pointerEvents: 'auto', offset: 0 },
+            { opacity: 0.01, filter: 'blur(19px)', visibility: 'visible', pointerEvents: 'auto', offset: 0.99 },
+            { opacity: 0, filter: 'blur(20px)', visibility: 'hidden', pointerEvents: 'none', offset: 1 }
+        ];
+
+        const pair2Frames = [
+            { opacity: 0, filter: 'blur(20px)', visibility: 'hidden', pointerEvents: 'none', offset: 0 },
+            { opacity: 0.01, filter: 'blur(19px)', visibility: 'visible', pointerEvents: 'auto', offset: 0.01 },
+            { opacity: 1, filter: 'blur(0px)', visibility: 'visible', pointerEvents: 'auto', offset: 0.3 },
+            { opacity: 1, filter: 'blur(0px)', visibility: 'visible', pointerEvents: 'auto', offset: 0.7 },
+            { opacity: 0.01, filter: 'blur(19px)', visibility: 'visible', pointerEvents: 'auto', offset: 0.99 },
+            { opacity: 0, filter: 'blur(20px)', visibility: 'hidden', pointerEvents: 'none', offset: 1 }
+        ];
+
+        const pair3Frames = [
+            { opacity: 0, filter: 'blur(20px)', visibility: 'hidden', pointerEvents: 'none', offset: 0 },
+            { opacity: 0.01, filter: 'blur(19px)', visibility: 'visible', pointerEvents: 'auto', offset: 0.01 },
+            { opacity: 1, filter: 'blur(0px)', visibility: 'visible', pointerEvents: 'auto', offset: 0.7 },
+            { opacity: 1, filter: 'blur(0px)', visibility: 'visible', pointerEvents: 'auto', offset: 1 }
+        ];
+
+        const config = {
+            interactions: [
+                // --- INTERACTION 1: Automatic Entry for Pair 1 ---
+                {
+                    key: 'pair-1',
+                    trigger: 'viewEnter', 
+                    params: { type: 'once', threshold: 0.1 },
+                    effects: [
+                        {
+                            keyframeEffect: { 
+                                name: 'pair1-auto-in', 
+                                keyframes: timeInFrames 
+                            },
+                            duration: 1500,
+                            easing: 'ease-out',
+                            fill: 'forwards'
+                        }
+                    ]
+                },
+
+                // --- INTERACTION 2: Scroll Sequence ---
+                {
+                    key: 'timeline-track', 
+                    trigger: 'viewProgress',
+                    effects: [
+                        // Effect 1: Pair 1 Exit Only
+                        {
+                            key: 'pair-1',
+                            fill: 'forwards',
+                            rangeStart: { name: 'contain', offset: { value: 30, type: 'percentage' } },
+                            rangeEnd: { name: 'contain', offset: { value: 40, type: 'percentage' } },
+                            keyframeEffect: { 
+                                name: 'pair1-exit', 
+                                keyframes: scrollOutFrames 
+                            }
+                        },
+
+                        // Effect 2: Full Lifecycle of Pair 2
+                        {
+                            key: 'pair-2',
+                            fill: 'both',
+                            rangeStart: { name: 'contain', offset: { value: 40, type: 'percentage' } },
+                            rangeEnd: { name: 'contain', offset: { value: 75, type: 'percentage' } },
+                            keyframeEffect: { 
+                                name: 'pair2-cycle', 
+                                keyframes: pair2Frames 
+                            }
+                        },
+
+                        // Effect 3: Entry of Pair 3
+                        {
+                            key: 'pair-3',
+                            fill: 'both',
+                            rangeStart: { name: 'contain', offset: { value: 75, type: 'percentage' } },
+                            rangeEnd: { name: 'contain', offset: { value: 95, type: 'percentage' } },
+                            keyframeEffect: { 
+                                name: 'pair3-cycle', 
+                                keyframes: pair3Frames 
+                            }
+                        }
+                    ]
+                }
+            ]
+        };
+
+        Interact.create(config);
+    </script>
+</body>
+</html>
