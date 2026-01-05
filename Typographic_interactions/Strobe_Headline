@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immersive Reality</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .visualizer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            /* Tighter line height for the "stack" effect */
+            line-height: 0.85; 
+        }
+
+        .row {
+            display: flex;
+            justify-content: center;
+            white-space: nowrap;
+            /* Mix blend mode creates the "screen" interaction if they overlap, 
+               though here they are stacked vertically */
+            mix-blend-mode: screen; 
+            user-select: none;
+        }
+
+        .row.middle {
+            z-index: 10;
+            cursor: text;
+            user-select: text;
+        }
+
+        .row.duplicate {
+            pointer-events: none;
+            /* Duplicates start visible but will be animated by JS */
+        }
+
+        .char {
+            display: inline-block;
+            font-weight: 900;
+            font-size: 5.5vw; /* Fluid font size */
+            letter-spacing: -0.05em;
+        }
+
+        .space {
+            display: inline-block;
+            width: 2vw;
+        }
+
+        .desc-container {
+            margin-top: 3rem;
+            height: 6rem;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            width: 100%;
+        }
+
+        /* * CRITICAL: Opacity 0 ensures it is invisible initially.
+         * The 'fill: both' in Interact will handle the rest.
+         */
+        #hero-desc {
+            color: #d1d5db; /* Light gray */
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-align: center;
+            line-height: 1.625;
+            max-width: 32rem;
+            opacity: 0; 
+        }
+
+        @media (min-width: 768px) {
+            #hero-desc {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="visualizer-container" id="stack-container">
+        <!-- Rows will be injected here by JavaScript -->
+    </div>
+
+    <div class="desc-container">
+        <div id="hero-desc">
+            <p style="margin: 0;">
+                Experience the harmony of sound and vision.<br>
+                An interactive journey powered by code.
+            </p>
+        </div>
+    </div>
+
+    <!-- Load Wix Interact -->
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+
+        // Configuration
+        const ROWS = 7;
+        const TEXT = "IMMERSIVE REALITY";
+        const MIDDLE_INDEX = Math.floor(ROWS / 2);
+        
+        // --- 1. DOM Generation ---
+        const container = document.getElementById('stack-container');
+
+        for (let r = 0; r < ROWS; r++) {
+            const isMiddle = r === MIDDLE_INDEX;
+            const rowEl = document.createElement(isMiddle ? 'h1' : 'div');
+            
+            rowEl.classList.add('row');
+            if (isMiddle) rowEl.classList.add('middle');
+            else rowEl.classList.add('duplicate');
+
+            // Generate characters
+            for (let c = 0; c < TEXT.length; c++) {
+                const char = TEXT[c];
+                if (char === ' ') {
+                    const space = document.createElement('span');
+                    space.classList.add('space');
+                    rowEl.appendChild(space);
+                    continue;
+                }
+
+                const span = document.createElement('span');
+                span.textContent = char;
+                span.classList.add('char');
+
+                // For interactions, we need to target specific elements.
+                // We assign a data-interact-id to duplicates so we can target them.
+                if (!isMiddle) {
+                    // Create a unique wrapper for the Interact library to target
+                    const wrapper = document.createElement('interact-element');
+                    const key = `char-${r}-${c}`;
+                    wrapper.setAttribute('data-interact-key', key);
+                    wrapper.appendChild(span);
+                    rowEl.appendChild(wrapper);
+                } else {
+                    // Middle row is just static HTML
+                    rowEl.appendChild(span);
+                }
+            }
+            container.appendChild(rowEl);
+        }
+
+        // --- 2. Animation Logic (Replicating the React logic) ---
+        
+        // Calculate dynamic timing
+        const maxRowDist = Math.abs(0 - MIDDLE_INDEX);
+        const maxCharIndex = TEXT.length - 1;
+        const lastLetterStartDelay = (maxRowDist * 100) + (maxCharIndex * 40);
+        const animationDuration = 1200;
+        const buffer = 400;
+        
+        const paragraphDelay = lastLetterStartDelay + animationDuration + buffer;
+
+        const interactions = [];
+
+        // A. Text Flicker Animations
+        for (let r = 0; r < ROWS; r++) {
+            if (r === MIDDLE_INDEX) continue;
+
+            const dist = Math.abs(r - MIDDLE_INDEX);
+
+            for (let c = 0; c < TEXT.length; c++) {
+                if (TEXT[c] === ' ') continue;
+
+                const key = `char-${r}-${c}`;
+                const delay = (dist * 100) + (c * 40);
+
+                interactions.push({
+                    key: key,
+                    trigger: 'viewEnter',
+                    params: { type: 'once' },
+                    effects: [
+                        {
+                            keyframeEffect: {
+                                keyframes: [
+                                    { offset: 0.0, opacity: 1 },
+                                    { offset: 0.1, opacity: 0 },
+                                    { offset: 0.2, opacity: 1 },
+                                    { offset: 0.3, opacity: 0 },
+                                    { offset: 0.5, opacity: 1 },
+                                    { offset: 0.6, opacity: 0 },
+                                    { offset: 0.8, opacity: 1 }, 
+                                    { offset: 1.0, opacity: 0 }, 
+                                ],
+                            },
+                            duration: animationDuration,
+                            delay: delay,
+                            easing: 'linear',
+                            fill: 'forwards', 
+                        },
+                    ],
+                });
+            }
+        }
+
+        // B. Paragraph Reveal
+        // We target the #hero-desc div. Since it's a standard ID, we can wrap it 
+        // in an interact-element or just pass the element directly if using low-level API.
+        // But to stick to the pattern, let's wrap the p in the DOM or use the specific key we set in HTML.
+        // Wait, standard HTML doesn't have <interact-element> by default without the library processing it.
+        // The library looks for elements with `data-interact-key` OR we can pass elements directly?
+        // The safest way with the `Interact.create` JSON config is to use `data-interact-key`.
+        
+        // Let's add the attribute to the paragraph container dynamically or ensure it's in HTML.
+        const descEl = document.getElementById('hero-desc');
+        // We'll treat this div as our target. We need to register it manually if we don't use the custom element tag.
+        // Actually, the easiest way in vanilla JS with this specific library version is to use the custom element wrapper
+        // OR add the attribute to a standard element and hope the library picks it up, 
+        // BUT the library exposes `interact-element` web component.
+        
+        // Let's replace the outer div with the custom element for consistency.
+        const descParent = descEl.parentElement;
+        const interactWrapper = document.createElement('interact-element');
+        interactWrapper.setAttribute('data-interact-key', 'hero-desc');
+        interactWrapper.appendChild(descEl); // Move the content inside
+        descParent.appendChild(interactWrapper);
+
+        interactions.push({
+            key: 'hero-desc',
+            trigger: 'viewEnter',
+            params: { type: 'once' },
+            effects: [
+                {
+                    keyframeEffect: {
+                        keyframes: [
+                            { transform: 'translateY(110%)', opacity: 0 },
+                            { transform: 'translateY(0%)', opacity: 1 }
+                        ]
+                    },
+                    duration: 800,
+                    delay: paragraphDelay,
+                    easing: 'cubic-bezier(0.16, 1, 0.3, 1)', 
+                    fill: 'both', 
+                }
+            ]
+        });
+
+        // Initialize
+        Interact.create({ interactions });
+
+    </script>
+</body>
+</html>
