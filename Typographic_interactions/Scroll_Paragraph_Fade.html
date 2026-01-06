@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scroll Text Reveal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Hide scrollbar for cleaner demo */
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        body { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Typography */
+        .text-content {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            line-height: 1.2;
+            font-kerning: none;
+        }
+
+        /* The specific word styles */
+        .word {
+            display: inline-block;
+            white-space: pre; /* Preserves spaces */
+            transform-origin: bottom left;
+            will-change: transform, opacity;
+            /* Initial state (hidden) handled by the customEffect immediately, 
+               but we set defaults here to avoid FOUC */
+            opacity: 0.1; 
+            transform: translateY(20px);
+        }
+    </style>
+</head>
+<body class="bg-black text-white min-h-screen">
+
+    <!-- Spacer for initial scroll -->
+    <div class="h-screen flex items-center justify-center text-gray-500">
+        <p>Scroll Down &darr;</p>
+    </div>
+
+    <!-- 
+      The Interaction Track
+      This element is tall to create scroll space.
+      We wrap it in interact-element to give it a stable key.
+    -->
+    <interact-element data-interact-key="scroll-track">
+        <div class="relative h-[300vh]">
+            
+            <!-- Sticky Content -->
+            <div class="sticky top-0 h-screen flex items-center px-4 md:px-20 overflow-hidden">
+                <div class="max-w-4xl">
+                    
+                    <!-- NEW: Eyebrow Headline -->
+                    <h2 id="target-eyebrow" class="text-content text-blue-400 font-bold tracking-widest uppercase mb-6 flex flex-wrap gap-x-2 text-sm md:text-base">
+                        <!-- Content injected via JS -->
+                    </h2>
+
+                    <!-- Main Text -->
+                    <!-- 
+                        ACCESSIBILITY UPDATE:
+                        We add aria-label with the full text so screen readers read it as one coherent sentence.
+                        The content inside is hidden from screen readers via aria-hidden on the spans.
+                    -->
+                    <h1 id="target-text" class="text-content text-4xl md:text-6xl font-bold flex flex-wrap gap-x-3 gap-y-2">
+                        <!-- Content injected via JS -->
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </interact-element>
+
+    <!-- Spacer for footer -->
+    <div class="h-screen flex items-center justify-center text-gray-500">
+        <p>End of Section</p>
+    </div>
+
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+
+        // 1. Text Preparation
+        const eyebrowContent = "The Philosophy";
+        const mainContent = "Designing interactions shouldn't be a struggle. We want text that flows like water, rising from the depths as you scroll, creating a rhythm that guides the eye naturally from left to right, line by line.";
+        
+        // Helper to split text and retain accessibility
+        function splitAndAppend(text, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            // ACCESSIBILITY: Set the full text on the container
+            container.setAttribute('aria-label', text);
+            
+            // Split text into words and wrap them
+            text.split(' ').forEach(word => {
+                const span = document.createElement('span');
+                span.textContent = word;
+                span.className = 'word';
+                // ACCESSIBILITY: Hide visual artifacts from screen reader
+                span.setAttribute('aria-hidden', 'true');
+                container.appendChild(span);
+            });
+        }
+
+        // Initialize both text blocks
+        splitAndAppend(eyebrowContent, 'target-eyebrow');
+        splitAndAppend(mainContent, 'target-text');
+
+        // 2. The Custom Effect Logic
+        // This function runs every frame the scroll changes.
+        // element: the source element ('scroll-track')
+        // progress: number 0-1 representing scroll position
+        const wordRevealEffect = (element, progress) => {
+            // This selects ALL .word elements inside the container, 
+            // naturally picking up the eyebrow first, then the main text.
+            const wordElements = element.querySelectorAll('.word');
+            const totalWords = wordElements.length;
+            
+            // TIMING TWEAK: 
+            // We want the animation to finish slightly BEFORE the scroll range ends (at 80%).
+            // This creates a "freeze" moment where text is fully visible before it unsticks.
+            const finishAt = 0.8;
+            const effectiveProgress = Math.min(progress / finishAt, 1.0);
+
+            // Configuration for the stagger feel
+            const staggerOverlap = 0.5; 
+            const entrySpeed = 0.1; 
+            
+            wordElements.forEach((word, index) => {
+                // Calculate start/end thresholds for this specific word based on effectiveProgress
+                const start = (index / totalWords) * (1 - entrySpeed);
+                const end = start + entrySpeed;
+                
+                // Normalize progress for this word to 0-1
+                let localProgress = (effectiveProgress - start) / (end - start);
+                
+                // Clamp values
+                if (localProgress < 0) localProgress = 0;
+                if (localProgress > 1) localProgress = 1;
+
+                // Easing (Cubic Out for smooth rise)
+                const eased = 1 - Math.pow(1 - localProgress, 3);
+
+                // Apply Styles
+                const y = 40 - (40 * eased);
+                const alpha = Math.max(0.1, eased); 
+                const blur = 10 - (10 * eased);
+
+                word.style.transform = `translate3d(0, ${y}px, 0)`;
+                word.style.opacity = alpha;
+                word.style.filter = `blur(${blur}px)`;
+            });
+        };
+
+        // 3. Interact Configuration
+        const config = {
+            interactions: [
+                {
+                    key: 'scroll-track', 
+                    trigger: 'viewProgress',
+                    effects: [
+                        {
+                            customEffect: wordRevealEffect,
+                            fill: 'both', 
+                            composite: 'replace',
+                            
+                            // SCROLL RANGES UPDATED:
+                            // Start: 'entry' 0% -> When the track TOP hits the viewport BOTTOM (starts rising)
+                            // End: 'exit' 0% -> When the track BOTTOM hits the viewport BOTTOM (starts unsticking)
+                            // This maps the animation exactly to the time the element is entering and sticking.
+                            rangeStart: { name: 'entry', offset: { value: 0, type: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } }
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // 4. Initialize
+        Interact.create(config);
+
+    </script>
+</body>
+</html>
