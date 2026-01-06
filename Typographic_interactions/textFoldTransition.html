@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" class="snap-y snap-mandatory scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sticky Text Transitions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Hide scrollbar */
+        body::-webkit-scrollbar { display: none; }
+        body { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .text-mask {
+            overflow: hidden;
+            display: block;
+            line-height: 1.1; 
+            padding-bottom: 0.2em; /* Increased to prevent clipping of descenders */
+        }
+        
+        .line-content { display: block; }
+
+        .snap-point {
+            height: 100vh;
+            width: 100%;
+            scroll-snap-align: start;
+        }
+
+        /* Hide visual layer until Interact is ready */
+        .visual-layer {
+            opacity: 0;
+        }
+        .visual-layer.ready {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-white text-black font-sans m-0">
+
+    <!-- FIXED VISUAL LAYER -->
+    <div id="visual-layer" class="visual-layer fixed inset-0 flex items-center justify-center pointer-events-none z-20">
+        
+        <!-- PAIR 1 -->
+        <div class="absolute inset-0 flex flex-col items-center justify-center px-6 max-w-5xl mx-auto text-center">
+            
+            <!-- ACCESSIBILITY: Screen Reader Content -->
+            <div class="sr-only">
+                <h1>First Impression</h1>
+                <p>In the digital realm, your design serves as the silent ambassador of your brand, articulating values and intent long before a single word is read.</p>
+            </div>
+
+            <!-- VISUAL: Animated Split Text (Hidden from SR) -->
+            <div class="mb-8" aria-hidden="true">
+                <span class="text-mask">
+                    <interact-element data-interact-key="p1-h1-l1">
+                        <span class="text-6xl md:text-9xl uppercase font-normal tracking-tighter line-content">First</span>
+                    </interact-element>
+                </span>
+                <span class="text-mask">
+                    <interact-element data-interact-key="p1-h1-l2">
+                        <span class="text-6xl md:text-9xl uppercase font-normal tracking-tighter line-content">Impression</span>
+                    </interact-element>
+                </span>
+            </div>
+            
+            <div class="space-y-1" aria-hidden="true">
+                <span class="text-mask"><interact-element data-interact-key="p1-l1"><span class="text-xl md:text-3xl line-content">In the digital realm, your design serves as the</span></interact-element></span>
+                <span class="text-mask"><interact-element data-interact-key="p1-l2"><span class="text-xl md:text-3xl line-content">silent ambassador of your brand, articulating values</span></interact-element></span>
+                <span class="text-mask"><interact-element data-interact-key="p1-l3"><span class="text-xl md:text-3xl line-content">and intent long before a single word is read.</span></interact-element></span>
+            </div>
+        </div>
+
+        <!-- PAIR 2 -->
+        <div class="absolute inset-0 flex flex-col items-center justify-center px-6 max-w-5xl mx-auto text-center">
+            
+            <!-- ACCESSIBILITY: Screen Reader Content -->
+            <div class="sr-only">
+                <h1>Seamless Motion</h1>
+                <p>Animation transforms static interfaces into living ecosystems, providing critical context and guiding the user's eye through a fluid narrative.</p>
+            </div>
+
+            <!-- VISUAL: Animated Split Text (Hidden from SR) -->
+            <div class="mb-8" aria-hidden="true">
+                <span class="text-mask">
+                    <interact-element data-interact-key="p2-h1-l1">
+                        <span class="text-6xl md:text-9xl uppercase font-normal tracking-tighter line-content">Seamless</span>
+                    </interact-element>
+                </span>
+                <span class="text-mask">
+                    <interact-element data-interact-key="p2-h1-l2">
+                        <span class="text-6xl md:text-9xl uppercase font-normal tracking-tighter line-content">Motion</span>
+                    </interact-element>
+                </span>
+            </div>
+
+            <div class="space-y-1" aria-hidden="true">
+                <span class="text-mask"><interact-element data-interact-key="p2-l1"><span class="text-xl md:text-3xl line-content">Animation transforms static interfaces into living</span></interact-element></span>
+                <span class="text-mask"><interact-element data-interact-key="p2-l2"><span class="text-xl md:text-3xl line-content">ecosystems, providing critical context and guiding</span></interact-element></span>
+                <span class="text-mask"><interact-element data-interact-key="p2-l3"><span class="text-xl md:text-3xl line-content">the user's eye through a fluid narrative.</span></interact-element></span>
+            </div>
+        </div>
+
+        <!-- PAIR 3 -->
+        <div class="absolute inset-0 flex flex-col items-center justify-center px-6 max-w-5xl mx-auto text-center">
+            
+            <!-- ACCESSIBILITY: Screen Reader Content -->
+            <div class="sr-only">
+                <h1>Final Impact</h1>
+                <p>The final impression is the one that lingers, creating a resonant memory that persists after the browser tab is closed forever.</p>
+            </div>
+
+            <!-- VISUAL: Animated Split Text (Hidden from SR) -->
+            <div class="mb-8" aria-hidden="true">
+                <span class="text-mask">
+                    <interact-element data-interact-key="p3-h1-l1">
+                        <span class="text-6xl md:text-9xl uppercase font-normal tracking-tighter line-content">Final</span>
+                    </interact-element>
+                </span>
+                <span class="text-mask">
+                    <interact-element data-interact-key="p3-h1-l2">
+                        <span class="text-6xl md:text-9xl uppercase font-normal tracking-tighter line-content">Impact</span>
+                    </interact-element>
+                </span>
+            </div>
+
+            <div class="space-y-1" aria-hidden="true">
+                <span class="text-mask"><interact-element data-interact-key="p3-l1"><span class="text-xl md:text-3xl line-content">The final impression is the one that lingers,</span></interact-element></span>
+                <span class="text-mask"><interact-element data-interact-key="p3-l2"><span class="text-xl md:text-3xl line-content">creating a resonant memory that persists after</span></interact-element></span>
+                <span class="text-mask"><interact-element data-interact-key="p3-l3"><span class="text-xl md:text-3xl line-content">the browser tab is closed forever.</span></interact-element></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGICAL SCROLL LAYER -->
+    <interact-element data-interact-key="scroll-track">
+        <div class="relative w-full">
+            <div class="snap-point"></div> <!-- Pair 1 -->
+            <div class="snap-point"></div> <!-- Pair 2 -->
+            <div class="snap-point"></div> <!-- Pair 3 -->
+        </div>
+    </interact-element>
+
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+
+        // Check scroll position to determine if we should run the pageVisible animation
+        const scrollProgress = window.scrollY / Math.max(1, document.body.scrollHeight - window.innerHeight);
+        const isAtTop = scrollProgress < 0.15;
+
+        // 1. SCROLL EASING (Reversed / Ease-In)
+        const SCROLL_EASING = 'cubic-bezier(0.8, 0, 0.8, 0.2)';
+
+        // 2. LOAD EASING (Soft Ease-Out)
+        const LOAD_EASING = 'cubic-bezier(0.25, 1, 0.5, 1)';
+
+        // --- KEYFRAME DEFINITIONS ---
+        // Updated translation to 150% to ensure descenders fully clear the mask
+
+        const ENTER_SCROLL = [
+            { transform: 'translateY(150%)', opacity: 0, offset: 0, easing: SCROLL_EASING },
+            { transform: 'translateY(0%)', opacity: 1, offset: 1 }
+        ];
+        const EXIT_SCROLL = [
+            { transform: 'translateY(0%)', opacity: 1, offset: 0, easing: SCROLL_EASING },
+            { transform: 'translateY(-150%)', opacity: 0, offset: 1 }
+        ];
+
+        const ENTER_LOAD = [
+            { transform: 'translateY(110%)', opacity: 0, offset: 0, easing: LOAD_EASING },
+            { transform: 'translateY(0%)', opacity: 1, offset: 1 }
+        ];
+
+        // Adjusted ranges to end earlier (48/72) to ensure completion before scroll bounce/limits
+        const T1_START = 26; const T1_END = 48;
+        const T2_START = 51; const T2_END = 72;
+
+        // Build interactions array - only include pageVisible animation when at top
+        const interactions = [];
+
+        // --- 1. INITIAL LOAD (Pair 1) - Only when at top of page ---
+        if (isAtTop) {
+            interactions.push({
+                key: 'scroll-track', 
+                trigger: 'pageVisible',
+                effects: [
+                    { key: 'p1-h1-l1', duration: 1000, delay: 0, keyframeEffect: { name: 'in', keyframes: ENTER_LOAD }, fill: 'both', composite: 'add' },
+                    { key: 'p1-h1-l2', duration: 1000, delay: 100, keyframeEffect: { name: 'in', keyframes: ENTER_LOAD }, fill: 'both', composite: 'add' },
+                    { key: 'p1-l1', duration: 1000, delay: 200, keyframeEffect: { name: 'in', keyframes: ENTER_LOAD }, fill: 'both', composite: 'add' },
+                    { key: 'p1-l2', duration: 1000, delay: 300, keyframeEffect: { name: 'in', keyframes: ENTER_LOAD }, fill: 'both', composite: 'add' },
+                    { key: 'p1-l3', duration: 1000, delay: 400, keyframeEffect: { name: 'in', keyframes: ENTER_LOAD }, fill: 'both', composite: 'add' }
+                ]
+            });
+        }
+
+        // --- 2. SCROLL TRANSITIONS --- (always included)
+        interactions.push({
+            key: 'scroll-track',
+            trigger: 'viewProgress',
+            effects: [
+                // === PAIR 1 EXIT ===
+                { key: 'p1-h1-l1', rangeStart: { name: 'cover', offset: { value: T1_START, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p1-h1-l2', rangeStart: { name: 'cover', offset: { value: T1_START + 1, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END + 1, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p1-l1', rangeStart: { name: 'cover', offset: { value: T1_START, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p1-l2', rangeStart: { name: 'cover', offset: { value: T1_START + 1, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END + 1, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p1-l3', rangeStart: { name: 'cover', offset: { value: T1_START + 2, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END + 2, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+
+                // === PAIR 2 ENTER ===
+                { key: 'p2-h1-l1', rangeStart: { name: 'cover', offset: { value: T1_START, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p2-h1-l2', rangeStart: { name: 'cover', offset: { value: T1_START + 1, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END + 1, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p2-l1', rangeStart: { name: 'cover', offset: { value: T1_START, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p2-l2', rangeStart: { name: 'cover', offset: { value: T1_START + 1, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END + 1, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p2-l3', rangeStart: { name: 'cover', offset: { value: T1_START + 2, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END + 2, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+
+                // === PAIR 2 EXIT ===
+                { key: 'p2-h1-l1', rangeStart: { name: 'cover', offset: { value: T2_START, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p2-h1-l2', rangeStart: { name: 'cover', offset: { value: T2_START, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p2-l1', rangeStart: { name: 'cover', offset: { value: T2_START, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p2-l2', rangeStart: { name: 'cover', offset: { value: T2_START + 1, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END + 1, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p2-l3', rangeStart: { name: 'cover', offset: { value: T2_START + 2, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END + 2, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+
+                // === PAIR 3 ENTER ===
+                { key: 'p3-h1-l1', rangeStart: { name: 'cover', offset: { value: T2_START, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p3-h1-l2', rangeStart: { name: 'cover', offset: { value: T2_START + 1, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END + 1, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p3-l1', rangeStart: { name: 'cover', offset: { value: T2_START, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p3-l2', rangeStart: { name: 'cover', offset: { value: T2_START + 1, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END + 1, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p3-l3', rangeStart: { name: 'cover', offset: { value: T2_START + 2, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END + 2, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+            ]
+        });
+
+        Interact.create({ interactions });
+        
+        // Reveal visual layer immediately - no delay needed since pageVisible 
+        // animation is only included when at top (no conflicting animations)
+        document.getElementById('visual-layer').classList.add('ready');
+    </script>
+</body>
+</html>
