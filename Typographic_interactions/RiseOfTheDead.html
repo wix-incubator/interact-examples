@@ -106,6 +106,13 @@
         const word2 = "DEAD";
         const targetContainer = document.getElementById('split-text-target');
         
+        // ACCESSIBILITY: Add screen-reader only text so it reads naturally
+        // instead of reading individual split characters.
+        const srText = document.createElement('span');
+        srText.className = 'sr-only';
+        srText.textContent = `${word1} ${word2}`;
+        targetContainer.appendChild(srText);
+
         let letterKeys = [];
 
         const generateHTML = (text, lineIndex) => {
@@ -113,6 +120,10 @@
             // CHANGED: Added 'text-center' to explicitly center the inline-block letters
             lineDiv.className = 'block whitespace-nowrap text-center';
             
+            // ACCESSIBILITY: Hide the visual split text from screen readers
+            // because we provided the full text in the .sr-only span above.
+            lineDiv.setAttribute('aria-hidden', 'true');
+
             text.split('').forEach((char, charIndex) => {
                 const key = `char-${lineIndex}-${charIndex}`;
                 letterKeys.push(key);
