@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rising Dead Scroll Animation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Import Instrument Serif -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #0f0f11;
+            color: #ececec;
+            overflow-x: hidden;
+        }
+
+        .font-instrument {
+            font-family: 'Instrument Serif', serif;
+        }
+
+        /* 3D Perspective Context */
+        .char-perspective {
+            perspective: 600px;
+            display: inline-block;
+            margin: 0 2px;
+        }
+
+        /* Animation Target */
+        interact-element {
+            display: inline-block;
+            transform-origin: bottom center;
+            transform-style: preserve-3d;
+            vertical-align: bottom;
+        }
+
+        /* FIX: Override the global inline-block rule for the main track wrapper.
+           This ensures the scroll section takes up the full width of the screen,
+           allowing the flex-center alignment inside to work correctly.
+        */
+        interact-element[data-interact-key="scroll-track"] {
+            display: block;
+            width: 100%;
+        }
+
+        .letter-visual {
+            display: block;
+            will-change: transform, opacity;
+        }
+
+        .spacer {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #444;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+
+    <div class="spacer">
+        <p>↓ Scroll Down to Enter the Timeline ↓</p>
+    </div>
+
+    <!-- 
+        NEW STRUCTURE FOR STICKY SCROLL:
+        1. Outer Wrapper (interact-element): The "Track" that drives the timeline.
+        2. .scroll-track: Provides the height (300vh) for scrolling.
+        3. .sticky-content: Pinned to the screen to hold the text.
+    -->
+    <interact-element data-interact-key="scroll-track">
+        <!-- CHANGED: Increased height to 450vh to allow for more extreme offsets -->
+        <section class="relative h-[450vh] w-full">
+            <div class="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden">
+                
+                <h1 id="split-text-target" class="font-instrument text-6xl md:text-9xl text-center leading-tight mb-12 uppercase tracking-tighter w-full">
+                    <!-- Content injected by JS -->
+                </h1>
+
+                <div class="max-w-2xl px-6 text-center">
+                    <p class="text-lg md:text-xl text-gray-400 leading-relaxed">
+                        The ancient crypts have opened. As you scroll through the timeline of history, 
+                        the characters rise from their slumber to greet the modern world. 
+                        This text remains static, observing the chaos above.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+    </interact-element>
+
+    <div class="spacer">
+        <p>End of Timeline</p>
+    </div>
+
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+
+        // 1. Setup Content
+        const word1 = "RISING";
+        const word2 = "DEAD";
+        const targetContainer = document.getElementById('split-text-target');
+        
+        let letterKeys = [];
+
+        const generateHTML = (text, lineIndex) => {
+            const lineDiv = document.createElement('div');
+            // CHANGED: Added 'text-center' to explicitly center the inline-block letters
+            lineDiv.className = 'block whitespace-nowrap text-center';
+            
+            text.split('').forEach((char, charIndex) => {
+                const key = `char-${lineIndex}-${charIndex}`;
+                letterKeys.push(key);
+
+                const perspWrapper = document.createElement('span');
+                perspWrapper.className = 'char-perspective';
+
+                const wrapper = document.createElement('interact-element');
+                wrapper.setAttribute('data-interact-key', key);
+                
+                const span = document.createElement('span');
+                span.className = 'letter-visual';
+                span.textContent = char;
+                
+                wrapper.appendChild(span);
+                perspWrapper.appendChild(wrapper);
+                lineDiv.appendChild(perspWrapper);
+            });
+            return lineDiv;
+        };
+
+        targetContainer.appendChild(generateHTML(word1, 0));
+        targetContainer.appendChild(generateHTML(word2, 1));
+
+        // 2. Build Configuration
+        // We define ONE main interaction on the track, with multiple effects (one for each letter).
+        
+        const effects = letterKeys.map((letterKey) => {
+            // Random start delay (in vh).
+            // Track provides roughly 350vh of "sticky" scroll distance (450vh height - 100vh viewport).
+            // CHANGED: Increased random range from 80 to 250 for more extreme offsets
+            const startDelayVH = Math.floor(Math.random() * 250); 
+            
+            // Animation duration (in vh).
+            const durationVH = 50; 
+
+            return {
+                // Target the specific letter
+                key: letterKey, 
+                fill: 'both',
+                
+                // Start: When track top hits viewport top ('entry' 100%) + random delay
+                rangeStart: { 
+                    name: 'entry', 
+                    // 100% means "fully entered" (top at top).
+                    // We add 'vh' to delay the start relative to the scroll distance.
+                    offset: { value: 100, type: 'percentage' } 
+                },
+                // We actually need to offset the start by the random amount. 
+                // Since `rangeStart` combines logic, we can't just add `vh` to `percentage` easily in one object 
+                // unless the library supports calc (it doesn't usually).
+                // WORKAROUND: We use 'entry' with a VH offset. 
+                // Since 'entry' (0%) is when top hits bottom, 'entry' + 100vh is roughly top hits top.
+                // Let's use `entry` with `100vh + randomVH`.
+                
+                rangeStart: {
+                    name: 'entry',
+                    offset: { value: 100 + startDelayVH, type: 'vh' }
+                },
+
+                // End: Start + Duration
+                rangeEnd: { 
+                    name: 'entry', 
+                    offset: { value: 100 + startDelayVH + durationVH, type: 'vh' } 
+                },
+
+                keyframeEffect: {
+                    name: `rise-${letterKey}`,
+                    keyframes: [
+                        { 
+                            opacity: 0, 
+                            // CHANGED: Reduced translateY from 30px to 10px for a more subtle rise
+                            transform: 'rotateX(90deg) translateY(10px) translateZ(-50px)' 
+                        },
+                        { 
+                            opacity: 1, 
+                            transform: 'rotateX(0deg) translateY(0) translateZ(0)' 
+                        }
+                    ]
+                }
+            };
+        });
+
+        const config = {
+            interactions: [
+                {
+                    key: 'scroll-track', // Triggered by the main track wrapper
+                    trigger: 'viewProgress',
+                    effects: effects
+                }
+            ]
+        };
+
+        Interact.create(config);
+    </script>
+</body>
+</html>
