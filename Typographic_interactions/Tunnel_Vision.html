@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ripple Text Animation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Switched to Modak */
+    @import url('https://fonts.googleapis.com/css2?family=Modak&display=swap');
+
+    :root {
+      /* Reverted back to Black/White */
+      --bg-color: #0f0f11; 
+      --text-color: #ffffff;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Modak', system-ui; /* Updated Font Family */
+      overflow: hidden;
+    }
+
+    .ripple-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: grid;
+      place-items: center;
+      perspective: 1000px;
+    }
+
+    .layer-wrapper {
+      grid-area: 1 / 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      pointer-events: none;
+    }
+
+    /* .mouse-target handles the Interaction (Scale/Push) + Inertia */
+    .mouse-target {
+      will-change: transform;
+      transform-origin: center center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .h1-box {
+      /* Reduced size because Modak is very wide */
+      font-size: 7.5rem; 
+      /* Modak has unique metrics, 0.85 fits the glyphs better */
+      line-height: 0.85; 
+      font-weight: 400; /* Modak only has one weight (heavy) */
+      text-transform: uppercase;
+      letter-spacing: 0.02em; 
+      margin: 0;
+      padding: 0; 
+      width: fit-content;   
+      background-color: transparent; 
+      -webkit-text-stroke: 4px var(--bg-color);
+      paint-order: stroke fill;
+      display: block;
+      white-space: nowrap;
+      box-shadow: none;
+    }
+
+    .h1-base {
+      color: var(--text-color);
+      position: relative;
+      z-index: 50; 
+      /* Adjusted offset for Modak's baseline */
+      transform: translateY(-0.02em); 
+    }
+
+    .h1-copy {
+      color: var(--text-color); 
+      transform: translate3d(0, -0.02em, 0);
+    }
+
+    /* INERTIA + COLOR TINTING 
+       Applied to .mouse-target for movement, and .h1-copy for color.
+    */
+
+    /* LAYER 1 */
+    [data-interact-key="h1-L1"] .mouse-target { 
+      transition: transform 0.5s cubic-bezier(0.1, 0.9, 0.2, 1);
+    }
+    [data-interact-key="h1-L1"] .h1-copy {
+      color: color-mix(in srgb, var(--text-color), var(--bg-color) 20%);
+    }
+
+    /* LAYER 2 */
+    [data-interact-key="h1-L2"] .mouse-target { 
+      transition: transform 0.65s cubic-bezier(0.1, 0.9, 0.2, 1);
+    }
+    [data-interact-key="h1-L2"] .h1-copy {
+      color: color-mix(in srgb, var(--text-color), var(--bg-color) 35%);
+    }
+
+    /* LAYER 3 */
+    [data-interact-key="h1-L3"] .mouse-target { 
+      transition: transform 0.8s cubic-bezier(0.1, 0.9, 0.2, 1);
+    }
+    [data-interact-key="h1-L3"] .h1-copy {
+      color: color-mix(in srgb, var(--text-color), var(--bg-color) 50%);
+    }
+
+    /* LAYER 4 */
+    [data-interact-key="h1-L4"] .mouse-target { 
+      transition: transform 0.95s cubic-bezier(0.1, 0.9, 0.2, 1);
+    }
+    [data-interact-key="h1-L4"] .h1-copy {
+      color: color-mix(in srgb, var(--text-color), var(--bg-color) 65%);
+    }
+
+    /* LAYER 5 */
+    [data-interact-key="h1-L5"] .mouse-target { 
+      transition: transform 1.1s cubic-bezier(0.1, 0.9, 0.2, 1);
+    }
+    [data-interact-key="h1-L5"] .h1-copy {
+      color: color-mix(in srgb, var(--text-color), var(--bg-color) 80%);
+    }
+
+
+    .content-block {
+      position: absolute;
+      bottom: 3rem;
+      width: 100%;
+      text-align: center;
+      z-index: 100;
+    }
+
+    @media (max-width: 768px) {
+      .h1-box {
+        font-size: 3.5rem; /* Adjusted for mobile width */
+        -webkit-text-stroke: 2px var(--bg-color); 
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-center items-center">
+
+  <div class="relative w-full h-full">
+    
+    <div class="ripple-container">
+      
+      <!-- STRUCTURE: Interact > Mouse Target (JS Move) > Text Box -->
+
+      <!-- LAYER 5 -->
+      <div class="layer-wrapper" style="z-index: 4">
+        <interact-element data-interact-key="h1-L5">
+          <div class="mouse-target">
+            <div class="h1-box h1-copy">BLACK HOLE</div>
+          </div>
+        </interact-element>
+      </div>
+      
+      <!-- LAYER 4 -->
+      <div class="layer-wrapper" style="z-index: 5">
+        <interact-element data-interact-key="h1-L4">
+          <div class="mouse-target">
+            <div class="h1-box h1-copy">BLACK HOLE</div>
+          </div>
+        </interact-element>
+      </div>
+
+      <!-- LAYER 3 -->
+      <div class="layer-wrapper" style="z-index: 6">
+        <interact-element data-interact-key="h1-L3">
+          <div class="mouse-target">
+            <div class="h1-box h1-copy">BLACK HOLE</div>
+          </div>
+        </interact-element>
+      </div>
+
+      <!-- LAYER 2 -->
+      <div class="layer-wrapper" style="z-index: 7">
+        <interact-element data-interact-key="h1-L2">
+          <div class="mouse-target">
+            <div class="h1-box h1-copy">BLACK HOLE</div>
+          </div>
+        </interact-element>
+      </div>
+
+      <!-- LAYER 1 -->
+      <div class="layer-wrapper" style="z-index: 8">
+        <interact-element data-interact-key="h1-L1">
+          <div class="mouse-target">
+            <div class="h1-box h1-copy">BLACK HOLE</div>
+          </div>
+        </interact-element>
+      </div>
+
+      <!-- MAIN -->
+      <div class="layer-wrapper" style="z-index: 50">
+        <interact-element data-interact-key="h1-trigger">
+          <h1 class="h1-box h1-base">BLACK HOLE</h1>
+        </interact-element>
+      </div>
+
+    </div>
+
+    <interact-element data-interact-key="hero-text">
+      <div class="content-block px-6">
+        <p class="text-gray-500 text-sm tracking-widest uppercase">
+          Interact to disturb the void
+        </p>
+      </div>
+    </interact-element>
+
+  </div>
+
+  <script type="module">
+    import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+
+    /**
+     * @param {number} scale - Scale > 1
+     * @param {number} range - Parallax range
+     */
+    const createDepthLayer = (scale, range) => (element, progress) => {
+      // Find the mouse target wrapper inside the interact element
+      const target = element.querySelector('.mouse-target') || element;
+
+      const rawX = (progress.x || 0.5) - 0.5;
+      const rawY = (progress.y || 0.5) - 0.5;
+
+      const x = rawX * 2 * range * -1;
+      const y = rawY * 2 * range * -1;
+
+      const yCorrection = 0.0; 
+
+      // Stroke logic applied to the text box inside
+      const textBox = element.querySelector('.h1-box');
+      if (textBox) {
+        const isMobile = window.innerWidth <= 768;
+        const baseStroke = isMobile ? 2 : 4; 
+        const adjustedStroke = baseStroke / scale;
+        textBox.style.webkitTextStrokeWidth = `${adjustedStroke}px`;
+        textBox.style.transition = `-webkit-text-stroke-width ${scale * 0.5}s ease-out`; 
+      }
+
+      // Apply Transform to the Mouse Target Wrapper
+      target.style.transform = `
+        translate3d(${x}px, calc(${yCorrection}em + ${y}px), 0) 
+        scale(${scale})
+      `;
+    };
+
+    const config = {
+      effects: {
+        'fade-up': {
+            namedEffect: { type: 'SlideIn', direction: 'bottom', distance: '30px', duration: 1000, easing: 'ease-out' },
+            fill: 'both'
+        }
+      },
+
+      interactions: [
+        {
+          key: 'h1-trigger',
+          trigger: 'pointerMove',
+          params: { hitArea: 'root' }, 
+          effects: [
+            { key: 'h1-L1', customEffect: createDepthLayer(1.15, 20) },
+            { key: 'h1-L2', customEffect: createDepthLayer(1.30, 40) },
+            { key: 'h1-L3', customEffect: createDepthLayer(1.45, 60) },
+            { key: 'h1-L4', customEffect: createDepthLayer(1.60, 80) },
+            { key: 'h1-L5', customEffect: createDepthLayer(1.75, 100) },
+          ]
+        },
+
+        /* Text Entrance */
+        {
+            key: 'hero-text',
+            trigger: 'viewEnter',
+            effects: [{ effectId: 'fade-up', delay: 400 }]
+        }
+      ]
+    };
+
+    Interact.create(config);
+  </script>
+</body>
+</html>
