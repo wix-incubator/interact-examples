@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design History - Apple Grid System</title>
+    
+    <!-- Import the Wix Interact Library -->
+    <script type="module" src="https://esm.sh/@wix/interact@2.0.0-rc.4/web?bundle"></script>
+
+    <style>
+        /* --- APPLE SYSTEM STACK & VARIABLES --- */
+        :root {
+            --bg-color: #000000;
+            --book-cover: #ffffff;
+            --text-main: #1d1d1f;
+            --text-secondary: #86868b;
+            --divider: #d2d2d7;
+            
+            /* Grid Units */
+            --page-padding: clamp(24px, 6%, 48px);
+            --header-height: 140px; 
+        }
+
+        html, body {
+            margin: 0; padding: 0;
+            background: var(--bg-color);
+            min-height: 300vh;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        interact-element { display: block; }
+
+        .viewport-wrapper {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            pointer-events: none;
+        }
+
+        .scroll-track-inner {
+            height: 300vh; width: 100%; position: absolute; top: 0; left: 0; pointer-events: none;
+        }
+
+        .book-container {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            
+            /* --- Responsive Aspect Ratio Logic --- */
+            /* 1. Width takes 85% of screen width (vw) */
+            /* 2. Constrained by height: Max width is calculated to keep height within ~85vh 
+                  (136vh / 1.6 aspect ratio = 85vh max height) */
+            width: 85vw;
+            max-width: 136vh; 
+            aspect-ratio: 16/10;
+            
+            display: flex; justify-content: center; align-items: center;
+            perspective: 3500px; pointer-events: auto;
+        }
+
+        .book {
+            position: relative; width: 100%; height: 100%; transform-style: preserve-3d;
+        }
+
+        /* --- PAGE STRUCTURE --- */
+        .leaf, .cover, .right-page {
+            position: absolute; top: 0; right: 0; width: 50%; height: 100%;
+            border-radius: 4px 12px 12px 4px;
+            transform-origin: left center;
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+
+        .right-page {
+            z-index: 1;
+            border-left: 1px solid rgba(0,0,0,0.06);
+            background: linear-gradient(to right, #f5f5f7 0%, #ffffff 15%, #ffffff 100%);
+        }
+
+        .face {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            backface-visibility: hidden;
+            background: white;
+            border-radius: 4px 12px 12px 4px;
+            overflow: hidden;
+        }
+
+        /* --- STRICT GRID LAYOUT --- */
+        .face, .right-page {
+            box-sizing: border-box;
+            padding: var(--page-padding);
+            display: grid;
+            grid-template-rows: auto 1fr auto; 
+            gap: 24px;
+            text-align: left;
+            color: var(--text-main);
+        }
+
+        .page-header {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            min-height: var(--header-height); 
+        }
+
+        .cover .page-header { min-height: auto; margin-bottom: auto; }
+        .cover .face { gap: 12px; }
+
+        /* Stacking & Back Faces */
+        .cover { z-index: 20; background: var(--book-cover); }
+        .leaf-3 { z-index: 10; } 
+        .leaf-2 { z-index: 5; }
+
+        .leaf-back, .cover-back { 
+            transform: rotateY(180deg); 
+            border-radius: 12px 4px 4px 12px; 
+            border-right: 1px solid rgba(0,0,0,0.06); border-left: none;
+        }
+
+        .cover .face.cover-back { background: linear-gradient(to left, #f5f5f7 0%, #ffffff 15%, #ffffff 100%); }
+        #leaf2 .face.leaf-front { background: linear-gradient(to right, #f5f5f7 0%, #ffffff 15%, #ffffff 100%); }
+        #leaf2 .face.leaf-back  { background: linear-gradient(to left, #e5e5ea 0%, #ffffff 20%, #ffffff 100%); }
+        #leaf3 .face.leaf-front { background: linear-gradient(to right, #e5e5ea 0%, #ffffff 20%, #ffffff 100%); }
+        #leaf3 .face.leaf-back  { background: linear-gradient(to left, #d2d2d7 0%, #f5f5f7 20%, #ffffff 100%); }
+
+        .leaf-front::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to right, rgba(0,0,0,0.1), transparent 25%);
+            opacity: var(--shadow-front, 0); pointer-events: none; border-radius: 4px 12px 12px 4px;
+        }
+        .leaf-back::before {
+             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+             background: linear-gradient(to left, rgba(0,0,0,0.1), transparent 25%);
+             opacity: var(--shadow-back, 0); pointer-events: none; border-radius: 12px 4px 4px 12px;
+        }
+
+        .pages-stack {
+            position: absolute; top: 1px; right: 2px; width: 49.5%; height: 99%;
+            background: #d1d1d6; border-radius: 4px 12px 12px 4px; z-index: 0;
+            box-shadow: -2px 0 8px rgba(0,0,0,0.15);
+        }
+
+        /* Typography */
+        h1 { font-size: clamp(48px, 8vw, 82px); font-weight: 600; letter-spacing: -0.04em; margin: 0; line-height: 0.95; }
+        h2 { font-size: clamp(28px, 4.5vw, 40px); font-weight: 600; letter-spacing: -0.02em; margin: 0; line-height: 1.1; }
+        .eyebrow { font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 12px 0; display: block; }
+        .divider { width: 100%; height: 1px; background: var(--divider); margin: 0 0 24px 0; }
+        .content-body { display: flex; flex-direction: column; gap: 20px; }
+        p { font-size: clamp(14px, 1.6vw, 17px); line-height: 1.5; color: var(--text-main); margin: 0; font-weight: 400; max-width: 92%; }
+        .large-p { font-size: clamp(18px, 2.2vw, 22px); line-height: 1.4; font-weight: 500; letter-spacing: -0.01em; }
+        
+        .page-footer { 
+            font-size: 12px; color: var(--text-secondary); font-weight: 500; 
+            font-variant-numeric: tabular-nums; align-self: end; 
+        }
+        .leaf-back .page-footer, .cover-back .page-footer { justify-self: start; }
+        .leaf-front .page-footer, .right-page .page-footer { justify-self: end; }
+        
+        .graphics-container { margin-bottom: 8px; }
+        .icon-box { width: 48px; height: 48px; background: #000; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: auto; }
+        .cover-back .footer-row { display: flex; width: 100%; justify-content: space-between; align-items: flex-end; margin-top: auto; }
+
+        .apple-logo { width: 24px; height: 24px; background: #fff; mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.79-1.31.02-2.3-1.23-3.14-2.47-1.72-2.49-3.03-7.03-1.27-10.09 0.86-1.49 2.39-2.43 4.07-2.45 1.3 0 2.52.87 3.32.87.79 0 2.29-1.09 3.84-0.93 0.65 0.03 2.5.26 3.68 1.98-0.09.06-2.2 1.28-2.18 3.81 0.02 3.03 2.65 4.04 2.68 4.05-0.02.07-0.42 1.44-1.39 2.83M13 3.5c.71-.86 1.19-2.05 1.05-3.24-1.03.04-2.27.69-3.01 1.54-.66.75-1.24 1.95-1.08 3.12 1.15.09 2.33-.56 3.04-1.42"/></svg>'); -webkit-mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.79-1.31.02-2.3-1.23-3.14-2.47-1.72-2.49-3.03-7.03-1.27-10.09 0.86-1.49 2.39-2.43 4.07-2.45 1.3 0 2.52.87 3.32.87.79 0 2.29-1.09 3.84-0.93 0.65 0.03 2.5.26 3.68 1.98-0.09.06-2.2 1.28-2.18 3.81 0.02 3.03 2.65 4.04 2.68 4.05-0.02.07-0.42 1.44-1.39 2.83M13 3.5c.71-.86 1.19-2.05 1.05-3.24-1.03.04-2.27.69-3.01 1.54-.66.75-1.24 1.95-1.08 3.12 1.15.09 2.33-.56 3.04-1.42"/></svg>'); }
+        .circle-art { width: 56px; height: 56px; border: 3px solid #e5e5ea; border-radius: 50%; }
+        .rect-art { width: 32px; height: 32px; background: #e5e5ea; border-radius: 8px; }
+        .grid-art { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; width: 40px; }
+        .grid-art div { width: 18px; height: 18px; background: #e5e5ea; border-radius: 4px; }
+
+        .scroll-hint { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 2px; animation: bounce 2s infinite; pointer-events: none; z-index: 100; font-weight: 600; }
+        @keyframes bounce { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 10px); } }
+        
+        /* --- RESPONSIVE VERTICAL LAYOUT (Under 750px) --- */
+        @media (max-width: 750px) {
+            html, body {
+                min-height: auto;
+                height: auto;
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+
+            .viewport-wrapper {
+                position: static;
+                height: auto;
+                width: 100%;
+                padding: 60px 20px;
+                box-sizing: border-box;
+                overflow: visible !important;
+            }
+
+            .scroll-track-inner, .scroll-hint, .pages-stack, .cover-front { display: none; }
+
+            .book-container {
+                position: static;
+                transform: none;
+                width: 100%;
+                max-width: 600px;
+                margin: 0 auto;
+                display: flex;
+                flex-direction: column;
+                gap: 40px; /* Standard vertical spacing */
+                padding-bottom: 100px;
+                /* Reset desktop specific sizing */
+                max-height: none;
+                aspect-ratio: auto;
+            }
+
+            .book { display: contents; }
+            .leaf, .cover { display: contents; }
+
+            /* Simple Card Styling */
+            .face, .right-page {
+                position: relative;
+                width: 100%;
+                min-height: 500px;
+                transform: none !important;
+                border-radius: 24px;
+                background: white !important;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15); /* Softer card shadow */
+                border: none;
+                margin-bottom: 0;
+                top: auto; left: auto; right: auto;
+            }
+
+            /* Clean up borders/gradients */
+            .face, .right-page, .leaf-back, .cover-back {
+                border-left: none;
+                border-right: none;
+            }
+
+            /* Ordering */
+            .cover-back { order: 1; }
+            #leaf2 .leaf-front { order: 2; }
+            #leaf2 .leaf-back { order: 3; }
+            #leaf3 .leaf-front { order: 4; }
+            #leaf3 .leaf-back { order: 5; }
+            .right-page { order: 6; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="viewport-wrapper">
+        <interact-element data-interact-key="scroll-track">
+            <div class="scroll-track-inner"></div>
+        </interact-element>
+
+        <interact-element data-interact-key="book-scene">
+            <div class="book-container">
+                <div class="pages-stack"></div>
+                <div class="book" id="main-book">
+                    <!-- Cover -->
+                    <div class="cover">
+                        <div class="face cover-front"></div>
+                        <div class="face cover-back">
+                            <div class="page-header" style="min-height: auto;">
+                                <div class="eyebrow">Design History</div>
+                                <h1>Pro<br>Edition.</h1>
+                            </div>
+                            <div class="content-body">
+                                <p style="font-size: 12px; color: #86868b; font-weight: 500;">California Series, 2026</p>
+                            </div>
+                            <!-- Cover Footer Row -->
+                            <div class="footer-row">
+                                <div class="page-footer" style="margin: 0;">02</div>
+                                <div class="icon-box" style="margin: 0;"><div class="apple-logo"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Leaf3 (05/06) -->
+                    <div class="leaf leaf-3" id="leaf3">
+                        <div class="face leaf-front">
+                            <div class="page-header">
+                                <div class="eyebrow">Chapter 03</div>
+                                <h2>The Grid.</h2>
+                            </div>
+                            <div class="content-body">
+                                <div class="divider"></div>
+                                <div class="graphics-container">
+                                    <div class="grid-art"><div></div><div></div><div></div><div></div></div>
+                                </div>
+                                <p>Order out of chaos. The grid is the invisible structure that guides the eye.</p>
+                            </div>
+                            <div class="page-footer">05</div>
+                        </div>
+                        <div class="face leaf-back">
+                            <div class="page-header">
+                                <div class="eyebrow">Details</div>
+                                <h2>Iconography.</h2>
+                            </div>
+                            <div class="content-body">
+                                <div class="divider"></div>
+                                <p>A universal language. A single pixel can change the meaning of a shape.</p>
+                                <div class="graphics-container">
+                                    <div class="circle-art"></div>
+                                </div>
+                            </div>
+                            <div class="page-footer">06</div>
+                        </div>
+                    </div>
+
+                    <!-- Leaf2 (03/04) -->
+                    <div class="leaf leaf-2" id="leaf2">
+                        <div class="face leaf-front">
+                            <div class="page-header">
+                                <div class="eyebrow">Preface</div>
+                                <h2>Visual<br>Language.</h2>
+                            </div>
+                            <div class="content-body">
+                                <div class="divider"></div>
+                                <p class="large-p">An exploration of minimalism, precision, and the bright aesthetics.</p>
+                            </div>
+                            <div class="page-footer">03</div>
+                        </div>
+                        <div class="face leaf-back">
+                            <div class="page-header">
+                                <div class="eyebrow">Chapter 02</div>
+                                <h2>Typography.</h2>
+                            </div>
+                            <div class="content-body">
+                                <div class="divider"></div>
+                                <p>Type is voice. In light mode, weight and spacing become the primary tools.</p>
+                            </div>
+                            <div class="page-footer">04</div>
+                        </div>
+                    </div>
+
+                    <!-- Right page (07) -->
+                    <div class="right-page">
+                        <div class="page-header">
+                            <div class="eyebrow">Chapter 04</div>
+                            <h2>Light Mode.</h2>
+                        </div>
+                        <div class="content-body">
+                            <div class="divider"></div>
+                            <p>Clarity above all. Light interfaces maximize readability and create a sense of openness.</p>
+                            <div class="graphics-container">
+                                <div class="rect-art"></div>
+                            </div>
+                        </div>
+                        <div class="page-footer">07</div>
+                    </div>
+                </div>
+            </div>
+        </interact-element>
+    </div>
+
+    <div class="scroll-hint">Scroll to Interact</div>
+
+<script type="module">
+    import { Interact } from 'https://esm.sh/@wix/interact@2.0.0-rc.4/web?bundle';
+
+    const updateShadows = (leaf, angle) => {
+        const abs = Math.abs(angle);
+        let front = 0, back = 0;
+        if (abs < 90) front = (abs / 90) * 0.15;
+        if (abs > 90 && abs <= 180) back = ((180 - abs) / 90) * 0.15;
+        leaf.style.setProperty('--shadow-front', front);
+        leaf.style.setProperty('--shadow-back', back);
+    };
+
+    const bookFlipLogic = (el, progress) => {
+        // Disable logic on mobile so cards stay static
+        if (window.innerWidth < 750) return;
+
+        const cover = el.querySelector('.cover');
+        const leaf3 = el.querySelector('#leaf3');
+        const leaf2 = el.querySelector('#leaf2');
+        
+        if (!cover || !leaf3 || !leaf2) return;
+
+        let p = (progress - 0.25) * 2;
+        p = Math.max(0, Math.min(1, p));
+
+        cover.style.transform = `rotateY(-180deg)`;
+        cover.style.setProperty('--shadow-front', 0);
+        cover.style.setProperty('--shadow-back', 0);
+
+        let angle3 = 0;
+        if (p <= 0.5) {
+            angle3 = (p / 0.5) * -178;
+        } else {
+            angle3 = -178;
+        }
+        leaf3.style.transform = `rotateY(${angle3}deg)`;
+        updateShadows(leaf3, angle3);
+
+        let angle2 = 0;
+        if (p > 0.5) {
+            angle2 = ((p - 0.5) / 0.5) * -176;
+        }
+        leaf2.style.transform = `rotateY(${angle2}deg)`;
+        updateShadows(leaf2, angle2);
+    };
+
+    const config = {
+        interactions: [
+            {
+                key: 'scroll-track',
+                trigger: 'viewProgress',
+                effects: [
+                    {
+                        key: 'book-scene',
+                        rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
+                        rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                        customEffect: bookFlipLogic
+                    }
+                ]
+            }
+        ]
+    };
+
+    Interact.create(config);
+</script>
+</body>
+</html>
