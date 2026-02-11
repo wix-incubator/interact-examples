@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wix Interact - 3D Rolodex Flip</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&display=swap');
+
+        :root {
+            --bg-color: #050505;
+            --text-color: #f0f0f0;
+            --grid-color: #333;
+        }
+
+        html {
+            /* Enables snapping to center (Dock to center) */
+            scroll-snap-type: y mandatory;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Oswald', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Layout Grid simulating the video design */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            height: 100vh; /* Fixed height for the background grid */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            pointer-events: none; /* Let clicks pass through to scroll */
+            z-index: 10;
+        }
+
+        .col {
+            border-right: 1px solid var(--grid-color);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .col:last-child {
+            border-right: none;
+        }
+
+        /* Scroll Container */
+        .content-scroll {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Removed gaps/padding because each item is now 100vh */
+        }
+
+        /* The Animated Item */
+        interact-element {
+            /* Forces each item to be exactly the height of the viewport */
+            height: 100vh;
+            width: 100%;
+            
+            /* Centers the content perfectly within that viewport height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            
+            /* Snaps the scroll to this element's center */
+            scroll-snap-align: center;
+            scroll-snap-stop: always;
+
+            /* Crucial for 3D effect not to be flattened */
+            transform-style: preserve-3d; 
+            will-change: transform, opacity;
+        }
+
+        .hero-text {
+            font-size: 12vw;
+            line-height: 0.9;
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin: 0;
+            color: white;
+            transform-origin: center center;
+        }
+
+        .meta-info {
+            font-size: 1rem;
+            opacity: 0.6;
+            margin-bottom: 10px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .layout-grid {
+                position: absolute; /* Allows grid to stay at top on mobile if needed, or use fixed */
+                height: auto;
+                min-height: auto;
+                grid-template-columns: 1fr;
+                border-bottom: 1px solid var(--grid-color);
+                background: var(--bg-color);
+            }
+
+            .col {
+                border-right: none;
+                border-bottom: 1px solid var(--grid-color);
+                flex-direction: row;
+                align-items: center;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .col:last-child {
+                border-bottom: none;
+            }
+
+            .col div {
+                text-align: left !important;
+            }
+
+            .hero-text {
+                font-size: 18vw;
+            }
+            
+            /* Ensure first item isn't covered by the mobile header grid */
+            .content-scroll {
+                padding-top: 0; 
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Fixed Grid Overlay (Esthetics) -->
+    <div class="layout-grid">
+        <div class="col">
+            <div>Featuring</div>
+            <div>Abigail DeVille<br>Xaviera Simmons<br>Rosa-Johan Uddoh</div>
+        </div>
+        <div class="col" style="border-right: 1px solid var(--grid-color);">
+            <div style="text-align: center;">Curated By</div>
+            <div style="text-align: center;">Racquel Chevremont<br>Mickalene Thomas</div>
+        </div>
+        <div class="col">
+            <div style="text-align: right;">Presented By</div>
+            <div style="text-align: right;">Pioneer Works<br>04.02-06.20.21<br>Brooklyn, NY</div>
+        </div>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="content-scroll">
+        
+        <!-- Item 1 -->
+        <interact-element data-interact-key="item-1">
+            <div>
+                <div class="meta-info">Exhibition 01</div>
+                <h1 class="hero-text">Xaviera<br>Simmons</h1>
+            </div>
+        </interact-element>
+
+        <!-- Item 2 -->
+        <interact-element data-interact-key="item-2">
+            <div>
+                <div class="meta-info">Exhibition 02</div>
+                <h1 class="hero-text">Heavies</h1>
+            </div>
+        </interact-element>
+
+        <!-- Item 3 -->
+        <interact-element data-interact-key="item-3">
+            <div>
+                <div class="meta-info">Exhibition 03</div>
+                <h1 class="hero-text">Rosa-Johan<br>Uddoh</h1>
+            </div>
+        </interact-element>
+
+        <!-- Item 4 -->
+        <interact-element data-interact-key="item-4">
+            <div>
+                <div class="meta-info">Exhibition 04</div>
+                <h1 class="hero-text">Abigail<br>DeVille</h1>
+            </div>
+        </interact-element>
+
+        <!-- Item 5 -->
+        <interact-element data-interact-key="item-5">
+            <div>
+                <div class="meta-info">Exhibition 05</div>
+                <h1 class="hero-text">Pioneer<br>Works</h1>
+            </div>
+        </interact-element>
+
+    </div>
+
+    <!-- Wix Interact Logic -->
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+
+        // Helper to generate config for each item
+        const createScrollInteraction = (id) => ({
+            key: id,
+            trigger: 'viewProgress',
+            effects: [
+                {
+                    // Logic for 100vh items:
+                    // Range covers the entire time the element is traversing the viewport.
+                    // Start: Top of element enters bottom of screen.
+                    // End: Bottom of element leaves top of screen.
+                    rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
+                    rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                    
+                    keyframeEffect: {
+                        name: '3D-Rolodex-Flip',
+                        keyframes: [
+                            // 1. Entering (at bottom)
+                            { 
+                                transform: 'perspective(1000px) rotateX(-90deg) scale(0.6)', 
+                                opacity: 0 
+                            },
+                            // 2. Center (Docked)
+                            { 
+                                transform: 'perspective(1000px) rotateX(0deg) scale(1)', 
+                                opacity: 1, 
+                                offset: 0.5 
+                            },
+                            // 3. Exiting (at top)
+                            { 
+                                transform: 'perspective(1000px) rotateX(90deg) scale(0.6)', 
+                                opacity: 0 
+                            }
+                        ]
+                    },
+                    fill: 'both',
+                    composite: 'replace'
+                }
+            ]
+        });
+
+        const config = {
+            interactions: [
+                createScrollInteraction('item-1'),
+                createScrollInteraction('item-2'),
+                createScrollInteraction('item-3'),
+                createScrollInteraction('item-4'),
+                createScrollInteraction('item-5')
+            ]
+        };
+
+        Interact.create(config);
+    </script>
+</body>
+</html>
