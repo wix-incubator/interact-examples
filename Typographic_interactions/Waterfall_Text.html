@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scroll viewer — Wix Interact</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; }
+    .page { background: #f8f8f8; min-height: 100vh; color: #1e293b; }
+    /* Avoid stacking context on scroll container for ViewTimeline; use overflow: clip if needed */
+    .scroll-area { height: 550vh; position: relative; overflow: clip; }
+    .sticky-wrap {
+      position: sticky; top: 0; height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      overflow: hidden; padding: 0 1rem;
+    }
+    .content-wrap {
+      position: relative; width: 100%; max-width: 64rem; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .paragraph {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      pointer-events: none;
+    }
+    .text-block {
+      font-size: clamp(1.5rem, 4vw, 3rem); line-height: 1.375; font-weight: 300; text-align: center;
+    }
+    .line { display: block; white-space: nowrap; margin-bottom: 0.5rem; perspective: 500px; }
+    .word {
+      display: inline-block; margin-right: 0.3em;
+      transform-style: preserve-3d; transform-origin: center bottom;
+      will-change: transform, opacity;
+    }
+    .scroll-hint {
+      position: absolute; bottom: 2.5rem; left: 0; right: 0;
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.2em; color: #94a3b8;
+      text-align: center; transition: opacity 0.15s;
+    }
+    .fin {
+      height: 100vh; background: #0f172a; display: flex; align-items: center; justify-content: center;
+      color: white;
+    }
+    .fin h2 { font-size: 1.875rem; font-weight: 300; opacity: 0.8; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <interact-element data-interact-key="scrollContainer">
+      <div class="scroll-area" id="scrollArea">
+        <div class="sticky-wrap">
+          <div class="content-wrap" id="contentWrap">
+            <!-- Paragraphs injected by script so we can attach data-* to each word -->
+          </div>
+          <div class="scroll-hint" id="scrollHint">Scroll to begin</div>
+        </div>
+      </div>
+    </interact-element>
+    <div class="fin">
+      <h2>Fin.</h2>
+    </div>
+  </div>
+
+  <script type="module">
+    // Must use /web entry so <interact-element> is registered (main entry can break binding).
+    // If the library fails (CDN/MCP/version), fallback runs the animation via native scroll.
+    let Interact;
+    try {
+      const mod = await import('https://esm.sh/@wix/interact@2.0.0-rc.4/web');
+      Interact = mod.Interact;
+    } catch (e) {
+      console.warn('Wix Interact (web) failed to load, using scroll fallback:', e);
+    }
+
+    // -- CONTENT (same as original JSX) --
+    const content = [
+      [
+        "For in the tapestry of life,",
+        "it is the density of these moments,",
+        "woven with intention and purpose,",
+        "that give us a profound sense of fulfillment",
+        "and grant us the wisdom to appreciate",
+        "the true meaning of our existence."
+      ],
+      [
+        "And as we stand at the precipice",
+        "of our mortality, we realize that the",
+        "significance of a life well-lived lies",
+        "not in the fear of death, but in the",
+        "legacy of memories we leave behind",
+        "for others to cherish and carry forward."
+      ],
+      [
+        "Thus, let us embrace each fleeting second,",
+        "not as a grain of sand slipping through",
+        "our fingers, but as a seed planted in",
+        "the garden of eternity, blooming long",
+        "after our own sun has set."
+      ]
+    ];
+
+    // -- ANIMATION CONSTANTS (from original) --
+    const LINE_DELAY = 0.015;
+    const WORD_DELAY = 0.002;
+    const ANIM_DURATION = 0.06;
+    const NUM_PARAGRAPHS = content.length;
+
+    function buildContentDOM() {
+      const wrap = document.getElementById('contentWrap');
+      wrap.innerHTML = '';
+
+      content.forEach((lines, paragraphIndex) => {
+        const slotSize = 1 / NUM_PARAGRAPHS;
+        const start = paragraphIndex * slotSize;
+        const end = start + 0.17;
+
+        const paraEl = document.createElement('div');
+        paraEl.className = 'paragraph';
+        paraEl.setAttribute('aria-hidden', paragraphIndex !== 0 ? 'true' : 'false');
+
+        const textBlock = document.createElement('div');
+        textBlock.className = 'text-block';
+
+        lines.forEach((lineText, lineIndex) => {
+          const lineEl = document.createElement('div');
+          lineEl.className = 'line';
+
+          const words = lineText.split(' ');
+          words.forEach((word, wordIndex) => {
+            const span = document.createElement('span');
+            span.className = 'word';
+            span.setAttribute('data-para', String(paragraphIndex));
+            span.setAttribute('data-line', String(lineIndex));
+            span.setAttribute('data-word', String(wordIndex));
+            span.setAttribute('data-start', String(start));
+            span.setAttribute('data-end', String(end));
+            span.textContent = word;
+            lineEl.appendChild(span);
+          });
+
+          textBlock.appendChild(lineEl);
+        });
+
+        paraEl.appendChild(textBlock);
+        wrap.appendChild(paraEl);
+      });
+    }
+
+    function applyWordProgress(progress) {
+      const words = document.querySelectorAll('#contentWrap .word');
+      const LINE_DELAY_N = LINE_DELAY;
+      const WORD_DELAY_N = WORD_DELAY;
+
+      words.forEach((el) => {
+        const paragraphIndex = Number(el.getAttribute('data-para'));
+        const lineIndex = Number(el.getAttribute('data-line'));
+        const wordIndex = Number(el.getAttribute('data-word'));
+        const start = Number(el.getAttribute('data-start'));
+        const end = Number(el.getAttribute('data-end'));
+
+        const delay = lineIndex * LINE_DELAY_N + wordIndex * WORD_DELAY_N;
+        const enterStart = start + delay;
+        const enterEnd = enterStart + ANIM_DURATION;
+        const exitStart = end + delay;
+        const exitEnd = exitStart + ANIM_DURATION;
+
+        let rotateX = 90, opacity = 0, y = 10;
+
+        if (progress < enterStart) {
+          rotateX = 90; opacity = 0; y = 10;
+        } else if (progress < enterEnd) {
+          const t = (progress - enterStart) / (enterEnd - enterStart);
+          rotateX = 90 - t * 90; opacity = t; y = 10 - t * 10;
+        } else if (progress < exitStart) {
+          rotateX = 0; opacity = 1; y = 0;
+        } else if (progress < exitEnd) {
+          const t = (progress - exitStart) / (exitEnd - exitStart);
+          rotateX = -90 * t; opacity = 1 - t; y = 10 * t;
+        } else {
+          rotateX = -90; opacity = 0; y = 10;
+        }
+
+        el.style.transform = `rotateX(${rotateX}deg) translateY(${y}px)`;
+        el.style.opacity = String(opacity);
+      });
+
+      const hint = document.getElementById('scrollHint');
+      if (hint) hint.style.opacity = Math.max(0, 1 - progress / 0.05);
+    }
+
+    buildContentDOM();
+
+    function runWithInteract() {
+      if (typeof Interact === 'undefined') return false;
+      const config = {
+        interactions: [
+          {
+            key: 'scrollContainer',
+            trigger: 'viewProgress',
+            effects: [
+              {
+                rangeStart: { name: 'entry', offset: { value: 0, type: 'percentage' } },
+                rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                fill: 'both',
+                customEffect: (_element, progress) => {
+                  applyWordProgress(progress);
+                }
+              }
+            ]
+          }
+        ]
+      };
+      try {
+        Interact.create(config);
+        return true;
+      } catch (e) {
+        console.warn('Interact.create failed:', e);
+        return false;
+      }
+    }
+
+    function runScrollFallback() {
+      const scrollArea = document.getElementById('scrollArea');
+      if (!scrollArea) return;
+
+      function onScroll() {
+        const rect = scrollArea.getBoundingClientRect();
+        const scrollHeight = scrollArea.offsetHeight - window.innerHeight;
+        const progress = scrollHeight <= 0
+          ? (rect.top <= 0 ? 1 : 0)
+          : Math.max(0, Math.min(1, -rect.top / scrollHeight));
+        applyWordProgress(progress);
+      }
+
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    }
+
+    if (!runWithInteract()) runScrollFallback();
+  </script>
+</body>
+</html>
