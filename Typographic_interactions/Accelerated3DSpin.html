@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MomentumSpin3D - Interactive Poster</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap');
+        
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* Typography styles to match the video exactly */
+        .info-label {
+            font-size: 0.6rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #999;
+            margin-bottom: 4px;
+            font-weight: 400;
+        }
+
+        .info-value {
+            font-size: 0.8rem;
+            line-height: 1.1;
+            font-weight: 400;
+            text-transform: none;
+        }
+
+        .main-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            width: 100%;
+        }
+
+        #headline-container {
+            transform-style: preserve-3d;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rotating-card {
+            position: relative;
+            transform-style: preserve-3d;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-face {
+            position: absolute;
+            backface-visibility: hidden;
+            white-space: nowrap;
+        }
+
+        .card-face.back {
+            transform: rotateY(180deg);
+        }
+
+        /* Layout for Scroll & Sticky */
+        .scroll-wrapper {
+            height: 500vh;
+        }
+
+        .sticky-section {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 3rem 4vw; 
+            box-sizing: border-box;
+            overflow: clip;
+        }
+
+        /* 3-column grid - Updated for perfect symmetry in LTR */
+        .poster-grid {
+            display: grid;
+            /* Perfectly equal columns */
+            grid-template-columns: repeat(3, 1fr);
+            width: 100%;
+            max-width: 94vw;  /* Wide span across the screen */
+            margin: 0 auto;    
+            gap: 2rem; 
+        }
+
+        /* Aligning items within the grid for LTR */
+        .poster-grid > div:nth-child(1) {
+            justify-self: start; /* Snap to the left edge */
+            text-align: left !important;
+        }
+
+        .poster-grid > div:nth-child(2) {
+            justify-self: center; /* Center column */
+            text-align: left !important;
+        }
+
+        .poster-grid > div:nth-child(3) {
+            justify-self: end; /* Snap to the right edge */
+            text-align: left !important;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .poster-grid {
+                grid-template-columns: 1fr; 
+                gap: 1.5rem;
+                padding: 0 1rem;
+                max-width: 100%;
+            }
+            
+            .poster-grid > div {
+                justify-self: start !important; /* Reset to standard alignment on mobile */
+            }
+
+            .sticky-section {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scroll-wrapper">
+        <!-- The Sticky Poster -->
+        <div class="sticky-section select-none">
+            
+            <!-- Header -->
+            <header class="poster-grid">
+                <div>
+                    <p class="info-label">Featuring</p>
+                    <p class="info-value">Abigail Deville<br>Xaviera Simmons<br>Rosa-Johan Uddoh</p>
+                </div>
+                <div>
+                    <p class="info-label">Curated By</p>
+                    <p class="info-value">Racquel Chevremont<br>Mickalene Thomas<br>(Deux Femmes Noires)</p>
+                </div>
+                <div>
+                    <p class="info-label">Presented By</p>
+                    <p class="info-value">Pioneer Works<br>04.02–06.20.21<br>Brooklyn, NY</p>
+                </div>
+            </header>
+
+            <!-- Center Rotating Text -->
+            <main class="main-container">
+                <interact-element data-interact-key="main-title">
+                    <div id="headline-container" class="rotating-card">
+                        <div class="card-face front">
+                            <h1 class="text-7xl md:text-9xl font-black uppercase tracking-tighter leading-none">HEAVIES</h1>
+                        </div>
+                        <div class="card-face back">
+                            <h1 class="text-7xl md:text-9xl font-black uppercase tracking-tighter leading-none">HEAVIES</h1>
+                        </div>
+                    </div>
+                </interact-element>
+            </main>
+
+            <!-- Footer -->
+            <footer class="poster-grid opacity-70">
+                <div>
+                    <p class="info-label">Featuring</p>
+                    <p class="info-value">Abigail Deville<br>Xaviera Simmons<br>Rosa-Johan Uddoh</p>
+                </div>
+                <div>
+                    <p class="info-label">Curated By</p>
+                    <p class="info-value">Racquel Chevremont<br>Mickalene Thomas<br>(Deux Femmes Noires)</p>
+                </div>
+                <div>
+                    <p class="info-label">Presented By</p>
+                    <p class="info-value">Pioneer Works<br>04.02–06.20.21<br>Brooklyn, NY</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scroll observer for dynamic speed -->
+    <interact-element data-interact-key="scroll-observer" style="position: absolute; top: 0; left: 0; width: 100%; height: 500vh; pointer-events: none; z-index: -1;"></interact-element>
+
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+
+        /**
+         * MomentumSpin3D Preset Configuration
+         * Combines a slow idle rotation with a scroll-driven acceleration.
+         */
+        const config = {
+            interactions: [
+                {
+                    // MomentumSpin3D: Idle Component
+                    key: 'main-title',
+                    trigger: 'viewEnter',
+                    params: { type: 'once' },
+                    effects: [
+                        {
+                            duration: 12000, 
+                            iterations: Infinity,
+                            easing: 'linear',
+                            fill: 'both',
+                            composite: 'replace',
+                            keyframeEffect: {
+                                name: 'momentumSpin3D_idle',
+                                keyframes: [
+                                    { transform: 'perspective(600px) rotateY(0deg)' },
+                                    { transform: 'perspective(600px) rotateY(360deg)' }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    // MomentumSpin3D: Scroll-Driven Acceleration
+                    key: 'scroll-observer',
+                    trigger: 'viewProgress',
+                    effects: [
+                        {
+                            key: 'main-title',
+                            rangeStart: { name: 'entry', offset: { value: 0, type: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            fill: 'both',
+                            composite: 'add', 
+                            keyframeEffect: {
+                                name: 'momentumSpin3D_scrollBoost',
+                                keyframes: [
+                                    { transform: 'perspective(600px) rotateY(0deg)' },
+                                    { transform: 'perspective(600px) rotateY(2880deg)' }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        };
+
+        Interact.create(config);
+    </script>
+</body>
+</html>
