@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slideshow — Wix Interact</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background: #000; overscroll-behavior: none; }
+    ::selection { background: white; color: black; }
+
+    /* ── Root (fixed overlay) ── */
+    .slideshow {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: clip;
+      background: #000;
+      color: #fff;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* ── Scroll track (creates page height, drives viewProgress) ── */
+    .scroll-track {
+      position: relative;
+      z-index: 0;
+    }
+    .scroll-track interact-element {
+      display: block;
+    }
+    .scroll-section {
+      height: 100vh;
+    }
+
+    /* ── Background panels ── */
+    .bg-layer { position: absolute; inset: 0; z-index: 0; }
+
+    .bg-panel {
+      position: absolute; inset: 0;
+      will-change: clip-path, filter;
+    }
+    .bg-panel img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .bg-panel .overlay   { position: absolute; inset: 0; background: rgba(0,0,0,.4); }
+    .bg-panel .noise      {
+      position: absolute; inset: 0; opacity: .2; pointer-events: none;
+      mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    .bg-panel .scanlines  {
+      position: absolute; inset: 0; pointer-events: none; z-index: 1;
+      background:
+        linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,.25) 50%),
+        linear-gradient(90deg, rgba(255,0,0,.06), rgba(0,255,0,.02), rgba(0,0,255,.06));
+      background-size: 100% 4px, 3px 100%;
+    }
+
+    /* ── UI layer ── */
+    .ui-layer {
+      position: relative; z-index: 30;
+      width: 100%; height: 100%;
+      padding: 1.5rem;
+      display: flex; flex-direction: column; justify-content: space-between;
+      pointer-events: none;
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,.5));
+    }
+    @media (min-width: 768px) { .ui-layer { padding: 3rem; } }
+
+    /* top / bottom rows */
+    .top-row, .bottom-row {
+      display: flex; justify-content: space-between; align-items: flex-start; width: 100%;
+    }
+    .bottom-row { align-items: flex-end; }
+
+    /* overflow wrappers for text-slide clips */
+    .clip-box { overflow: hidden; position: relative; }
+    .top-left   .clip-box { height: 1.6em; }
+    .top-center .clip-box { text-align: center; height: 1.8em; }
+    .top-right  .clip-box { text-align: right; }
+    .bottom-right .clip-box { text-align: right; }
+
+    .top-center {
+      position: absolute; left: 50%; top: 1.5rem;
+      transform: translateX(-50%);
+    }
+    @media (min-width: 768px) { .top-center { top: 3rem; } }
+
+    /* text styles */
+    .category, .subtitle-text {
+      display: block;
+      font-family: 'Roboto Flex', sans-serif;
+      font-size: .875rem; letter-spacing: .2em; text-transform: uppercase; font-weight: 700; opacity: .8;
+    }
+    @media (min-width: 768px) { .category, .subtitle-text { font-size: 1rem; } }
+
+    .number { display: block; font-size: 1.5rem; font-family: ui-monospace, monospace; letter-spacing: -.05em; }
+    .idx-label { font-size: 10px; letter-spacing: .2em; opacity: .6; font-family: ui-monospace, monospace; display: block; text-align: center; margin-top: .5em; }
+    .subtitle-rule { display: none; }
+
+    .description {
+      font-size: .75rem; max-width: 250px; text-align: right; opacity: .7;
+      line-height: 1.6; font-family: ui-monospace, monospace;
+    }
+
+    /* Bottom row: on mobile, stack description above indicators */
+    .bottom-right { display: block; }
+    @media (max-width: 767px) {
+      .bottom-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 45px;
+      }
+      .bottom-right { order: -1; }
+      .bottom-right .clip-box { text-align: left; }
+      .description { text-align: left; }
+    }
+
+    /* indicators */
+    .indicators { display: flex; gap: .5rem; align-items: flex-end; padding-bottom: .25rem; pointer-events: auto; }
+    .dot {
+      height: 3px; border-radius: 9999px; background: rgba(255,255,255,.3); transition: width .7s ease-out, background .3s; cursor: pointer;
+    }
+    .dot.active { background: #fff; }
+
+    /* ── Title layer ── */
+    .title-layer {
+      position: absolute; inset: 0; z-index: 20;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none; overflow: clip;
+    }
+
+    .title-layer interact-element {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .title-el {
+      position: relative;
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(3rem, 10vw, 10rem);
+      font-weight: 400; letter-spacing: -.02em;
+      color: #fff; mix-blend-mode: overlay;
+      white-space: nowrap; line-height: 1;
+      text-shadow: 0 0 30px rgba(0,0,0,.5);
+      will-change: transform;
+      opacity: 0;
+      pointer-events: auto;
+      user-select: text;
+      cursor: text;
+    }
+    .title-underline {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #fff;
+      transform: scaleX(0);
+      transform-origin: left;
+      will-change: transform;
+    }
+
+    /* Selectable UI text */
+    .category, .subtitle-text, .number, .idx-label, .description {
+      pointer-events: auto;
+      user-select: text;
+      cursor: text;
+    }
+
+    /* Screen reader only */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* ── Chevron ── */
+    .chevron {
+      position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+      z-index: 30; opacity: .5;
+      animation: pulse 2s ease-in-out infinite;
+      cursor: pointer;
+      pointer-events: auto;
+      border: none;
+      background: none;
+      color: inherit;
+      padding: 0;
+      font: inherit;
+    }
+    .chevron:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 4px;
+      border-radius: 2px;
+    }
+    .dot:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 2px;
+    }
+    @keyframes pulse { 0%,100% { opacity:.5 } 50% { opacity:.8 } }
+    .chevron svg { width: 24px; height: 24px; }
+  </style>
+</head>
+<body>
+
+  <!-- Fixed slideshow visual layer -->
+  <div class="slideshow" id="slideshow" role="region" aria-roledescription="slideshow" aria-label="Image slideshow">
+    <div id="liveRegion" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- BG panels (built by JS) -->
+    <div class="bg-layer" id="bgLayer"></div>
+
+    <!-- UI -->
+    <div class="ui-layer">
+      <!-- Top -->
+      <div class="top-row">
+        <div class="top-left"><div class="clip-box" id="catBox"></div></div>
+        <div class="top-center">
+          <div class="clip-box" id="numBox"></div>
+          <span class="idx-label" aria-hidden="true">INDEX</span>
+        </div>
+        <div class="top-right"><div class="clip-box" id="subBox"></div></div>
+      </div>
+      <!-- Bottom -->
+      <div class="bottom-row">
+        <div class="indicators" id="indicators"></div>
+        <div class="bottom-right"><div class="clip-box" id="descBox"></div></div>
+      </div>
+    </div>
+
+    <!-- Titles (built by JS, each wrapped in interact-element) -->
+    <div class="title-layer" id="titleLayer"></div>
+
+    <!-- Chevron -->
+    <button class="chevron" id="chevronBtn" type="button" aria-label="Scroll to next slide">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m6 9 6 6 6-6"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Scroll track: one section per slide + spacer for last slide's exit room -->
+  <div class="scroll-track" id="scrollTrack"></div>
+
+  <script type="module">
+    // ─── Load @wix/interact ───
+    let Interact;
+    try {
+      const mod = await import('https://esm.sh/@wix/interact/web');
+      Interact = mod.Interact;
+    } catch (e) {
+      console.warn('Wix Interact failed to load:', e);
+    }
+
+    // ─── Data ───
+    const SLIDES = [
+      { id:1, number:'001', category:'Genesis', subtitle:'Matter', title:'Soul Matters',
+        description:'The internal architecture of silence.',
+        image:'https://images.unsplash.com/photo-1555255707-c07966088b7b?q=80&w=2532&auto=format&fit=crop' },
+      { id:2, number:'002', category:'Process', subtitle:'Form', title:'Void Walker',
+        description:'Echoes from the deep static.',
+        image:'https://images.unsplash.com/photo-1506452819137-0422416856b8?q=80&w=2573&auto=format&fit=crop' },
+      { id:3, number:'003', category:'Entropy', subtitle:'Void', title:'Neon Dust',
+        description:'Fragments of a digital memory.',
+        image:'https://images.unsplash.com/photo-1535868463750-c78d9543614f?q=80&w=2676&auto=format&fit=crop' },
+      { id:4, number:'004', category:'Synthesis', subtitle:'Light', title:'Cyber Zen',
+        description:'Harmonic resonance in the machine.',
+        image:'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop' },
+    ];
+
+    // ─── DOM refs ───
+    const bgLayer    = document.getElementById('bgLayer');
+    const titleLayer = document.getElementById('titleLayer');
+    const catBox     = document.getElementById('catBox');
+    const numBox     = document.getElementById('numBox');
+    const subBox     = document.getElementById('subBox');
+    const descBox    = document.getElementById('descBox');
+    const indWrap    = document.getElementById('indicators');
+    const chevronBtn = document.getElementById('chevronBtn');
+    const scrollTrack = document.getElementById('scrollTrack');
+
+    // ─── Build background panels ───
+    const panels = SLIDES.map((s, i) => {
+      const el = document.createElement('div');
+      el.className = 'bg-panel';
+      el.style.zIndex  = i === 0 ? '10' : '0';
+      el.style.clipPath = i === 0 ? 'inset(0% 0% 0% 0%)' : 'inset(100% 0% 0% 0%)';
+      el.style.filter   = i === 0 ? 'brightness(1)' : 'brightness(0.6)';
+      el.innerHTML = `
+        <img src="${s.image}" alt="${s.title}">
+        <div class="overlay"></div>
+        <div class="noise"></div>
+        <div class="scanlines"></div>`;
+      bgLayer.appendChild(el);
+      return el;
+    });
+
+    // ─── Build title elements (each wrapped in interact-element) ───
+    const underlineEls = [];
+    const titleEls = SLIDES.map((s, i) => {
+      const wrapper = document.createElement('interact-element');
+      wrapper.setAttribute('data-interact-key', `title-${i}`);
+      const el = document.createElement('div');
+      el.className = 'title-el';
+      el.textContent = s.title;
+      const underline = document.createElement('div');
+      underline.className = 'title-underline';
+      el.appendChild(underline);
+      underlineEls.push(underline);
+      wrapper.appendChild(el);
+      titleLayer.appendChild(wrapper);
+      return el;
+    });
+
+    // Initial transform set after measurement below
+
+    // ─── Build scroll sections ───
+    SLIDES.forEach((_, i) => {
+      const wrapper = document.createElement('interact-element');
+      wrapper.setAttribute('data-interact-key', `section-${i}`);
+      const section = document.createElement('div');
+      section.className = 'scroll-section';
+      wrapper.appendChild(section);
+      scrollTrack.appendChild(wrapper);
+    });
+
+    // Extra spacers so the last slide's viewProgress exit range fully completes
+    for (let s = 0; s < 2; s++) {
+      const spacer = document.createElement('div');
+      spacer.className = 'scroll-section';
+      scrollTrack.appendChild(spacer);
+    }
+
+    // ─── Build text helpers ───
+    function makeTextEl(tag, cls, html) {
+      const el = document.createElement(tag);
+      el.className = cls;
+      el.innerHTML = html;
+      return el;
+    }
+
+    let curCat, curNum, curSub, curDesc;
+
+    function setInitialText(idx) {
+      const s = SLIDES[idx];
+      curCat  = makeTextEl('span', 'category', s.category);
+      curNum  = makeTextEl('span', 'number', s.number);
+      curSub  = makeTextEl('div', '', `<span class="subtitle-text">${s.subtitle}</span><span class="subtitle-rule"></span>`);
+      curDesc = makeTextEl('p', 'description', s.description);
+      catBox.appendChild(curCat);
+      numBox.appendChild(curNum);
+      subBox.appendChild(curSub);
+      descBox.appendChild(curDesc);
+    }
+
+    setInitialText(0);
+
+    // Wait for Instrument Serif (and all fonts) to load before measuring
+    await document.fonts.ready;
+
+    // ─── Measure positions for genesis-aligned diagonal path ───
+    // First slide starts top-left (aligned with category label).
+    // Last slide ends bottom-right (aligned with description text).
+    // Middle slides enter/exit fully off-screen.
+    const catRect = curCat.getBoundingClientRect();
+    const subBoxRect = subBox.getBoundingClientRect();
+    const descElRect = curDesc.getBoundingClientRect();
+    const indRect = indWrap.getBoundingClientRect();
+    const vwUnit = window.innerWidth / 100;
+    const vhUnit = window.innerHeight / 100;
+
+    const isMobile = window.innerWidth < 768;
+    const START_END_SCALE = isMobile ? 0.644 : 0.56;
+    const lastIdx = SLIDES.length - 1;
+
+    const titleAnimData = titleEls.map((el, i) => {
+      const rect = el.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+
+      // Genesis-aligned translate: title left edge at catRect.left, top below category
+      const genesisGap = isMobile ? 45 : 50;
+      const gx = (catRect.left + (w * START_END_SCALE) / 2 - window.innerWidth / 2) / vwUnit;
+      const gy = (catRect.bottom + genesisGap + (h * START_END_SCALE) / 2 - window.innerHeight / 2) / vhUnit;
+
+      // Bottom-right endpoint: title right edge at subBox right, bottom edge just above description
+      const endGap = isMobile ? 10 : 20;
+      const alignRight = subBoxRect.right;
+      const alignBottom = descElRect.height > 0 ? (descElRect.top - endGap) : (indRect.top - 30);
+      const endRightX = (alignRight - (w * START_END_SCALE) / 2 - window.innerWidth / 2) / vwUnit;
+      const endBottomY = (alignBottom - (h * START_END_SCALE) / 2 - window.innerHeight / 2) / vhUnit;
+
+      // Compute half-dimensions in vw/vh at the start/end scale
+      const halfWVw = (w * START_END_SCALE / 2) / vwUnit;
+      const halfHVh = (h * START_END_SCALE / 2) / vhUnit;
+
+      // Off-screen entry: title fully outside viewport top-left
+      const offEntryX = -(50 + halfWVw + 2);
+      const offEntryY = -(50 + halfHVh + 2);
+      // Off-screen exit: title fully outside viewport bottom-right
+      const offExitX  = 50 + halfWVw + 2;
+      const offExitY  = 50 + halfHVh + 2;
+
+      // First slide starts at genesis position (on-screen top-left).
+      // Other slides start off-screen.
+      const sx = i === 0 ? gx : offEntryX;
+      const sy = i === 0 ? gy : offEntryY;
+
+      // Last slide ends at bottom-right (aligned with description text).
+      // Other slides exit off-screen.
+      const ex = i === lastIdx ? endRightX : offExitX;
+      const ey = i === lastIdx ? endBottomY : offExitY;
+
+      // Genesis anchor transform (same for all titles — top-left aligned with category)
+      const genesisT = `translate(${gx.toFixed(2)}vw, ${gy.toFixed(2)}vh) scale(${START_END_SCALE})`;
+
+      // Build keyframes:
+      //   Slide 0:  0% genesis → 15% genesis (hold) → 35% center → 80% center → 100% exit
+      //   Slides 1+: 0% off-screen → 7% genesis (arrive) → 15% genesis (hold) → 35% center → 80% center → 100% exit
+      const kf = i === 0
+        ? [
+            { transform: genesisT,                       opacity: 1, offset: 0 },
+            { transform: genesisT,                       opacity: 1, offset: 0.15 },
+            { transform: 'translate(0, 0) scale(1.2)',   opacity: 1, offset: 0.35 },
+            { transform: 'translate(0, 0) scale(1.2)',   opacity: 1, offset: 0.80 },
+            { transform: `translate(${ex.toFixed(2)}vw, ${ey.toFixed(2)}vh) scale(${START_END_SCALE})`, opacity: 1, offset: 1 }
+          ]
+        : [
+            { transform: `translate(${sx.toFixed(2)}vw, ${sy.toFixed(2)}vh) scale(${START_END_SCALE})`, opacity: 1, offset: 0 },
+            { transform: genesisT,                       opacity: 1, offset: 0.07 },
+            { transform: genesisT,                       opacity: 1, offset: 0.15 },
+            { transform: 'translate(0, 0) scale(1.2)',   opacity: 1, offset: 0.35 },
+            { transform: 'translate(0, 0) scale(1.2)',   opacity: 1, offset: 0.80 },
+            { transform: `translate(${ex.toFixed(2)}vw, ${ey.toFixed(2)}vh) scale(${START_END_SCALE})`, opacity: 1, offset: 1 }
+          ];
+
+      return {
+        startX: sx, startY: sy, endX: ex, endY: ey,
+        genesisX: gx, genesisY: gy,
+        keyframes: kf
+      };
+    });
+
+    // Set initial visible state for first title
+    titleEls[0].style.opacity = '1';
+    titleEls[0].style.transform = titleAnimData[0].keyframes[0].transform;
+
+    // ─── Text swap (transition when displayed slide changes) ───
+    function swapText(nextIdx) {
+      const s = SLIDES[nextIdx];
+
+      [curCat, curNum, curSub, curDesc].forEach(el => {
+        if (!el) return;
+        const a = el.animate(
+          [{ transform: 'translateY(0)', opacity: 1 },
+           { transform: 'translateY(-20px)', opacity: 0 }],
+          { duration: 200, easing: 'ease-in', fill: 'forwards' }
+        );
+        a.finished.then(() => el.remove());
+      });
+
+      curCat  = makeTextEl('span', 'category', s.category);
+      curNum  = makeTextEl('span', 'number', s.number);
+      curSub  = makeTextEl('div', '', `<span class="subtitle-text">${s.subtitle}</span><span class="subtitle-rule"></span>`);
+      curDesc = makeTextEl('p', 'description', s.description);
+
+      catBox.appendChild(curCat);
+      numBox.appendChild(curNum);
+      subBox.appendChild(curSub);
+      descBox.appendChild(curDesc);
+
+      [curCat, curNum, curSub, curDesc].forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.animate(
+          [{ transform: 'translateY(20px)', opacity: 0 },
+           { transform: 'translateY(0)', opacity: 1 }],
+          { duration: 300, easing: 'ease-out', delay: 120, fill: 'forwards' }
+        );
+      });
+    }
+
+    // ─── Build indicators ───
+    indWrap.setAttribute('role', 'tablist');
+    indWrap.setAttribute('aria-label', 'Slide navigation');
+
+    const dots = SLIDES.map((s, i) => {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.style.width = i === 0 ? '64px' : '24px';
+      d.setAttribute('role', 'tab');
+      d.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+      d.setAttribute('aria-label', `Slide ${i + 1}: ${s.title}`);
+      d.setAttribute('tabindex', i === 0 ? '0' : '-1');
+      d.onclick = () => {
+        const sectionH = window.innerHeight;
+        const offset = i === 0 ? 0 : sectionH * 0.10;
+        window.scrollTo({ top: i * sectionH + offset, behavior: 'smooth' });
+      };
+      d.addEventListener('keydown', (e) => {
+        let target = -1;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          target = Math.min(i + 1, dots.length - 1);
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          target = Math.max(i - 1, 0);
+        } else if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          d.click();
+          return;
+        }
+        if (target >= 0 && target !== i) {
+          e.preventDefault();
+          dots[target].focus();
+          dots[target].click();
+        }
+      });
+      indWrap.appendChild(d);
+      return d;
+    });
+
+    function updateDots(idx) {
+      dots.forEach((d, i) => {
+        const isActive = i === idx;
+        d.classList.toggle('active', isActive);
+        d.style.width = isActive ? '64px' : '24px';
+        d.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        d.setAttribute('tabindex', isActive ? '0' : '-1');
+      });
+      const liveRegion = document.getElementById('liveRegion');
+      if (liveRegion) {
+        liveRegion.textContent = `Slide ${idx + 1} of ${SLIDES.length}: ${SLIDES[idx].title}`;
+      }
+    }
+
+    // ─── Chevron: scroll to next section ───
+    chevronBtn.addEventListener('click', () => {
+      const sectionH = window.innerHeight;
+      const currentSection = Math.round(window.scrollY / sectionH);
+      const next = Math.min(currentSection + 1, SLIDES.length - 1);
+      window.scrollTo({ top: next * sectionH, behavior: 'smooth' });
+    });
+
+    // ─── Scroll handler: backgrounds, UI text, indicators ───
+    let displayedSlide = 0;
+    let ticking = false;
+
+    function updateVisuals() {
+      const scrollY = window.scrollY;
+      const sectionH = window.innerHeight;
+      const rawProgress = scrollY / sectionH;
+      const slideIndex = Math.min(Math.floor(rawProgress), SLIDES.length - 1);
+      const localProg = Math.min(rawProgress - slideIndex, 1);
+
+      // Background wipe: next bg wipes in from bottom during 35%-100% of section scroll
+      panels.forEach((p, i) => {
+        if (i < slideIndex) {
+          p.style.zIndex = '0';
+          p.style.clipPath = 'inset(0% 0% 0% 0%)';
+          p.style.filter = 'brightness(0.6)';
+        } else if (i === slideIndex) {
+          p.style.zIndex = '10';
+          p.style.clipPath = 'inset(0% 0% 0% 0%)';
+          p.style.filter = 'brightness(1)';
+        } else if (i === slideIndex + 1 && localProg > 0.35) {
+          const wipeProgress = Math.min((localProg - 0.35) / 0.65, 1);
+          p.style.zIndex = '11';
+          p.style.clipPath = `inset(${(1 - wipeProgress) * 100}% 0% 0% 0%)`;
+          p.style.filter = `brightness(${0.6 + wipeProgress * 0.4})`;
+        } else {
+          p.style.zIndex = '0';
+          p.style.clipPath = 'inset(100% 0% 0% 0%)';
+          p.style.filter = 'brightness(0.6)';
+        }
+      });
+
+      // Underline animation: reveals left-to-right during center hold (35%–80%)
+      underlineEls.forEach((ul, i) => {
+        if (i === slideIndex) {
+          if (localProg >= 0.35 && localProg <= 0.80) {
+            const t = (localProg - 0.35) / 0.45;
+            ul.style.transform = `scaleX(${t})`;
+          } else if (localProg > 0.80) {
+            ul.style.transform = 'scaleX(1)';
+          } else {
+            ul.style.transform = 'scaleX(0)';
+          }
+        } else if (i < slideIndex) {
+          ul.style.transform = 'scaleX(1)';
+        } else {
+          ul.style.transform = 'scaleX(0)';
+        }
+      });
+
+      // UI text and indicators switch at section boundary (when next headline enters)
+      const target = Math.min(Math.max(0, Math.floor(rawProgress)), SLIDES.length - 1);
+      if (target !== displayedSlide) {
+        swapText(target);
+        updateDots(target);
+        displayedSlide = target;
+      }
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updateVisuals();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // ─── @wix/interact: viewProgress for scroll-driven title animations ───
+    //
+    // Per-title keyframes computed from measured positions:
+    //   0%  → off-screen top-left
+    //   35% → center screen, scale(1.2)  ── hold/pause + underline reveal ──
+    //   80% → center screen, scale(1.2)  ── end hold, underline complete ──
+    //   100%→ off-screen bottom-right
+    //
+    // Scrolling backward naturally reverses the scrub animation.
+
+    function enableInteract() {
+      try {
+        const interactions = SLIDES.map((_, i) => ({
+          key: `section-${i}`,
+          trigger: 'viewProgress',
+          effects: [{
+            key: `title-${i}`,
+            rangeStart: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+            rangeEnd:   { name: 'exit', offset: { value: 100, type: 'percentage' } },
+            fill: 'forwards',
+            keyframeEffect: {
+              name: `titleDiag${i}`,
+              keyframes: titleAnimData[i].keyframes
+            }
+          }]
+        }));
+
+        Interact.create({ interactions });
+        return true;
+      } catch (err) {
+        console.warn('Interact.create failed:', err);
+        return false;
+      }
+    }
+
+    // ─── Fallback: manual scroll-driven title animation (if Interact unavailable) ───
+    function enableFallback() {
+      function lerp(a, b, t) { return a + (b - a) * t; }
+
+      function animateTitlesFallback() {
+        const scrollY = window.scrollY;
+        const sectionH = window.innerHeight;
+        const rawProgress = scrollY / sectionH;
+        const slideIndex = Math.min(Math.floor(rawProgress), SLIDES.length - 1);
+        const localProg = Math.min(rawProgress - slideIndex, 1);
+
+        titleEls.forEach((el, i) => {
+          const d = titleAnimData[i];
+          if (i === slideIndex) {
+            let x, y, scale;
+            if (i === 0) {
+              if (localProg <= 0.15) {
+                x = d.genesisX; y = d.genesisY; scale = START_END_SCALE;
+              } else if (localProg <= 0.35) {
+                const t = (localProg - 0.15) / 0.20;
+                x = lerp(d.genesisX, 0, t);
+                y = lerp(d.genesisY, 0, t);
+                scale = lerp(START_END_SCALE, 1.2, t);
+              } else if (localProg <= 0.80) {
+                x = 0; y = 0; scale = 1.2;
+              } else {
+                const t = (localProg - 0.80) / 0.20;
+                x = lerp(0, d.endX, t);
+                y = lerp(0, d.endY, t);
+                scale = lerp(1.2, START_END_SCALE, t);
+              }
+            } else {
+              if (localProg <= 0.07) {
+                const t = localProg / 0.07;
+                x = lerp(d.startX, d.genesisX, t);
+                y = lerp(d.startY, d.genesisY, t);
+                scale = START_END_SCALE;
+              } else if (localProg <= 0.15) {
+                x = d.genesisX; y = d.genesisY; scale = START_END_SCALE;
+              } else if (localProg <= 0.35) {
+                const t = (localProg - 0.15) / 0.20;
+                x = lerp(d.genesisX, 0, t);
+                y = lerp(d.genesisY, 0, t);
+                scale = lerp(START_END_SCALE, 1.2, t);
+              } else if (localProg <= 0.80) {
+                x = 0; y = 0; scale = 1.2;
+              } else {
+                const t = (localProg - 0.80) / 0.20;
+                x = lerp(0, d.endX, t);
+                y = lerp(0, d.endY, t);
+                scale = lerp(1.2, START_END_SCALE, t);
+              }
+            }
+            el.style.transform = `translate(${x}vw, ${y}vh) scale(${scale})`;
+            el.style.opacity = '1';
+          } else if (i < slideIndex) {
+            el.style.transform = `translate(${d.endX}vw, ${d.endY}vh) scale(${START_END_SCALE})`;
+            el.style.opacity = '1';
+          } else {
+            el.style.opacity = '0';
+          }
+        });
+      }
+
+      window.addEventListener('scroll', animateTitlesFallback, { passive: true });
+      animateTitlesFallback();
+    }
+
+    // Always use manual scroll-driven title animation for precise control
+    enableFallback();
+
+    // ─── Keyboard navigation ───
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) return;
+      const sectionH = window.innerHeight;
+      const currentSection = Math.round(window.scrollY / sectionH);
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+        if (document.activeElement && document.activeElement.getAttribute('role') === 'tab') return;
+        e.preventDefault();
+        const next = Math.min(currentSection + 1, SLIDES.length - 1);
+        window.scrollTo({ top: next * sectionH, behavior: 'smooth' });
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        if (document.activeElement && document.activeElement.getAttribute('role') === 'tab') return;
+        e.preventDefault();
+        const prev = Math.max(currentSection - 1, 0);
+        window.scrollTo({ top: prev * sectionH, behavior: 'smooth' });
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        window.scrollTo({ top: (SLIDES.length - 1) * sectionH, behavior: 'smooth' });
+      }
+    });
+  </script>
+</body>
+</html>
