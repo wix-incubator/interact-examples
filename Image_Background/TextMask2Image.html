@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Mask — Scroll Reveal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;900&display=swap" rel="stylesheet">
+  <style>
+    /* Register custom property so WAAPI can interpolate it */
+    @property --text-scale {
+      syntax: '<number>';
+      inherits: true;
+      initial-value: 1;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', 'Arial Black', sans-serif; background: #fff; }
+
+    /* ── Tall scroll container ── */
+    .scroll-section {
+      height: 600vh;
+      position: relative;
+    }
+
+    /* ── Sticky viewport (100vh) ── */
+    .sticky-container {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 100%;
+      overflow: clip;
+    }
+
+    /* ── Full-screen background image ── */
+    .bg-image {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
+        url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1920&q=80')
+        center / cover no-repeat;
+      background-size: cover;
+      background-position: center;
+    }
+
+    /* ── White overlay — mix-blend-mode: screen
+         white pixels hide the image, black text reveals it ── */
+    .text-layer {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      mix-blend-mode: screen;
+    }
+
+    .mask-text {
+      font-size: clamp(1rem, 4vw, 5rem);
+      font-weight: 900;
+      color: black;
+      text-transform: uppercase;
+      white-space: nowrap;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      transform: scale(var(--text-scale));
+    }
+
+    /* ── Subtitle that slides in from the bottom ── */
+    .subtitle {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 38vh;
+      color: white;
+      font-size: clamp(0.875rem, 2vw, 1.5rem);
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      z-index: 20;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ Scroll-driven text-mask section ═══ -->
+  <interact-element data-interact-key="scroll-section">
+    <section class="scroll-section">
+      <div class="sticky-container">
+        <div class="bg-image"></div>
+        <interact-element data-interact-key="text-layer">
+          <div class="text-layer">
+            <h1 class="mask-text">WONDER</h1>
+          </div>
+        </interact-element>
+        <interact-element data-interact-key="subtitle">
+          <p class="subtitle">Every moment holds something extraordinary</p>
+        </interact-element>
+      </div>
+    </section>
+  </interact-element>
+
+  <script type="module">
+    let Interact;
+    try {
+      const mod = await import('https://esm.sh/@wix/interact@2.0.0-rc.4/web');
+      Interact = mod.Interact;
+    } catch (e) {
+      console.warn('Wix Interact (web) failed to load:', e);
+    }
+
+    if (Interact) {
+      Interact.create({
+        interactions: [
+          {
+            key: 'scroll-section',
+            trigger: 'viewProgress',
+            effects: [
+              /* ── Scale the text until strokes fill the viewport (finishes at 70%) ── */
+              {
+                key: 'text-layer',
+                keyframeEffect: {
+                  name: 'text-zoom',
+                  keyframes: [
+                    { '--text-scale': '1',    offset: 0 },
+                    { '--text-scale': '2.3',  offset: 0.1 },
+                    { '--text-scale': '5.8',  offset: 0.2 },
+                    { '--text-scale': '14',   offset: 0.3 },
+                    { '--text-scale': '33',   offset: 0.4 },
+                    { '--text-scale': '76',   offset: 0.5 },
+                    { '--text-scale': '180',  offset: 0.6 },
+                    { '--text-scale': '450',  offset: 0.7 },
+                    { '--text-scale': '450',  offset: 1 },
+                  ],
+                },
+                rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
+                rangeEnd:   { name: 'exit',  offset: { value: 0, unit: 'percentage' } },
+                fill: 'both',
+              },
+              /* ── Subtitle slides from below viewport to center screen ── */
+              {
+                key: 'subtitle',
+                keyframeEffect: {
+                  name: 'subtitle-slide',
+                  keyframes: [
+                    { transform: 'translateY(50vh)',  opacity: 0,   offset: 0 },
+                    { transform: 'translateY(50vh)',  opacity: 0,   offset: 0.7 },
+                    { transform: 'translateY(15vh)',  opacity: 1,   offset: 0.8 },
+                    { transform: 'translateY(0)',     opacity: 1,   offset: 0.9 },
+                    { transform: 'translateY(0)',     opacity: 1,   offset: 1 },
+                  ],
+                },
+                rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
+                rangeEnd:   { name: 'exit',  offset: { value: 0, unit: 'percentage' } },
+                fill: 'both',
+              },
+            ],
+          },
+        ],
+      });
+    } else {
+      /* ── Fallback: native scroll listener ── */
+      const textEl     = document.querySelector('.mask-text');
+      const subtitleEl = document.querySelector('.subtitle');
+      const section    = document.querySelector('.scroll-section');
+
+      function onScroll() {
+        if (!section || !textEl) return;
+        const rect       = section.getBoundingClientRect();
+        const scrollDist = section.offsetHeight - window.innerHeight;
+        const progress   = scrollDist <= 0
+          ? 0
+          : Math.max(0, Math.min(1, -rect.top / scrollDist));
+
+        const scale = progress <= 0.7
+          ? Math.pow(450, progress / 0.7)
+          : 450;
+        textEl.style.setProperty('--text-scale', String(scale));
+
+        if (subtitleEl) {
+          if (progress < 0.7) {
+            subtitleEl.style.transform = 'translateY(50vh)';
+            subtitleEl.style.opacity = '0';
+          } else if (progress < 0.9) {
+            const t = (progress - 0.7) / 0.2;
+            const startPx = window.innerHeight * 0.5;
+            subtitleEl.style.transform = `translateY(${startPx * (1 - t)}px)`;
+            subtitleEl.style.opacity = String(t);
+          } else {
+            subtitleEl.style.transform = 'translateY(0)';
+            subtitleEl.style.opacity = '1';
+          }
+        }
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    }
+  </script>
+</body>
+</html>
