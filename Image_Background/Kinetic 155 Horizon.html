@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chronos Architecture | Untamed Beauty</title>
+    <!-- Tailwind CSS for premium styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter font for a sophisticated aesthetic -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: black;
+            margin: 0;
+            overflow-x: clip;
+        }
+        
+        /* Clean UI: Hide scrollbars */
+        body::-webkit-scrollbar { display: none; }
+        body { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Essential for 3D depth propagation between nested layers */
+        .preserve-3d {
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+        }
+
+        .scene-container {
+            overflow: clip;
+            perspective: 2500px;
+        }
+        
+        interact-element {
+            display: block;
+        }
+
+        .beauty-card-ui {
+            background-color: white;
+            box-shadow: 0 100px 200px -50px rgba(0,0,0,0.85);
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background: Improved visibility with higher brightness and lower overlay -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <img 
+            src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop" 
+            alt="Epic cinematic mountain landscape" 
+            class="w-full h-full object-cover grayscale contrast-[1.1] brightness-[0.75]"
+        />
+        <div class="absolute inset-0 bg-black/5"></div>
+    </div>
+
+    <!-- Scroll Trigger (500vh) -->
+    <interact-element data-interact-key="scroll-trigger" class="relative z-10 block h-[500vh]">
+        
+        <!-- Sticky Scene: Source for Mouse Tracking -->
+        <interact-element data-interact-key="sticky-scene" class="sticky top-0 h-screen w-full flex flex-col items-center justify-center p-4 md:p-6 scene-container pointer-events-auto">
+            
+            <!-- LAYER 1: Scroll Rotation Layer (Outer) - Part of "Kinetic 155 Horizon" -->
+            <interact-element data-interact-key="scroll-layer" class="preserve-3d">
+                
+                <!-- LAYER 2: Mouse Tilt Layer (Middle) - Part of "Kinetic 155 Horizon" -->
+                <interact-element data-interact-key="mouse-layer" class="preserve-3d">
+                    
+                    <!-- LAYER 3: Hover Expansion Layer (Inner) - Part of "Kinetic 155 Horizon" -->
+                    <interact-element data-interact-key="hover-layer" class="preserve-3d">
+                        <!-- Content Card -->
+                        <div class="beauty-card-ui p-12 md:p-24 w-[85vw] md:w-full max-w-lg aspect-[4/5] md:aspect-square">
+                            <h3 class="text-4xl md:text-7xl font-bold leading-[1.05] mb-4 md:mb-8 text-[#1d1d1f] tracking-tighter">
+                                Untamed<br/>Beauty.
+                            </h3>
+                            <p class="text-lg md:text-2xl font-medium leading-relaxed text-[#86868b] max-w-[280px] md:max-w-xs mx-auto">
+                                In every walk with nature one receives far more than he seeks.
+                            </p>
+                        </div>
+                    </interact-element>
+                    
+                </interact-element>
+            </interact-element>
+
+        </interact-element>
+    </interact-element>
+
+    <div class="h-[20vh] bg-transparent"></div>
+
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact/web';
+
+        /**
+         * Preset: Kinetic 155 Horizon
+         * Features: 155-degree scroll rotation, 3D Mouse Tilt, and Hover Scale expansion.
+         */
+        const config = {
+            interactions: [
+                // 1. Scroll-driven animation (Symmetric 155-degree rotation)
+                {
+                    key: 'scroll-trigger',
+                    trigger: 'viewProgress',
+                    effects: [
+                        {
+                            key: 'scroll-layer',
+                            rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 100, unit: 'percentage' } },
+                            fill: 'both',
+                            keyframeEffect: {
+                                name: 'kinetic-155-horizon-scroll',
+                                keyframes: [
+                                    { offset: 0, transform: 'rotateY(155deg) scale(0.75)', opacity: 1 },
+                                    { offset: 0.4, transform: 'rotateY(0deg) scale(1)', opacity: 1 },
+                                    { offset: 0.6, transform: 'rotateY(0deg) scale(1)', opacity: 1 },
+                                    { offset: 1, transform: 'rotateY(-155deg) scale(0.75)', opacity: 1 }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                // 2. Mouse-driven animation (Kinetic 3D Tilt)
+                {
+                    key: 'sticky-scene',
+                    trigger: 'pointerMove',
+                    params: { hitArea: 'root' },
+                    effects: [
+                        {
+                            key: 'mouse-layer',
+                            namedEffect: { type: 'Tilt3DMouse' },
+                            transitionDuration: 600,
+                            easing: 'ease-out'
+                        }
+                    ]
+                },
+                // 3. Hover interaction (Kinetic 5% Expansion)
+                {
+                    key: 'hover-layer',
+                    trigger: 'hover',
+                    params: { method: 'toggle' },
+                    effects: [
+                        {
+                            transition: {
+                                duration: 400,
+                                easing: 'cubic-bezier(0.33, 1, 0.68, 1)',
+                                styleProperties: [
+                                    { name: 'transform', value: 'scale(1.05)' }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        };
+
+        Interact.create(config);
+    </script>
+
+</body>
+</html>
