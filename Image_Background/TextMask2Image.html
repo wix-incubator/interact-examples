@@ -127,14 +127,14 @@
                   name: 'text-zoom',
                   keyframes: [
                     { '--text-scale': '1',    offset: 0 },
-                    { '--text-scale': '2.3',  offset: 0.1 },
-                    { '--text-scale': '5.8',  offset: 0.2 },
-                    { '--text-scale': '14',   offset: 0.3 },
-                    { '--text-scale': '33',   offset: 0.4 },
-                    { '--text-scale': '76',   offset: 0.5 },
-                    { '--text-scale': '180',  offset: 0.6 },
-                    { '--text-scale': '450',  offset: 0.7 },
-                    { '--text-scale': '450',  offset: 1 },
+                    { '--text-scale': '2.5',  offset: 0.1 },
+                    { '--text-scale': '7',    offset: 0.2 },
+                    { '--text-scale': '20',   offset: 0.3 },
+                    { '--text-scale': '55',   offset: 0.4 },
+                    { '--text-scale': '150',  offset: 0.5 },
+                    { '--text-scale': '400',  offset: 0.6 },
+                    { '--text-scale': '800',  offset: 0.7 },
+                    { '--text-scale': '800',  offset: 1 },
                   ],
                 },
                 rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
@@ -177,8 +177,8 @@
           : Math.max(0, Math.min(1, -rect.top / scrollDist));
 
         const scale = progress <= 0.7
-          ? Math.pow(450, progress / 0.7)
-          : 450;
+          ? Math.pow(800, progress / 0.7)
+          : 800;
         textEl.style.setProperty('--text-scale', String(scale));
 
         if (subtitleEl) {
