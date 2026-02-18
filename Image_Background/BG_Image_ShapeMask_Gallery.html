@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Green Horizons (Scroll)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&family=Lora:ital,wght@1,400;1,500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Tall scroll container — 5x viewport for scroll room ── */
+    .scroll-section {
+      height: 500vh;
+      position: relative;
+    }
+
+    /* ── Sticky viewport (100vh) ── */
+    .sticky-container {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 100%;
+      overflow: clip;
+      display: flex;
+      align-items: center;
+    }
+
+    /* ── Background image layers ── */
+    .bg-layer {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .bg-idle {
+      z-index: 0;
+      background-image: url('./idle-bg.png');
+    }
+
+    .bg-education {
+      z-index: 1;
+      background-image: url('https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1920&q=80');
+      clip-path: circle(0% at 50% 50%);
+    }
+
+    .bg-conservation {
+      z-index: 2;
+      background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920&q=80');
+      clip-path: circle(0% at 50% 50%);
+    }
+
+    .bg-agriculture {
+      z-index: 3;
+      background-image: url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1920&q=80');
+      clip-path: circle(0% at 50% 50%);
+    }
+
+    /* ── Dark overlay for text legibility ── */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 5;
+    }
+
+    /* ── Content ── */
+    .content {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      padding: 2.5rem 3rem;
+      padding-left: 8vw;
+    }
+
+    @media (min-width: 768px) {
+      .content { padding-left: 5vw; }
+    }
+
+    /* ── Top label + full-width divider ── */
+    .label {
+      font-family: 'Lora', Georgia, serif;
+      font-style: italic;
+      font-size: 1rem;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-left: -8vw;
+      margin-right: -3rem;
+      padding-left: 8vw;
+      padding-right: 3rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+    }
+
+    @media (min-width: 768px) {
+      .label {
+        margin-left: -5vw;
+        margin-right: -3rem;
+        padding-left: 5vw;
+        padding-right: 3rem;
+      }
+    }
+    .label::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #fff;
+      flex-shrink: 0;
+    }
+
+    /* ── Paragraph — vertically centered ── */
+    .text-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .about-text {
+      font-size: clamp(2.07rem, 4vw, 2.62rem);
+      font-weight: 300;
+      line-height: 1.14;
+      letter-spacing: -0.01em;
+      color: rgba(255, 255, 255, 0.85);
+      max-width: 1200px;
+    }
+
+    /* ── Highlighted words — static Lora italic ── */
+    .highlight {
+      display: inline;
+      font-family: 'Lora', Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      color: #fff;
+    }
+
+    /* ── Footer line ── */
+    .org-name {
+      font-family: 'Lora', Georgia, serif;
+      font-style: italic;
+      font-size: 1rem;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      color: #fff;
+      padding-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <interact-element data-interact-key="scroll-section">
+    <section class="scroll-section" role="region" aria-labelledby="about-heading">
+      <div class="sticky-container">
+
+        <!-- Background image layers -->
+        <div class="bg-layer bg-idle" aria-hidden="true"></div>
+
+        <interact-element data-interact-key="bg-education" aria-hidden="true">
+          <div class="bg-layer bg-education"></div>
+        </interact-element>
+
+        <interact-element data-interact-key="bg-conservation" aria-hidden="true">
+          <div class="bg-layer bg-conservation"></div>
+        </interact-element>
+
+        <interact-element data-interact-key="bg-agriculture" aria-hidden="true">
+          <div class="bg-layer bg-agriculture"></div>
+        </interact-element>
+
+        <div class="overlay" aria-hidden="true"></div>
+
+        <!-- Text content -->
+        <div class="content">
+          <h2 id="about-heading" class="label">About Us</h2>
+          <div class="text-wrap">
+            <p class="about-text">
+              We build resilient communities<br>
+              through <span class="highlight">education</span>, environmental<br>
+              <span class="highlight">conservation</span>, and sustainable<br>
+              <span class="highlight">agriculture</span> — working alongside<br>
+              local leaders across 34 countries.
+            </p>
+          </div>
+          <p class="org-name">Green Horizons Foundation</p>
+        </div>
+
+      </div>
+    </section>
+  </interact-element>
+
+  <script type="module">
+    let Interact;
+    try {
+      const mod = await import('https://esm.sh/@wix/interact@2.0.0-rc.4/web');
+      Interact = mod.Interact;
+    } catch (e) {
+      console.warn('Wix Interact failed to load:', e);
+    }
+
+    if (Interact) {
+      Interact.create({
+        conditions: {
+          motionAllowed: { type: 'media', predicate: '(prefers-reduced-motion: no-preference)' },
+        },
+        interactions: [
+
+          /*
+            Scroll timeline: idle → education → conservation → agriculture
+            Each image circle-reveals over its scroll segment, then stays fully open.
+            transitionDuration adds smooth drag so the circle animation lags
+            behind the scroll for a slower, cinematic feel.
+          */
+
+          {
+            key: 'scroll-section',
+            trigger: 'viewProgress',
+            conditions: ['motionAllowed'],
+            effects: [
+              /* ── Education: circle open + continuous zoom (min 1.0) ── */
+              {
+                key: 'bg-education',
+                fill: 'both',
+                easing: 'cubic-bezier(0.37, 0, 0.63, 1)',
+                transitionDuration: 1500,
+                transitionEasing: 'ease-out',
+                keyframeEffect: {
+                  name: 'reveal-education',
+                  keyframes: [
+                    { clipPath: 'circle(0% at 50% 50%)',   transform: 'scale(1.2)',  offset: 0 },
+                    { clipPath: 'circle(0% at 50% 50%)',   transform: 'scale(1.17)', offset: 0.10 },
+                    { clipPath: 'circle(150% at 50% 50%)', transform: 'scale(1.06)', offset: 0.33 },
+                    { clipPath: 'circle(150% at 50% 50%)', transform: 'scale(1.0)',  offset: 1 },
+                  ],
+                },
+                rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
+                rangeEnd:   { name: 'exit',  offset: { value: 0, unit: 'percentage' } },
+              },
+
+              /* ── Conservation: circle open + continuous zoom (min 1.0) ── */
+              {
+                key: 'bg-conservation',
+                fill: 'both',
+                easing: 'cubic-bezier(0.37, 0, 0.63, 1)',
+                transitionDuration: 1500,
+                transitionEasing: 'ease-out',
+                keyframeEffect: {
+                  name: 'reveal-conservation',
+                  keyframes: [
+                    { clipPath: 'circle(0% at 50% 50%)',   transform: 'scale(1.2)',  offset: 0 },
+                    { clipPath: 'circle(0% at 50% 50%)',   transform: 'scale(1.09)', offset: 0.38 },
+                    { clipPath: 'circle(150% at 50% 50%)', transform: 'scale(1.02)', offset: 0.62 },
+                    { clipPath: 'circle(150% at 50% 50%)', transform: 'scale(1.0)',  offset: 1 },
+                  ],
+                },
+                rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
+                rangeEnd:   { name: 'exit',  offset: { value: 0, unit: 'percentage' } },
+              },
+
+              /* ── Agriculture: circle open + continuous zoom (capped at 1.0) ── */
+              {
+                key: 'bg-agriculture',
+                fill: 'both',
+                easing: 'cubic-bezier(0.37, 0, 0.63, 1)',
+                transitionDuration: 1500,
+                transitionEasing: 'ease-out',
+                keyframeEffect: {
+                  name: 'reveal-agriculture',
+                  keyframes: [
+                    { clipPath: 'circle(0% at 50% 50%)',   transform: 'scale(1.15)', offset: 0 },
+                    { clipPath: 'circle(0% at 50% 50%)',   transform: 'scale(1.08)', offset: 0.66 },
+                    { clipPath: 'circle(150% at 50% 50%)', transform: 'scale(1.0)',  offset: 0.90 },
+                    { clipPath: 'circle(150% at 50% 50%)', transform: 'scale(1.0)',  offset: 1 },
+                  ],
+                },
+                rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
+                rangeEnd:   { name: 'exit',  offset: { value: 0, unit: 'percentage' } },
+              },
+            ],
+          },
+
+        ],
+      });
+    }
+  </script>
+
+</body>
+</html>
