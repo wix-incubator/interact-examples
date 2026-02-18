@@ -168,7 +168,9 @@
       <div class="sticky-container">
 
         <!-- Background image layers -->
-        <div class="bg-layer bg-idle" aria-hidden="true"></div>
+        <interact-element data-interact-key="bg-idle" aria-hidden="true">
+          <div class="bg-layer bg-idle"></div>
+        </interact-element>
 
         <interact-element data-interact-key="bg-education" aria-hidden="true">
           <div class="bg-layer bg-education"></div>
@@ -285,6 +287,66 @@
                     { clipPath: 'circle(0% at 50% 50%)',   transform: 'scale(1.08)', offset: 0.66 },
                     { clipPath: 'circle(150% at 50% 50%)', transform: 'scale(1.0)',  offset: 0.90 },
                     { clipPath: 'circle(150% at 50% 50%)', transform: 'scale(1.0)',  offset: 1 },
+                  ],
+                },
+                rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
+                rangeEnd:   { name: 'exit',  offset: { value: 0, unit: 'percentage' } },
+              },
+
+              /* ── Idle blur-out: blurs as education circle reveals ── */
+              {
+                key: 'bg-idle',
+                fill: 'both',
+                easing: 'cubic-bezier(0.37, 0, 0.63, 1)',
+                transitionDuration: 1500,
+                transitionEasing: 'ease-out',
+                keyframeEffect: {
+                  name: 'blur-idle',
+                  keyframes: [
+                    { filter: 'blur(0px)',  offset: 0 },
+                    { filter: 'blur(0px)',  offset: 0.10 },
+                    { filter: 'blur(30px)', offset: 0.33 },
+                    { filter: 'blur(30px)', offset: 1 },
+                  ],
+                },
+                rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
+                rangeEnd:   { name: 'exit',  offset: { value: 0, unit: 'percentage' } },
+              },
+
+              /* ── Education blur-out: blurs as conservation circle reveals ── */
+              {
+                key: 'bg-education',
+                fill: 'both',
+                easing: 'cubic-bezier(0.37, 0, 0.63, 1)',
+                transitionDuration: 1500,
+                transitionEasing: 'ease-out',
+                keyframeEffect: {
+                  name: 'blur-education',
+                  keyframes: [
+                    { filter: 'blur(0px)',  offset: 0 },
+                    { filter: 'blur(0px)',  offset: 0.38 },
+                    { filter: 'blur(30px)', offset: 0.62 },
+                    { filter: 'blur(30px)', offset: 1 },
+                  ],
+                },
+                rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
+                rangeEnd:   { name: 'exit',  offset: { value: 0, unit: 'percentage' } },
+              },
+
+              /* ── Conservation blur-out: blurs as agriculture circle reveals ── */
+              {
+                key: 'bg-conservation',
+                fill: 'both',
+                easing: 'cubic-bezier(0.37, 0, 0.63, 1)',
+                transitionDuration: 1500,
+                transitionEasing: 'ease-out',
+                keyframeEffect: {
+                  name: 'blur-conservation',
+                  keyframes: [
+                    { filter: 'blur(0px)',  offset: 0 },
+                    { filter: 'blur(0px)',  offset: 0.66 },
+                    { filter: 'blur(30px)', offset: 0.90 },
+                    { filter: 'blur(30px)', offset: 1 },
                   ],
                 },
                 rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
