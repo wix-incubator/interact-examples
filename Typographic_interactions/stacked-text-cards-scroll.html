@@ -12,7 +12,6 @@
 
     interact-element { display: block; }
 
-    html { scroll-behavior: smooth; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'Segoe UI', sans-serif;
       background: #f5f5f7;
@@ -20,6 +19,8 @@
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
+
+    /* ── Hero ── */
 
     .hero {
       position: sticky;
@@ -34,19 +35,25 @@
       text-align: center;
       padding: 2rem;
     }
+
     .hero h1 {
       font-family: 'DM Serif Display', Georgia, serif;
       font-size: clamp(2.75rem, 6vw, 4.25rem);
       font-weight: 400;
       letter-spacing: -0.02em;
       margin-bottom: 0.75rem;
+      opacity: 0;
     }
+
     .hero p {
       color: #6e6e73;
       font-size: 1.2rem;
       font-weight: 400;
       letter-spacing: 0.01em;
+      opacity: 0;
     }
+
+    /* ── Card Sections (sticky stacking via negative margins) ── */
 
     .card-section {
       position: relative;
@@ -54,9 +61,10 @@
       align-items: center;
       justify-content: center;
     }
-    .card-section.first { min-height: 580vh; margin-top: -40vh; }
+
+    .card-section.first  { min-height: 580vh; margin-top: -40vh; }
     .card-section.second { min-height: 420vh; margin-top: -420vh; }
-    .card-section.third { min-height: 260vh; margin-top: -260vh; }
+    .card-section.third  { min-height: 260vh; margin-top: -260vh; }
     .card-section.fourth { min-height: 120vh; margin-top: -120vh; }
 
     .card-wrap {
@@ -68,18 +76,17 @@
       align-items: center;
       padding: 2rem;
     }
-    .card-section.first .card-wrap { z-index: 1; }
+
+    .card-section.first  .card-wrap { z-index: 1; }
     .card-section.second .card-wrap { z-index: 2; }
-    .card-section.third .card-wrap { z-index: 3; }
+    .card-section.third  .card-wrap { z-index: 3; }
     .card-section.fourth .card-wrap { z-index: 4; }
+
+    /* ── Card ── */
 
     .card {
       width: 72vh;
       aspect-ratio: 4 / 3.2;
-      opacity: var(--card-opacity, 1);
-      transform: rotate(var(--card-rotation, 0deg));
-      transform-origin: center center;
-      transition: transform 0.06s ease-out, opacity 0.15s ease-out;
       background: #fff;
       border-radius: 36px;
       padding: 4rem 3.5rem;
@@ -101,6 +108,7 @@
       background: linear-gradient(135deg, #f5f5f7 0%, #e8e8ed 100%);
       border-radius: 18px;
     }
+
     .card-icon svg {
       width: 28px;
       height: 28px;
@@ -143,7 +151,8 @@
       max-width: 80%;
     }
 
-    /* Responsive: below 750px, 20px padding down to 390px min */
+    /* ── Responsive ── */
+
     @media (max-width: 750px) {
       body { padding: 0 20px; }
       .hero { padding: 2rem 0; }
@@ -159,12 +168,16 @@
 
     @media (max-width: 390px) {
       body { padding: 0 20px; }
-      .card { width: min(72vh, calc(100vw - 40px)); padding: 2.5rem 1.5rem; }
+      .card {
+        width: min(72vh, calc(100vw - 40px));
+        padding: 2.5rem 1.5rem;
+      }
     }
   </style>
 </head>
 <body>
 
+  <!-- ── Hero ── -->
   <section class="hero">
     <interact-element data-interact-key="hero-title">
       <h1>The Journey</h1>
@@ -174,152 +187,203 @@
     </interact-element>
   </section>
 
+  <!-- ── Card 1 ── -->
   <section class="card-section first">
     <div class="card-wrap">
       <interact-element data-interact-key="card-1">
         <div class="card">
-        <div class="card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M12 6v6l4 2"/>
-          </svg>
-        </div>
-        <span class="label">Step 01</span>
-        <h2>Design</h2>
-        <p class="subtitle">Every great product begins with intention</p>
-        <p class="body">The first card anchors in place. As you scroll, each new card will stack on top, creating a layered experience that guides the eye.</p>
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 6v6l4 2"/>
+            </svg>
+          </div>
+          <span class="label">Step 01</span>
+          <h2>Design</h2>
+          <p class="subtitle">Every great product begins with intention</p>
+          <p class="body">The first card anchors in place. As you scroll, each new card will stack on top, creating a layered experience that guides the eye.</p>
         </div>
       </interact-element>
     </div>
   </section>
 
+  <!-- ── Card 2 ── -->
   <section class="card-section second">
     <div class="card-wrap">
       <interact-element data-interact-key="card-2">
         <div class="card">
-        <div class="card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-            <path d="M2 17l10 5 10-5"/>
-          </svg>
-        </div>
-        <span class="label">Step 02</span>
-        <h2>Build</h2>
-        <p class="subtitle">Craft with precision and care</p>
-        <p class="body">This card scrolls in and stops directly on top of the first. The stacking creates depth and draws attention to the journey.</p>
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+            </svg>
+          </div>
+          <span class="label">Step 02</span>
+          <h2>Build</h2>
+          <p class="subtitle">Craft with precision and care</p>
+          <p class="body">This card scrolls in and stops directly on top of the first. The stacking creates depth and draws attention to the journey.</p>
         </div>
       </interact-element>
     </div>
   </section>
 
+  <!-- ── Card 3 ── -->
   <section class="card-section third">
     <div class="card-wrap">
       <interact-element data-interact-key="card-3">
         <div class="card">
-        <div class="card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-            <line x1="12" y1="22.08" x2="12" y2="12"/>
-          </svg>
-        </div>
-        <span class="label">Step 03</span>
-        <h2>Launch</h2>
-        <p class="subtitle">Bring your vision to the world</p>
-        <p class="body">Three cards now stacked. Each layer represents a phase of the process, building toward the final result.</p>
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+              <line x1="12" y1="22.08" x2="12" y2="12"/>
+            </svg>
+          </div>
+          <span class="label">Step 03</span>
+          <h2>Launch</h2>
+          <p class="subtitle">Bring your vision to the world</p>
+          <p class="body">Three cards now stacked. Each layer represents a phase of the process, building toward the final result.</p>
         </div>
       </interact-element>
     </div>
   </section>
 
+  <!-- ── Card 4 ── -->
   <section class="card-section fourth">
     <div class="card-wrap">
       <interact-element data-interact-key="card-4">
         <div class="card">
-        <div class="card-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-            <polyline points="22 4 12 14.01 9 11.01"/>
-          </svg>
-        </div>
-        <span class="label">Step 04</span>
-        <h2>Complete</h2>
-        <p class="subtitle">All layers aligned, scroll ends here</p>
-        <p class="body">The full stack is now visible. Four cards, one story. This is where the scroll stops and the experience concludes.</p>
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <span class="label">Step 04</span>
+          <h2>Complete</h2>
+          <p class="subtitle">All layers aligned, scroll ends here</p>
+          <p class="body">The full stack is now visible. Four cards, one story. This is where the scroll stops and the experience concludes.</p>
         </div>
       </interact-element>
     </div>
   </section>
 
+  <!-- ── @wix/interact ── -->
   <script type="module">
-    try {
-      const { Interact } = await import('https://esm.sh/@wix/interact');
-      Interact.create({
-        interactions: [
-          { key: 'hero-title', trigger: 'viewEnter', params: { type: 'once', threshold: 0.2 },
-            effects: [{ duration: 1200, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards', namedEffect: { type: 'FadeIn' } }] },
-          { key: 'hero-subtitle', trigger: 'viewEnter', params: { type: 'once', threshold: 0.2 },
-            effects: [{ duration: 1000, delay: 300, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards', namedEffect: { type: 'FadeIn' } }] },
-          { key: 'card-1', trigger: 'viewEnter', params: { type: 'once', threshold: 0.15 },
-            effects: [{ duration: 1000, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards', namedEffect: { type: 'FadeIn' } }] },
-          { key: 'card-2', trigger: 'viewEnter', params: { type: 'once', threshold: 0.15 },
-            effects: [{ duration: 1000, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards', namedEffect: { type: 'FadeIn' } }] },
-          { key: 'card-3', trigger: 'viewEnter', params: { type: 'once', threshold: 0.15 },
-            effects: [{ duration: 1000, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards', namedEffect: { type: 'FadeIn' } }] },
-          { key: 'card-4', trigger: 'viewEnter', params: { type: 'once', threshold: 0.15 },
-            effects: [{ duration: 1000, easing: 'cubic-bezier(0.16, 1, 0.3, 1)', fill: 'forwards', namedEffect: { type: 'FadeIn' } }] }
-        ]
-      });
-    } catch (e) { console.warn('Wix Interact failed (run via http server):', e); }
+    import { Interact } from 'https://esm.sh/@wix/interact/web';
+
+    const entryRange = {
+      rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
+      rangeEnd:   { name: 'entry', offset: { value: 100, unit: 'percentage' } },
+    };
+
+    Interact.create({
+      conditions: {
+        'full-motion': {
+          type: 'media',
+          predicate: '(prefers-reduced-motion: no-preference)',
+        },
+        'reduced-motion': {
+          type: 'media',
+          predicate: '(prefers-reduced-motion: reduce)',
+        },
+      },
+
+      effects: {
+        'enter-ccw': {
+          keyframeEffect: {
+            name: 'enter-ccw',
+            keyframes: [
+              { transform: 'rotate(-8deg)' },
+              { transform: 'rotate(0deg)' },
+            ],
+          },
+          fill: 'both',
+          easing: 'ease-out',
+          ...entryRange,
+        },
+        'enter-cw': {
+          keyframeEffect: {
+            name: 'enter-cw',
+            keyframes: [
+              { transform: 'rotate(8deg)' },
+              { transform: 'rotate(0deg)' },
+            ],
+          },
+          fill: 'both',
+          easing: 'ease-out',
+          ...entryRange,
+        },
+      },
+
+      interactions: [
+        /* ── Hero entrance ── */
+        {
+          key: 'hero-title',
+          trigger: 'viewEnter',
+          params: { type: 'once' },
+          effects: [{
+            keyframeEffect: {
+              name: 'hero-title-fade',
+              keyframes: [
+                { opacity: 0, transform: 'translateY(16px)' },
+                { opacity: 1, transform: 'translateY(0)' },
+              ],
+            },
+            duration: 1200,
+            easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+            fill: 'forwards',
+          }],
+        },
+        {
+          key: 'hero-subtitle',
+          trigger: 'viewEnter',
+          params: { type: 'once' },
+          effects: [{
+            keyframeEffect: {
+              name: 'hero-sub-fade',
+              keyframes: [
+                { opacity: 0, transform: 'translateY(16px)' },
+                { opacity: 1, transform: 'translateY(0)' },
+              ],
+            },
+            duration: 1000,
+            delay: 300,
+            easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+            fill: 'forwards',
+          }],
+        },
+
+        /* ── Card 2 — rotate counter-clockwise ── */
+        {
+          key: 'card-2',
+          trigger: 'viewProgress',
+          conditions: ['full-motion'],
+          effects: [
+            { effectId: 'enter-ccw' },
+          ],
+        },
+        /* ── Card 3 — rotate clockwise ── */
+        {
+          key: 'card-3',
+          trigger: 'viewProgress',
+          conditions: ['full-motion'],
+          effects: [
+            { effectId: 'enter-cw' },
+          ],
+        },
+        /* ── Card 4 — rotate counter-clockwise ── */
+        {
+          key: 'card-4',
+          trigger: 'viewProgress',
+          conditions: ['full-motion'],
+          effects: [
+            { effectId: 'enter-ccw' },
+          ],
+        },
+      ],
+    });
   </script>
 
-  <script>
-    (function() {
-      const sections = document.querySelectorAll('.card-section');
-      const cards = document.querySelectorAll('.card');
-      const ROTATION_START = 8;
-      const TRAVEL_DISTANCE = 280;
-
-      function updateRotations() {
-        const vh = window.innerHeight;
-        const viewportCenter = vh * 0.5;
-
-        sections.forEach((section, i) => {
-          const card = cards[i];
-          if (!card) return;
-
-          const wrapRect = section.querySelector('.card-wrap').getBoundingClientRect();
-          const cardCenter = wrapRect.top + wrapRect.height / 2;
-
-          let progress = 1;
-          if (cardCenter > viewportCenter) {
-            const distance = cardCenter - viewportCenter;
-            progress = 1 - Math.min(1, distance / TRAVEL_DISTANCE);
-          }
-
-          progress = Math.max(0, Math.min(1, progress));
-          const rotation = i === 0 ? 0 : ROTATION_START * (1 - progress) * (i % 2 === 0 ? 1 : -1);
-          const opacity = 0.9 + 0.1 * progress;
-          card.style.setProperty('--card-rotation', rotation + 'deg');
-          card.style.setProperty('--card-opacity', opacity.toString());
-        });
-      }
-
-      let ticking = false;
-      function onScroll() {
-        if (!ticking) {
-          requestAnimationFrame(function() {
-            updateRotations();
-            ticking = false;
-          });
-          ticking = true;
-        }
-      }
-
-      window.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('resize', updateRotations);
-      updateRotations();
-    })();
-  </script>
 </body>
 </html>
