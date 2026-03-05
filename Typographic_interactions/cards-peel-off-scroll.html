@@ -24,9 +24,7 @@
 
     .hero {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
+      inset: 0 0 auto;
       z-index: 0;
       display: flex;
       flex-direction: column;
@@ -51,67 +49,72 @@
       letter-spacing: 0.01em;
     }
 
-    /* ── Card Sections (sticky stacking via negative margins) ── */
+    /* ── Card Sections ── */
 
-    .card-section {
-      position: relative;
-    }
+    .card-section { position: relative; }
 
-    .card-section.first  { min-height: 280vh; z-index: 4; }
-    .card-section.second { min-height: 440vh; margin-top: -280vh; z-index: 3; }
-    .card-section.third  { min-height: 600vh; margin-top: -440vh; z-index: 2; }
-    .card-section.fourth { min-height: 700vh; margin-top: -600vh; z-index: 1; }
+    .card-section.first  { min-height: 280dvh; z-index: 4; }
+    .card-section.second { min-height: 440dvh; margin-top: -280dvh; z-index: 3; }
+    .card-section.third  { min-height: 600dvh; margin-top: -440dvh; z-index: 2; }
+    .card-section.fourth { min-height: 700dvh; margin-top: -600dvh; z-index: 1; }
 
     .card-wrap {
       position: sticky;
       top: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 2rem;
+      height: 100dvh;
+      display: grid;
+      place-items: start center;
+      padding: max(10rem, 27dvh) 2rem 2rem;
     }
 
     /* ── Card ── */
 
     .card {
-      width: 57.6vh;
-      aspect-ratio: 4 / 3.2;
+      --tilt: 0deg;
+      width: 57.6dvh;
+      aspect-ratio: 5 / 4;
       background: #fff;
-      border-radius: 28px;
-      padding: 3rem 2.75rem;
+      border-radius: 4px;
+      padding: 3.5rem 3rem;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.04), 0 48px 160px rgba(0,0,0,0.08);
+      box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 24px 80px rgba(0,0,0,.07);
+      border: 1px solid rgba(0,0,0,.06);
+      transform: rotate(var(--tilt));
     }
 
+    .card-section.first  .card { --tilt: -4deg; }
+    .card-section.second .card { --tilt: 5deg; }
+    .card-section.third  .card { --tilt: -3.5deg; }
+    .card-section.fourth .card { --tilt: 2.5deg; }
+
     .card-icon {
-      width: 56px;
-      height: 56px;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #f5f5f7 0%, #e8e8ed 100%);
-      border-radius: 18px;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 1.75rem;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(0,0,0,.1);
+      border-radius: 2px;
     }
 
     .card-icon svg {
-      width: 28px;
-      height: 28px;
+      width: 22px;
+      height: 22px;
       color: #1d1d1f;
+      stroke-width: 1.5;
     }
 
     .card .label {
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.2em;
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
       text-transform: uppercase;
-      color: #86868b;
-      margin-bottom: 1rem;
+      color: #a1a1a6;
+      margin-bottom: 1.25rem;
     }
 
     .card h2 {
@@ -120,59 +123,51 @@
       font-weight: 400;
       letter-spacing: -0.02em;
       line-height: 1.05;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
     }
 
     .card .subtitle {
       color: #1d1d1f;
-      font-size: 1.2rem;
-      font-weight: 500;
-      line-height: 1.5;
+      font-size: 1.1rem;
+      font-weight: 400;
+      line-height: 1.6;
       letter-spacing: -0.01em;
       max-width: 85%;
     }
 
     .card .body {
-      color: #6e6e73;
-      font-size: 1rem;
-      line-height: 1.7;
+      color: #86868b;
+      font-size: 0.9rem;
+      line-height: 1.8;
       font-weight: 400;
-      margin-top: 1.5rem;
+      margin-top: 1.25rem;
       max-width: 80%;
     }
 
-    /* ── Card rotations (stacked feel) ── */
-
-    .card-section.first  .card { transform: rotate(-2deg); }
-    .card-section.second .card { transform: rotate(2.5deg); }
-    .card-section.third  .card { transform: rotate(-1.5deg); }
-    .card-section.fourth .card { transform: rotate(1deg); }
-
-    /* ── Dark card variant ── */
+    /* ── Dark variant ── */
 
     .card.dark {
       background: #1d1d1f;
       color: #f5f5f7;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 48px 160px rgba(0,0,0,0.24);
+      border-color: rgba(255,255,255,.08);
+      box-shadow: 0 1px 2px rgba(0,0,0,.2), 0 24px 80px rgba(0,0,0,.3);
     }
 
     .card.dark .card-icon {
-      background: linear-gradient(135deg, #2d2d2f 0%, #3a3a3c 100%);
+      border-color: rgba(255,255,255,.12);
     }
 
-    .card.dark .card-icon svg { color: #f5f5f7; }
-    .card.dark .label { color: #86868b; }
-    .card.dark .subtitle { color: #f5f5f7; }
-    .card.dark .body { color: #a1a1a6; }
+    .card.dark .card-icon svg { color: #f5f5f7; stroke-width: 1.5; }
+    .card.dark .label { color: #636366; }
+    .card.dark .subtitle { color: #e5e5ea; }
+    .card.dark .body { color: #8e8e93; }
 
     /* ── Responsive ── */
 
     @media (max-width: 750px) {
-      body { padding: 0 20px; }
-      .hero { padding: 2rem 0; }
-      .card-wrap { padding: 20px 0; }
+      .card-wrap { padding: max(10rem, 27dvh) 20px 20px; }
       .card {
-        width: min(57.6vh, calc(100vw - 40px));
+        width: min(57.6dvh, calc(100vw - 40px));
         padding: 2.5rem 1.5rem;
       }
       .card h2 { font-size: 2rem; }
@@ -181,11 +176,7 @@
     }
 
     @media (max-width: 390px) {
-      body { padding: 0 20px; }
-      .card {
-        width: min(57.6vh, calc(100vw - 40px));
-        padding: 2rem 1.25rem;
-      }
+      .card { padding: 2rem 1.25rem; }
     }
   </style>
 </head>
@@ -291,38 +282,16 @@
       rangeEnd:   { name: 'exit', offset: { value: 100, unit: 'percentage' } },
     };
 
+    const heroEnter = {
+      easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+      fill: 'forwards',
+    };
+
     Interact.create({
       conditions: {
         'full-motion': {
           type: 'media',
           predicate: '(prefers-reduced-motion: no-preference)',
-        },
-      },
-
-      effects: {
-        'exit-ccw': {
-          keyframeEffect: {
-            name: 'exit-ccw',
-            keyframes: [
-              { transform: 'rotate(0deg)', opacity: 1 },
-              { transform: 'rotate(-6deg)', opacity: 0 },
-            ],
-          },
-          fill: 'both',
-          easing: 'ease-in',
-          ...exitRange,
-        },
-        'exit-cw': {
-          keyframeEffect: {
-            name: 'exit-cw',
-            keyframes: [
-              { transform: 'rotate(0deg)', opacity: 1 },
-              { transform: 'rotate(6deg)', opacity: 0 },
-            ],
-          },
-          fill: 'both',
-          easing: 'ease-in',
-          ...exitRange,
         },
       },
 
@@ -341,8 +310,7 @@
               ],
             },
             duration: 1200,
-            easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
-            fill: 'forwards',
+            ...heroEnter,
           }],
         },
         {
@@ -359,37 +327,85 @@
             },
             duration: 1000,
             delay: 300,
-            easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
-            fill: 'forwards',
+            ...heroEnter,
           }],
         },
 
-        /* ── Card 1 — peels off with counter-clockwise rotation ── */
+        /* ── Card 1 — tilt -4° → exit counter-clockwise ── */
         {
           key: 'card-1',
           trigger: 'viewProgress',
           conditions: ['full-motion'],
-          effects: [
-            { effectId: 'exit-ccw' },
-          ],
+          effects: [{
+            keyframeEffect: {
+              name: 'card-1-exit',
+              keyframes: [
+                { transform: 'rotate(-4deg)', opacity: 1 },
+                { transform: 'rotate(-10deg)', opacity: 0 },
+              ],
+            },
+            fill: 'both',
+            easing: 'ease-in',
+            ...exitRange,
+          }],
         },
-        /* ── Card 2 — peels off with clockwise rotation ── */
+
+        /* ── Card 2 — tilt 5° → exit clockwise ── */
         {
           key: 'card-2',
           trigger: 'viewProgress',
           conditions: ['full-motion'],
-          effects: [
-            { effectId: 'exit-cw' },
-          ],
+          effects: [{
+            keyframeEffect: {
+              name: 'card-2-exit',
+              keyframes: [
+                { transform: 'rotate(5deg)', opacity: 1 },
+                { transform: 'rotate(11deg)', opacity: 0 },
+              ],
+            },
+            fill: 'both',
+            easing: 'ease-in',
+            ...exitRange,
+          }],
         },
-        /* ── Card 3 — peels off with counter-clockwise rotation ── */
+
+        /* ── Card 3 — tilt -3.5° → exit counter-clockwise ── */
         {
           key: 'card-3',
           trigger: 'viewProgress',
           conditions: ['full-motion'],
-          effects: [
-            { effectId: 'exit-ccw' },
-          ],
+          effects: [{
+            keyframeEffect: {
+              name: 'card-3-exit',
+              keyframes: [
+                { transform: 'rotate(-3.5deg)', opacity: 1 },
+                { transform: 'rotate(-9.5deg)', opacity: 0 },
+              ],
+            },
+            fill: 'both',
+            easing: 'ease-in',
+            ...exitRange,
+          }],
+        },
+
+        /* ── Card 4 — tilt entrance ── */
+        {
+          key: 'card-4',
+          trigger: 'viewEnter',
+          params: { type: 'once' },
+          conditions: ['full-motion'],
+          effects: [{
+            keyframeEffect: {
+              name: 'card-4-enter',
+              keyframes: [
+                { transform: 'rotate(0deg)' },
+                { transform: 'rotate(2.5deg)' },
+              ],
+            },
+            duration: 600,
+            easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+            fill: 'forwards',
+          }],
         },
       ],
     });
