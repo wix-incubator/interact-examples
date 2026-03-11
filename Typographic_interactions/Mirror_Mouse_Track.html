@@ -89,6 +89,11 @@
     <script type="module">
         import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
 
+        const TILT_PERSPECTIVE = 500;
+        const TILT_ANGLE = 50;
+        const TILT_LATENCY = 0;
+        const TILT_INVERTED = -1;
+
         const config = {
             conditions: {
                 mobile: { type: 'media', predicate: '(max-width: 767px)' },
@@ -96,32 +101,34 @@
             },
             interactions: [
                 // --- DESKTOP INTERACTIONS ---
-                {
-                    key: 'header-zone', 
-                    trigger: 'pointerMove',
-                    params: { hitArea: 'root' },
-                    effects: [
-                        {
-                            namedEffect: { type: 'Tilt3DMouse', power: 'medium' },
-                            fill: 'both', 
-                            composite: 'add',
-                            conditions: ['desktop']
-                        }
-                    ]
-                },
-                {
-                    key: 'text-zone',
-                    trigger: 'pointerMove',
-                    params: { hitArea: 'root' },
-                    effects: [
-                        {
-                            namedEffect: { type: 'Tilt3DMouse', power: 'medium' },
-                            fill: 'both',
-                            composite: 'add',
-                            conditions: ['desktop']
-                        }
-                    ]
-                },
+                    {
+                        key: 'header-zone', 
+                        trigger: 'pointerMove',
+                        params: { hitArea: 'root' },
+                        effects: [
+                            {
+                                transitionDuration: TILT_LATENCY,
+                                namedEffect: { type: 'Tilt3DMouse', angle: TILT_ANGLE, perspective: TILT_PERSPECTIVE, inverted: TILT_INVERTED > 0 },
+                                fill: 'both', 
+                                composite: 'add',
+                                conditions: ['desktop']
+                            }
+                        ]
+                    },
+                    {
+                        key: 'text-zone',
+                        trigger: 'pointerMove',
+                        params: { hitArea: 'root' },
+                        effects: [
+                            {
+                                transitionDuration: TILT_LATENCY,
+                                namedEffect: { type: 'Tilt3DMouse', angle: TILT_ANGLE, perspective: TILT_PERSPECTIVE, inverted: TILT_INVERTED > 0 },
+                                fill: 'both',
+                                composite: 'add',
+                                conditions: ['desktop']
+                            }
+                        ]
+                    },
 
                 // --- MOBILE INTERACTIONS ---
                 {

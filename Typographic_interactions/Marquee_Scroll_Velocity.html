@@ -8,12 +8,11 @@
     <style>
         body {
             font-family: 'Helvetica Neue', sans-serif;
-            background-color: #1a1a1a; 
+            background-color: #1a1a1a;
             color: #eee;
-            /* Height for scrolling */
             min-height: 400vh;
             margin: 0;
-            overflow-x: hidden;
+            overflow-x: clip;
         }
 
         .spacer {
@@ -23,22 +22,18 @@
             justify-content: center;
         }
 
-        /* Marquee Container */
         .marquee-wrapper {
-            overflow: clip; 
+            overflow: clip;
             width: 100%;
             padding: 4rem 0;
             background: #1a1a1a;
             display: flex;
             flex-direction: column;
+            align-items: center;
             gap: 1rem;
             position: relative;
         }
 
-        /* Keep this fix: 
-           Ensure the wrapper is exactly as wide as the text content 
-           so the loop math (translateX -50%) works perfectly.
-        */
         [data-interact-key^="row-"] {
             width: max-content;
         }
@@ -46,7 +41,7 @@
         .marquee-line {
             display: flex;
             width: fit-content;
-            will-change: transform; 
+            will-change: transform;
         }
 
         .marquee-item {
@@ -57,7 +52,7 @@
             padding-right: 2vw;
             text-transform: uppercase;
             transform-style: preserve-3d;
-            user-select: text; 
+            user-select: text;
             cursor: text;
         }
 
@@ -65,7 +60,7 @@
             color: transparent;
             -webkit-text-stroke: 2px #fff;
         }
-        
+
         .row-2 .marquee-item {
             color: #fff;
         }
@@ -73,121 +68,58 @@
 </head>
 <body>
 
-    <div class="spacer"></div>
+    <!-- Outer wrapper spans the full scroll range so viewProgress fires throughout -->
+    <interact-element data-interact-key="velocity-tracker">
+        <div>
+            <div class="spacer"></div>
 
-    <interact-element data-interact-key="main-container">
-        <section class="marquee-wrapper" aria-label="Animated Text Showcase">
-            
-            <!-- Row 1: Moves Left -->
-            <interact-element data-interact-key="row-left">
-                <div class="marquee-line row-1">
-                    <div class="marquee-item">Creative Animation • Velocity Scroll • Interact Lib •</div>
-                    <div class="marquee-item" aria-hidden="true">Creative Animation • Velocity Scroll • Interact Lib •</div>
-                </div>
-            </interact-element>
+            <section class="marquee-wrapper" aria-label="Animated Text Showcase">
+                <interact-element data-interact-key="row-left">
+                    <div class="marquee-line row-1">
+                        <div class="marquee-item">Creative Animation • Velocity Scroll • Interact Lib •</div>
+                        <div class="marquee-item" aria-hidden="true">Creative Animation • Velocity Scroll • Interact Lib •</div>
+                        <div class="marquee-item" aria-hidden="true">Creative Animation • Velocity Scroll • Interact Lib •</div>
+                        <div class="marquee-item" aria-hidden="true">Creative Animation • Velocity Scroll • Interact Lib •</div>
+                    </div>
+                </interact-element>
 
-            <!-- Row 2: Moves Right -->
-            <interact-element data-interact-key="row-right">
-                <div class="marquee-line row-2">
-                    <div class="marquee-item">Seamless Motion • Infinite Loop • Web Design •</div>
-                    <div class="marquee-item" aria-hidden="true">Seamless Motion • Infinite Loop • Web Design •</div>
-                </div>
-            </interact-element>
+                <interact-element data-interact-key="row-right">
+                    <div class="marquee-line row-2">
+                        <div class="marquee-item">Seamless Motion • Infinite Loop • Web Design •</div>
+                        <div class="marquee-item" aria-hidden="true">Seamless Motion • Infinite Loop • Web Design •</div>
+                        <div class="marquee-item" aria-hidden="true">Seamless Motion • Infinite Loop • Web Design •</div>
+                        <div class="marquee-item" aria-hidden="true">Seamless Motion • Infinite Loop • Web Design •</div>
+                    </div>
+                </interact-element>
+            </section>
 
-        </section>
+            <div class="spacer"></div>
+        </div>
     </interact-element>
 
-    <div class="spacer"></div>
-
-    <!-- Import Wix Interact -->
     <script type="module">
         import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
 
-        // ------------------------------------------------------------------
-        // Helper: Physics-Based Velocity Controller
-        // ------------------------------------------------------------------
-        let currentSpeed = 1;
-        let lastScrollY = window.scrollY;
-        let baseSpeed = 1; 
-
-        // This loop runs every frame to calculate momentum
-        const physicsLoop = () => {
-            const currentScrollY = window.scrollY;
-            const delta = currentScrollY - lastScrollY;
-            lastScrollY = currentScrollY;
-
-            // Update Base Direction
-            if (delta > 0.5) {
-                baseSpeed = 1;
-            } else if (delta < -0.5) {
-                baseSpeed = -1;
+        let speedMultiplier = 1;
+        window.addEventListener('message', (e) => {
+            const msg = e.data;
+            if (msg && msg.__explorer && msg.type === 'setSpeed') {
+                speedMultiplier = msg.value;
             }
+        });
 
-            // Determine Target Speed
-            const sensitivity = 0.4; 
-            let targetSpeed = baseSpeed + (delta * sensitivity);
-
-            // Clamp the target speed
-            targetSpeed = Math.max(Math.min(targetSpeed, 15), -15);
-
-            // Liquid Interpolation
-            const lerpFactor = 0.1; 
-            currentSpeed += (targetSpeed - currentSpeed) * lerpFactor;
-
-            // Optimization
-            if (Math.abs(delta) < 0.1 && Math.abs(currentSpeed - baseSpeed) < 0.01) {
-                currentSpeed = baseSpeed;
-            }
-
-            applySpeed(currentSpeed);
-            requestAnimationFrame(physicsLoop);
-        };
-
-        const applySpeed = (speed) => {
-            // FIXED: Reverted to targeting the inner DIVs where the animation lives
-            const rows = [
-                document.querySelector('[data-interact-key="row-left"] > div'),
-                document.querySelector('[data-interact-key="row-right"] > div')
-            ];
-
-            rows.forEach(row => {
-                if(!row) return;
-                const animations = row.getAnimations();
-                
-                // FIXED: Use a dataset attribute on the element itself to track initialization.
-                // This ensures EACH row gets initialized, not just the first one.
-                if (!row.dataset.hasInitialized && animations.length > 0) {
-                     animations.forEach(anim => {
-                        // Jump forward so we can reverse immediately
-                        anim.currentTime = 20000000; 
-                     });
-                     row.dataset.hasInitialized = "true";
-                }
-
-                animations.forEach(anim => {
-                    anim.updatePlaybackRate(speed);
-                });
-            });
-        };
-
-        // Start the physics loop immediately
-        physicsLoop();
-
-        // ------------------------------------------------------------------
-        // Configuration
-        // ------------------------------------------------------------------
-        const config = {
+        Interact.create({
             effects: {
                 'marquee-left-fx': {
-                    duration: 40000, 
-                    iterations: 1e6, 
+                    duration: 40000,
+                    iterations: 1e6,
                     easing: 'linear',
                     fill: 'both',
                     keyframeEffect: {
                         name: 'slide-left',
                         keyframes: [
                             { transform: 'translateX(0%)' },
-                            { transform: 'translateX(-50%)' }
+                            { transform: 'translateX(-25%)' }
                         ]
                     }
                 },
@@ -199,7 +131,7 @@
                     keyframeEffect: {
                         name: 'slide-right',
                         keyframes: [
-                            { transform: 'translateX(-50%)' },
+                            { transform: 'translateX(-25%)' },
                             { transform: 'translateX(0%)' }
                         ]
                     }
@@ -216,11 +148,54 @@
                     key: 'row-right',
                     trigger: 'pageVisible',
                     effects: [{ effectId: 'marquee-right-fx' }]
+                },
+                {
+                    key: 'velocity-tracker',
+                    trigger: 'viewProgress',
+                    effects: [{
+                        rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
+                        rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                        fill: 'both',
+                        customEffect: (element, progress) => {
+                            const s = element.__vs || (element.__vs = {
+                                lastProgress: progress,
+                                baseSpeed: 1,
+                                currentSpeed: 1
+                            });
+
+                            const delta = progress - s.lastProgress;
+                            s.lastProgress = progress;
+
+                            if (Math.abs(delta) < 0.00001) return;
+
+                            if (delta > 0.0003) s.baseSpeed = 1;
+                            else if (delta < -0.0003) s.baseSpeed = -1;
+
+                            const sensitivity = 400;
+                            let target = s.baseSpeed + delta * sensitivity;
+                            target = Math.max(-15, Math.min(15, target));
+
+                            s.currentSpeed += (target - s.currentSpeed) * 0.15;
+
+                            if (Math.abs(delta) < 0.0001 && Math.abs(s.currentSpeed - s.baseSpeed) < 0.01) {
+                                s.currentSpeed = s.baseSpeed;
+                            }
+
+                            element.querySelectorAll('.marquee-line').forEach(line => {
+                                const anims = line.getAnimations();
+                                if (!line.dataset.init && anims.length) {
+                                    anims.forEach(a => { a.currentTime = 20000000; });
+                                    line.dataset.init = '1';
+                                }
+                                anims.forEach(a => {
+                                    a.updatePlaybackRate(s.currentSpeed * speedMultiplier);
+                                });
+                            });
+                        }
+                    }]
                 }
             ]
-        };
-
-        Interact.create(config);
+        });
     </script>
 </body>
 </html>

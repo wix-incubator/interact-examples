@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Scrolling Cards with @wix/interact</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS variables for explorer slider control */
+        :root {
+            --hvs-gap: 4;
+            --hvs-card-w: 33.3;
+            --hvs-card-h: 75;
+            --hvs-radius: 16;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #1a202c;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Sticky wrapper: height and vertical centering driven by card height */
+        .sticky-wrap {
+            position: sticky;
+            top: calc((100 - var(--hvs-card-h)) / 2 * 1vh);
+            height: calc(var(--hvs-card-h) * 1vh);
+            width: 100%;
+            overflow: hidden;
+        }
+
+        /* Stack gap driven by variable */
+        #stack {
+            gap: calc(var(--hvs-gap) * 1px);
+        }
+
+        .card {
+            /* Start off-screen below viewport */
+            transform: translateY(100vh);
+            will-change: transform;
+            border: 1px solid #e2e8f0;
+            /* Dimensions and radius driven by CSS variables */
+            width: 80vw;
+            height: calc(var(--hvs-card-h) * 1vh);
+            border-radius: calc(var(--hvs-radius) * 1px);
+        }
+
+        @media (min-width: 768px) {
+            .card {
+                width: calc(var(--hvs-card-w) * 1vw);
+            }
+        }
+
+        .card img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+        .card .card-content {
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Main Scrolling Animation Section -->
+    <wix-interact-element data-wix-path="#scroll-section">
+        <section id="scroll-section" class="relative" style="height: 900vh;">
+            
+            <!-- Sticky Container -->
+            <div class="sticky-wrap">
+
+                <!-- The stack of cards -->
+                <wix-interact-element data-wix-path="#stack">
+                    <div id="stack" class="flex w-max">
+                        
+                        <wix-interact-element data-wix-path="#card-1">
+                            <div id="card-1" class="card relative flex flex-col justify-end text-white overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1554941829-202a0b2403b8?q=80&w=2940&auto=format&fit=crop" alt="Abstract architectural design" onerror="this.onerror=null;this.src='https://placehold.co/800x1200/cccccc/333333?text=Image+1';">
+                                <div class="card-content p-6 md:p-8">
+                                    <h2 class="text-3xl md:text-4xl font-bold">Discovery</h2>
+                                    <p class="text-base md:text-lg">Every scroll reveals something new.</p>
+                                </div>
+                            </div>
+                        </wix-interact-element>
+
+                        <wix-interact-element data-wix-path="#card-2">
+                            <div id="card-2" class="card relative flex flex-col justify-end text-white overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=2787&auto=format&fit=crop" alt="Smooth, flowing abstract shapes" onerror="this.onerror=null;this.src='https://placehold.co/800x1200/cccccc/333333?text=Image+2';">
+                                <div class="card-content p-6 md:p-8">
+                                    <h2 class="text-3xl md:text-4xl font-bold">Progression</h2>
+                                    <p class="text-base md:text-lg">Building momentum with each frame.</p>
+                                </div>
+                            </div>
+                        </wix-interact-element>
+
+                        <wix-interact-element data-wix-path="#card-3">
+                            <div id="card-3" class="card relative flex flex-col justify-end text-white overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1579546929662-711aa81148cf?q=80&w=2940&auto=format&fit=crop" alt="Colorful pastel abstract background" onerror="this.onerror=null;this.src='https://placehold.co/800x1200/cccccc/333333?text=Image+3';">
+                                <div class="card-content p-6 md:p-8">
+                                    <h2 class="text-3xl md:text-4xl font-bold">Harmony</h2>
+                                    <p class="text-base md:text-lg">Where design and motion align.</p>
+                                </div>
+                            </div>
+                        </wix-interact-element>
+
+                        <wix-interact-element data-wix-path="#card-4">
+                            <div id="card-4" class="card relative flex flex-col justify-end text-white overflow-hidden">
+                                    <img src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=2940&auto=format&fit=crop" alt="Vibrant liquid paint mixing" onerror="this.onerror=null;this.src='https://placehold.co/800x1200/cccccc/333333?text=Image+4';">
+                                <div class="card-content p-6 md:p-8">
+                                    <h2 class="text-3xl md:text-4xl font-bold">Energy</h2>
+                                    <p class="text-base md:text-lg">A dynamic visual experience.</p>
+                                </div>
+                            </div>
+                        </wix-interact-element>
+
+                        <wix-interact-element data-wix-path="#card-5">
+                            <div id="card-5" class="card relative flex flex-col justify-end text-white overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?q=80&w=2854&auto=format&fit=crop" alt="Subtle watercolor texture" onerror="this.onerror=null;this.src='https://placehold.co/800x1200/cccccc/333333?text=Image+5';">
+                                <div class="card-content p-6 md:p-8">
+                                    <h2 class="text-3xl md:text-4xl font-bold">Clarity</h2>
+                                    <p class="text-base md:text-lg">The story becomes clear.</p>
+                                </div>
+                            </div>
+                        </wix-interact-element>
+                        
+                        <wix-interact-element data-wix-path="#card-6">
+                            <div id="card-6" class="card relative flex flex-col justify-end text-white overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2940&auto=format&fit=crop" alt="Bright blend of abstract colors" onerror="this.onerror=null;this.src='https://placehold.co/800x1200/cccccc/333333?text=Image+6';">
+                                <div class="card-content p-6 md:p-8">
+                                    <h2 class="text-3xl md:text-4xl font-bold">Finale</h2>
+                                    <p class="text-base md:text-lg">The final view unfolds.</p>
+                                </div>
+                            </div>
+                        </wix-interact-element>
+                    </div>
+                </wix-interact-element>
+            </div>
+
+        </section>
+    </wix-interact-element>
+
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const isMobile = window.innerWidth < 768;
+            const numCards = 6;
+
+            // Read CSS variables to compute scroll distance dynamically
+            const root = getComputedStyle(document.documentElement);
+            const gap = parseFloat(root.getPropertyValue('--hvs-gap'));
+            const cardH = parseFloat(root.getPropertyValue('--hvs-card-h'));
+
+            // Compute horizontal scroll distance from actual card widths and gaps
+            let horizontalScrollEnd;
+            if (isMobile) {
+                const mobileCardW = 80; // vw
+                const scrollVW = numCards * mobileCardW - 100;
+                const scrollGapPX = (numCards - 1) * gap;
+                horizontalScrollEnd = `translateX(calc(-${scrollVW}vw - ${scrollGapPX}px))`;
+            } else {
+                const cardW = parseFloat(root.getPropertyValue('--hvs-card-w'));
+                const scrollVW = numCards * cardW - 100;
+                const scrollGapPX = (numCards - 1) * gap;
+                horizontalScrollEnd = `translateX(calc(-${scrollVW}vw - ${scrollGapPX}px))`;
+            }
+
+            // Entry offset: cards start this far below their natural position
+            const entryOffset = Math.max(cardH + 10, 100);
+
+            const config = {
+                interactions: [
+                    {
+                        key: '#scroll-section',
+                        trigger: 'viewProgress',
+                        effects: [
+                            // Horizontal scroll of the #stack container
+                            {
+                                key: '#stack',
+                                keyframeEffect: {
+                                    name: 'stack-scroll-effect',
+                                    keyframes: [
+                                        { transform: 'translateX(0vw)' },
+                                        { transform: horizontalScrollEnd }
+                                    ],
+                                },
+                                rangeStart: { name: 'cover', offset: { type: 'percentage', value: 50 } },
+                                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 90 } },
+                                easing: 'linear',
+                                fill: 'both'
+                            },
+                            // Card 1 entrance
+                            {
+                                key: '#card-1',
+                                keyframeEffect: {
+                                    name: 'card-1-scroll-effect',
+                                    keyframes: [
+                                        { transform: `translateY(${entryOffset}vh)` },
+                                        { transform: 'translateY(0vh)' }
+                                    ],
+                                },
+                                rangeStart: { name: 'cover', offset: { type: 'percentage', value: 10 } },
+                                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 40 } },
+                                easing: 'linear',
+                                fill: 'both'
+                            },
+                            // Card 2 entrance
+                            {
+                                key: '#card-2',
+                                keyframeEffect: {
+                                    name: 'card-2-scroll-effect',
+                                    keyframes: [
+                                        { transform: `translateY(${entryOffset}vh)` },
+                                        { transform: 'translateY(0vh)' }
+                                    ],
+                                },
+                                rangeStart: { name: 'cover', offset: { type: 'percentage', value: 10 } },
+                                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 50 } },
+                                easing: 'linear',
+                                fill: 'both'
+                            },
+                            // Card 3 entrance
+                            {
+                                key: '#card-3',
+                                keyframeEffect: {
+                                    name: 'card-3-scroll-effect',
+                                    keyframes: [
+                                        { transform: `translateY(${entryOffset}vh)` },
+                                        { transform: 'translateY(0vh)' }
+                                    ],
+                                },
+                                rangeStart: { name: 'cover', offset: { type: 'percentage', value: 10 } },
+                                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 60 } },
+                                easing: 'linear',
+                                fill: 'both'
+                            },
+                            // Card 4 entrance
+                            {
+                                key: '#card-4',
+                                keyframeEffect: {
+                                    name: 'card-4-scroll-effect',
+                                    keyframes: [
+                                        { transform: `translateY(${entryOffset}vh)` },
+                                        { transform: 'translateY(0vh)' }
+                                    ],
+                                },
+                                rangeStart: { name: 'cover', offset: { type: 'percentage', value: 40 } },
+                                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 70 } },
+                                easing: 'linear',
+                                fill: 'both'
+                            },
+                            // Card 5 entrance
+                            {
+                                key: '#card-5',
+                                keyframeEffect: {
+                                    name: 'card-5-scroll-effect',
+                                    keyframes: [
+                                        { transform: `translateY(${entryOffset}vh)` },
+                                        { transform: 'translateY(0vh)' }
+                                    ],
+                                },
+                                rangeStart: { name: 'cover', offset: { type: 'percentage', value: 50 } },
+                                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 80 } },
+                                easing: 'linear',
+                                fill: 'both'
+                            },
+                            // Card 6 entrance
+                            {
+                                key: '#card-6',
+                                keyframeEffect: {
+                                    name: 'card-6-scroll-effect',
+                                    keyframes: [
+                                        { transform: `translateY(${entryOffset}vh)` },
+                                        { transform: 'translateY(0vh)' }
+                                    ],
+                                },
+                                rangeStart: { name: 'cover', offset: { type: 'percentage', value: 60 } },
+                                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 90 } },
+                                easing: 'linear',
+                                fill: 'both'
+                            }
+                        ]
+                    }
+                ]
+            };
+
+            Interact.create(config);
+        });
+    </script>
+
+</body>
+</html>

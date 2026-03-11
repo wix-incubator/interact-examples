@@ -1,0 +1,45 @@
+#,Animation,Trigger,Layout,Content,Wow Level,Dimensionality,Intent,Motion,Difficulty,Readiness
+1,3D Parallax Gallery,pointer-tilt,Grid,Image,Polished,2.5D,Portfolio,Reactive,Intermediate,Minor Polish
+2,Accordion Scroll H,hover-accordion,H-Strip,Image,Subtle,2D,Features,Smooth,Beginner,Ship-Ready
+3,Accordion Scroll V,hover-accordion,V-Stack,Image,Subtle,2D,Features,Smooth,Beginner,Ship-Ready
+4,Blur Focus Gallery,hover-gallery,Grid,Image,Subtle,2D,Portfolio,Smooth,Beginner,Ship-Ready
+5,Card Spread,scroll-card-stack,Layered,Image,Polished,2.5D,Card Deck,Playful,Intermediate,Ship-Ready
+6,Card Spread By Hover,hover-card-spread,Layered,Image,Polished,2.5D,Card Deck,Playful,Intermediate,Ship-Ready
+7,Classic Horizontal Scroll,scroll-storytelling,H-Strip,Mixed,Polished,2D,Storytelling,Smooth,Intermediate,Ship-Ready
+8,Corner Fold Scroll,scroll-shape-morph,V-Stack,Mixed,Bold,2.5D,Storytelling,Dramatic,Intermediate,Showcase
+9,Cursor Trail,pointer-trail,Free-form,Image,Wild,2D,Portfolio,Playful,Advanced,Showcase
+10,Diagonal Shuffle,scroll-card-stack,Grid,Image,Polished,2.5D,Card Deck,Playful,Intermediate,Minor Polish
+11,Digital Jukebox,scroll-3d,V-Stack,Mixed,Bold,Full 3D,Card Deck,Mechanical,Advanced,Showcase
+12,Dolphin Animation,pointer-trail,Free-form,Image,Wild,2D,Portfolio,Playful,Advanced,Showcase
+13,Endless Parallax,click-interaction,Free-form,Image,Wild,2D,Ambient,Playful,Advanced,Showcase
+14,Expanding H Scroll,scroll-storytelling,H-Strip,Mixed,Polished,Full 3D,Storytelling,Dramatic,Advanced,Minor Polish
+15,Ferris Wheel,continuous-loop,Radial,Image,Bold,Full 3D,Portfolio,Mechanical,Intermediate,Minor Polish
+16,Horizontal & Vertical,scroll-storytelling,H-Strip,Mixed,Polished,2.5D,Storytelling,Smooth,Advanced,Minor Polish
+17,Horizontal Carousel,scroll-3d,H-Strip,Image,Polished,Full 3D,Portfolio,Mechanical,Advanced,Showcase
+18,Horizontal Lanes,parallax-lanes,H-Strip,Image,Subtle,2D,Ambient,Smooth,Beginner,Ship-Ready
+19,H Scrolling Gallery,hover-gallery,H-Strip,Image,Wild,Full 3D,Portfolio,Dramatic,Advanced,Showcase
+20,Rotating Gallery Grid,pointer-tilt,Grid,Image,Polished,2.5D,Portfolio,Reactive,Intermediate,Minor Polish
+21,Looped Tabs w/ Perspective,continuous-loop,H-Strip,Mixed,Polished,2.5D,Portfolio,Mechanical,Intermediate,Minor Polish
+22,MantaRay,entrance-reveal,Grid,Image,Polished,2D,Hero,Playful,Intermediate,Minor Polish
+23,Mirror Hover Gallery,hover-gallery,Grid,Image,Subtle,2D,Portfolio,Smooth,Beginner,Ship-Ready
+24,Mouse Track Gallery,pointer-trail,H-Strip,Image,Wild,Full 3D,Portfolio,Reactive,Advanced,Showcase
+25,Paragraph Reveal,scroll-text,V-Stack,Mixed,Polished,2.5D,Storytelling,Playful,Intermediate,Showcase
+26,Scroll 3D Animation,scroll-3d,Single,Mixed,Bold,Full 3D,Hero,Dramatic,Advanced,Showcase
+27,Shape Scroll,scroll-shape-morph,Single,Image,Bold,2.5D,Hero,Playful,Intermediate,Minor Polish
+28,Small Carousel,click-interaction,Radial,Image,Bold,Full 3D,Card Deck,Mechanical,Advanced,Showcase
+29,Snake Animation,click-interaction,Free-form,Image,Wild,2D,Portfolio,Playful,Advanced,Showcase
+30,Sticky Repeater Stack,scroll-card-stack,V-Stack,Image,Subtle,2.5D,Features,Smooth,Intermediate,Ship-Ready
+31,Title Folds Scroll,scroll-card-stack,V-Stack,Mixed,Polished,Full 3D,Features,Dramatic,Intermediate,Minor Polish
+32,Vertical Lanes,parallax-lanes,V-Stack,Image,Subtle,2D,Ambient,Smooth,Beginner,Ship-Ready
+33,Wheel Carousel,continuous-loop,Radial,Image,Bold,Full 3D,Portfolio,Mechanical,Intermediate,Minor Polish
+34,Window Scroll,scroll-storytelling,V-Stack,Mixed,Polished,2.5D,Storytelling,Mechanical,Intermediate,Minor Polish
+35,Aura Stack,scroll-text,Layered,Text,Bold,2.5D,Storytelling,Smooth,Intermediate,Minor Polish
+36,Book Animation,scroll-text,Single,Mixed,Bold,Full 3D,Storytelling,Dramatic,Advanced,Showcase
+37,Circular Scroll Nav,scroll-text,Radial,Text,Bold,Full 3D,Navigation,Mechanical,Advanced,Showcase
+38,Editorial Text Reveal,scroll-text,Layered,Mixed,Polished,2.5D,Storytelling,Smooth,Intermediate,Minor Polish
+39,Headline Images Overlay,entrance-reveal,Layered,Mixed,Subtle,2D,Hero,Smooth,Beginner,Ship-Ready
+40,IconText Pro Gallery,hover-accordion,H-Strip,Mixed,Subtle,2D,Features,Smooth,Beginner,Ship-Ready
+41,Marquee Scroll Velocity,continuous-loop,H-Strip,Text,Subtle,2D,Ambient,Smooth,Beginner,Ship-Ready
+42,Mirror Mouse Track,pointer-tilt,Layered,Text,Polished,2.5D,Hero,Reactive,Intermediate,Minor Polish
+43,Text Fold Transition,scroll-text,V-Stack,Text,Subtle,2D,Navigation,Smooth,Beginner,Ship-Ready
+44,Tunnel Vision,pointer-tilt,Layered,Text,Wild,2.5D,Hero,Reactive,Advanced,Showcase

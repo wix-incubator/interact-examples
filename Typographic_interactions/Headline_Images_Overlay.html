@@ -9,6 +9,11 @@
         /* Importing Xanh Mono, Liter, and Oswald */
         @import url('https://fonts.googleapis.com/css2?family=Xanh+Mono:ital@0;1&family=Liter:ital,wght@0,400;1,400&family=Oswald:wght@700&display=swap');
 
+        :root {
+            --grayscale: 100%;
+            --mask-scale: 1;
+        }
+
         body, html {
             margin: 0;
             padding: 0;
@@ -90,6 +95,8 @@
             opacity: 0;
             will-change: opacity;
             background-color: #f3f4f6;
+            transform: scale(var(--mask-scale));
+            transform-origin: center;
         }
 
         .mask-bg {
@@ -100,7 +107,7 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            filter: grayscale(100%);
+            filter: grayscale(var(--grayscale));
         }
 
         /* Shapes */

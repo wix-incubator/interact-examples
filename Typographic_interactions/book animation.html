@@ -19,7 +19,8 @@
             
             /* Grid Units */
             --page-padding: clamp(24px, 6%, 48px);
-            --header-height: 140px; 
+            --header-height: 140px;
+            --book-perspective: 3500px;
         }
 
         html, body {
@@ -54,7 +55,7 @@
             aspect-ratio: 16/10;
             
             display: flex; justify-content: center; align-items: center;
-            perspective: 3500px; pointer-events: auto;
+            perspective: var(--book-perspective); pointer-events: auto;
         }
 
         .book {
@@ -165,8 +166,6 @@
         .grid-art { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; width: 40px; }
         .grid-art div { width: 18px; height: 18px; background: #e5e5ea; border-radius: 4px; }
 
-        .scroll-hint { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 2px; animation: bounce 2s infinite; pointer-events: none; z-index: 100; font-weight: 600; }
-        @keyframes bounce { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 10px); } }
         
         /* --- RESPONSIVE VERTICAL LAYOUT (Under 750px) --- */
         @media (max-width: 750px) {
@@ -344,55 +343,22 @@
         </interact-element>
     </div>
 
-    <div class="scroll-hint">Scroll to Interact</div>
 
 <script type="module">
     import { Interact } from 'https://esm.sh/@wix/interact@2.0.0-rc.4/web?bundle';
 
-    const updateShadows = (leaf, angle) => {
-        const abs = Math.abs(angle);
-        let front = 0, back = 0;
-        if (abs < 90) front = (abs / 90) * 0.15;
-        if (abs > 90 && abs <= 180) back = ((180 - abs) / 90) * 0.15;
-        leaf.style.setProperty('--shadow-front', front);
-        leaf.style.setProperty('--shadow-back', back);
-    };
-
-    const bookFlipLogic = (el, progress) => {
-        // Disable logic on mobile so cards stay static
-        if (window.innerWidth < 750) return;
-
-        const cover = el.querySelector('.cover');
-        const leaf3 = el.querySelector('#leaf3');
-        const leaf2 = el.querySelector('#leaf2');
-        
-        if (!cover || !leaf3 || !leaf2) return;
-
-        let p = (progress - 0.25) * 2;
-        p = Math.max(0, Math.min(1, p));
-
-        cover.style.transform = `rotateY(-180deg)`;
-        cover.style.setProperty('--shadow-front', 0);
-        cover.style.setProperty('--shadow-back', 0);
-
-        let angle3 = 0;
-        if (p <= 0.5) {
-            angle3 = (p / 0.5) * -178;
-        } else {
-            angle3 = -178;
-        }
-        leaf3.style.transform = `rotateY(${angle3}deg)`;
-        updateShadows(leaf3, angle3);
-
-        let angle2 = 0;
-        if (p > 0.5) {
-            angle2 = ((p - 0.5) / 0.5) * -176;
-        }
-        leaf2.style.transform = `rotateY(${angle2}deg)`;
-        updateShadows(leaf2, angle2);
+    const scrollRange = {
+        rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 } },
+        rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 } }
     };
 
     const config = {
+        conditions: {
+            'desktop': {
+                type: 'media',
+                predicate: '(min-width: 751px)'
+            }
+        },
         interactions: [
             {
                 key: 'scroll-track',
@@ -400,9 +366,53 @@
                 effects: [
                     {
                         key: 'book-scene',
-                        rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
-                        rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
-                        customEffect: bookFlipLogic
+                        selector: '.cover',
+                        conditions: ['desktop'],
+                        ...scrollRange,
+                        fill: 'both',
+                        keyframeEffect: {
+                            name: 'cover-flip',
+                            keyframes: [
+                                { offset: 0, transform: 'rotateY(-180deg)' },
+                                { offset: 1, transform: 'rotateY(-180deg)' }
+                            ]
+                        }
+                    },
+                    {
+                        key: 'book-scene',
+                        selector: '#leaf3',
+                        conditions: ['desktop'],
+                        ...scrollRange,
+                        fill: 'both',
+                        keyframeEffect: {
+                            name: 'leaf3-flip',
+                            keyframes: [
+                                { offset: 0,     transform: 'rotateY(0deg)',      '--shadow-front': 0,     '--shadow-back': 0 },
+                                { offset: 0.25,  transform: 'rotateY(0deg)',      '--shadow-front': 0,     '--shadow-back': 0 },
+                                { offset: 0.375, transform: 'rotateY(-89deg)',    '--shadow-front': 0.15,  '--shadow-back': 0 },
+                                { offset: 0.377, transform: 'rotateY(-90.4deg)',  '--shadow-front': 0,     '--shadow-back': 0.15 },
+                                { offset: 0.5,   transform: 'rotateY(-178deg)',   '--shadow-front': 0,     '--shadow-back': 0.003 },
+                                { offset: 1,     transform: 'rotateY(-178deg)',   '--shadow-front': 0,     '--shadow-back': 0.003 }
+                            ]
+                        }
+                    },
+                    {
+                        key: 'book-scene',
+                        selector: '#leaf2',
+                        conditions: ['desktop'],
+                        ...scrollRange,
+                        fill: 'both',
+                        keyframeEffect: {
+                            name: 'leaf2-flip',
+                            keyframes: [
+                                { offset: 0,     transform: 'rotateY(0deg)',      '--shadow-front': 0,     '--shadow-back': 0 },
+                                { offset: 0.5,   transform: 'rotateY(0deg)',      '--shadow-front': 0,     '--shadow-back': 0 },
+                                { offset: 0.625, transform: 'rotateY(-88deg)',    '--shadow-front': 0.147, '--shadow-back': 0 },
+                                { offset: 0.627, transform: 'rotateY(-89.5deg)',  '--shadow-front': 0,     '--shadow-back': 0.15 },
+                                { offset: 0.75,  transform: 'rotateY(-176deg)',   '--shadow-front': 0,     '--shadow-back': 0.007 },
+                                { offset: 1,     transform: 'rotateY(-176deg)',   '--shadow-front': 0,     '--shadow-back': 0.007 }
+                            ]
+                        }
                     }
                 ]
             }

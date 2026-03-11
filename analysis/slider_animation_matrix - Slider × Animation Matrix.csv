@@ -1,0 +1,53 @@
+Slider Family,Number of times used,3D Parallax Gallery,Accordion Scroll Horizontal,Accordion Scroll Vertical,Blur Focus Gallery,Card Spread,Card Spread By Hover,Classic Horizontal Scroll,Corner Fold Scroll,Cursor Trail,Diagonal Shuffle,Digital Jukebox,Dolphin Animation,Endless Parallax,Expanding Horizontal Scroll,Ferris Wheel,Horizontal & Vertical Scroll,Horizontal Carousel Perspective,Horizontal Lanes,Horizontally Scrolling Gallery,Rotating Gallery Grid,Looped Tabs With Perspective,Breathing Gallery (MantaRay),Mirror Hover Gallery,Mouse Track Infinite Gallery,Paragraph Reveal,Scroll 3D Animation,Shape Scroll,Small Carousel,Snake Animation,Sticky Repeater Stack,Title Folds Scroll,Vertical Lanes,Wheel Carousel,Window Scroll,Aura Stack,Book Animation,Circular Scroll Nav,Editorial Text Reveal,Headline Images Overlay,IconText Pro Gallery,Marquee Scroll Velocity,Mirror Mouse Track,Text Fold Transition,Tunnel Vision
+Border Radius,32,Border Radius,Panel Border Radius,Panel Border Radius,Border Radius,Card Border Radius,Card Border Radius,✗,✗,Border Radius,Card Border Radius,Item Border Radius,Border Radius,Tile Border Radius,✗,Tile Border Radius,Card Border Radius,Card Border Radius,Image Border Radius,Card Border Radius,Card Border Radius,Card Border Radius,Image Border Radius,Card Border Radius,Image Border Radius,✗,Panel Border Radius,Panel Border Radius,Card Border Radius,Image Border Radius,Card Border Radius,"Card Border Radius
+Image Border Radius",Image Border Radius,Card Border Radius,Panel Border Radius,✗,Page Border Radius,✗,✗,✗,Panel Border Radius,✗,✗,✗,✗
+Speed,30,✗,Panel Speed,Panel Speed,✗,Animation Speed,✗,Animation Speed,Animation Speed,✗,Animation Speed,✗,✗,Animation Speed,Animation Speed,Rotation Speed,Animation Speed,✗,Lane Speed,"Hover Speed
+Scroll Speed",✗,Marquee Speed,Breathing Speed,✗,Gallery Speed,Animation Speed,Animation Speed,Animation Speed,✗,Animation Speed,Scroll Speed,Animation Speed,Lane Speed,Rotation Speed,Animation Speed,Animation Speed,✗,✗,Animation Speed,Animation Speed,Panel Speed,Marquee Speed,✗,Animation Speed,✗
+Spacing,24,Grid Gap,Panel Gap,Panel Gap,Grid Gap,✗,✗,"Gap
+Outer Padding",✗,✗,✗,Item Spacing,✗,✗,✗,✗,Card Gap,Card Spacing,Image Padding,✗,Grid Gap,Card Gap,Image Overlap,Grid Gap,✗,✗,Panel Gap (Depth),✗,✗,✗,Stack Gap,✗,Image Padding,✗,✗,Column Gap,Page Padding,Gap Between Items,Column Gap,Content Padding,Panel Gap,Row Gap,✗,Heading/Body Gap,✗
+Dimensions,22,✗,"Open Width
+Panel Default Width
+Panel Default Height","Open Height
+Panel Default Height
+Panel Default Width",✗,Card Width,Card Width,"Panel Width
+Panel Height",Banner Height,✗,Card Max Width,"Item Width
+Item Height",✗,✗,Panel Image Width,✗,"Card Width
+Card Height","Card Width
+Card Height",Row Height,✗,✗,✗,✗,Row Height,✗,✗,✗,"Panel Width
+Panel Height","Card Width
+Card Height",✗,✗,Card Height,Column Width,✗,"Panel Height
+Panel Width",Content Max Width,✗,✗,Content Max Width,✗,"Open Width
+Panel Default Width
+Panel Default Height",✗,✗,Content Max Width,✗
+Size / Scale,15,✗,✗,✗,✗,✗,✗,✗,✗,Image Size,✗,✗,Image Size,Image Size,Zoom Level,"Ring Size
+Tile Size",✗,3D Depth,✗,Card Size,✗,✗,"Hover Size
+Image Base Size
+Size Variation",✗,Item Size,Image Mask Width,✗,✗,Card Border Width,"Image Base Size
+Size Variation",✗,Card Entry Scale,✗,"Ring Size
+Card Size",✗,✗,✗,✗,✗,Mask Scale,✗,✗,✗,✗,✗
+Typography,8,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,"Font Size
+Line Height",✗,✗,✗,✗,✗,✗,✗,✗,✗,"Main Title Size
+Section Heading Size
+Heading Letter Spacing
+Featured Text Size
+Background Number Size",✗,Item Font Size,"Main Title Size
+Section Heading Size
+Heading Letter Spacing
+Featured Text Size
+Background Number Size",Text Font Size,✗,"Font Size
+Stroke Width",Heading Font Size,✗,"Font Size
+Stroke Width"
+Angle / Tilt,7,Tilt Angle,✗,✗,✗,Card Rotation,Card Rotation,✗,✗,✗,Angle,✗,✗,✗,✗,✗,✗,✗,✗,✗,"Max Rotation
+Max Movement",✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,Tilt Angle,✗,Parallax Range
+Perspective,7,Perspective,✗,✗,✗,✗,✗,✗,✗,✗,✗,Perspective,✗,✗,✗,✗,✗,✗,✗,✗,✗,Perspective,✗,✗,✗,✗,Perspective,✗,✗,✗,✗,✗,✗,✗,Perspective,✗,Perspective,✗,✗,✗,✗,✗,Perspective,✗,✗
+Direction,6,Direction,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,Rotation Direction,✗,✗,✗,✗,Direction,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,Rotation Direction,✗,✗,✗,✗,✗,✗,✗,✗,Direction,✗,Direction
+Density / Count,5,✗,✗,✗,✗,✗,✗,✗,✗,Density,✗,✗,Density,Image Density,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,Image Count,✗,✗,✗,Image Count,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗
+Pointer Latency,4,Pointer Latency,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,Pointer Latency,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,Pointer Latency,✗,Pointer Latency
+Visual Effect,4,✗,✗,✗,Blur Intensity,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,"Blur Intensity
+Parallax Depth",✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,Blur Intensity,✗,✗,✗,Image Grayscale,✗,✗,✗,✗,✗
+Stagger / Timing,4,✗,✗,✗,✗,✗,✗,✗,✗,"Pop Duration
+Gap / Stagger",✗,✗,"Pop Duration
+Gap / Stagger",✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,Stagger,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,Entrance Stagger,✗,✗,✗,✗,✗,✗,✗
+Unique,3,✗,✗,✗,✗,✗,✗,✗,Fold Point,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,Reveal Shape,✗,Wave Amplitude,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗
+Spread Distance,2,✗,✗,✗,✗,Spread Distance,Spread Distance,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗
+Hover Effect,2,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,Hover Shape,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,✗,Hover Shift,✗,✗,✗,✗,✗,✗,✗

@@ -7,6 +7,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        :root {
+            --panel-default-width: 180px;
+            --panel-open-width: 700px;
+            --panel-speed: 1;
+        }
+
         /* Apple-style typography and smooth scrolling */
         html {
             overflow-x: hidden;
@@ -152,7 +158,7 @@
             }
 
             .desktop-layout .feature-column {
-                width: 180px; 
+                width: var(--panel-default-width, 180px);
                 height: 100%;
                 flex-shrink: 0;
                 overflow: hidden;
@@ -177,9 +183,11 @@
 
             .desktop-layout .feature-text-group {
                 position: absolute;
-                bottom: 3.5rem;
-                left: 3.5rem;
-                width: 600px; 
+                bottom: calc(3.5rem * var(--text-scale, 1));
+                left: calc(3.5rem * var(--text-scale, 1));
+                width: calc(var(--panel-open-width, 700px) - 100px);
+                max-height: calc(100% - 3rem * var(--text-scale, 1));
+                overflow: hidden;
                 opacity: 0;
                 transform: translateY(20px);
                 z-index: 10;
@@ -187,8 +195,16 @@
                 text-align: left;
             }
 
-            .feature-bottom-title {
-                font-size: 2.8rem;
+            .desktop-layout .feature-bottom-subtitle {
+                font-size: calc(0.75rem * var(--text-scale, 1));
+            }
+
+            .desktop-layout .feature-bottom-title {
+                font-size: calc(2.8rem * var(--text-scale, 1));
+            }
+
+            .desktop-layout .feature-description {
+                font-size: calc(1rem * var(--text-scale, 1));
             }
         }
     </style>
@@ -277,109 +293,145 @@
         import { Interact } from 'https://esm.sh/@wix/interact@2.0.0-rc.6/web';
 
         document.addEventListener("DOMContentLoaded", () => {
+            const container = document.getElementById('feature-container');
+            const BASE_OPEN_WIDTH = 700;
+            const BASE_HEIGHT_VH = 0.65;
+
+            function readVars() {
+                var rs = getComputedStyle(document.documentElement);
+                var dw = rs.getPropertyValue('--panel-default-width').trim() || '180px';
+                var ow = rs.getPropertyValue('--panel-open-width').trim() || '700px';
+                var spd = parseFloat(rs.getPropertyValue('--panel-speed')) || 1;
+                var owN = parseInt(ow);
+                var cH = container.getBoundingClientRect().height;
+                return { dw: dw, ow: ow, spd: spd, owN: owN, cH: cH,
+                    iTx: 70 - owN / 2,
+                    iTy: -(cH * 0.29)
+                };
+            }
+
+            function updateTextScale(v) {
+                var widthScale = Math.min(1, v.owN / BASE_OPEN_WIDTH);
+                var heightScale = Math.min(1, v.cH / (window.innerHeight * BASE_HEIGHT_VH));
+                var scale = Math.min(widthScale, heightScale);
+                document.documentElement.style.setProperty('--text-scale', scale);
+            }
+
+            var v = readVars();
+            updateTextScale(v);
+
             const config = {
                 conditions: {
                     'desktop': { type: 'media', predicate: '(min-width: 769px)' }
                 },
                 effects: {
-                    'expand-card': {
-                        transition: {
-                            duration: 800,
-                            easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
-                            styleProperties: [{ name: 'width', value: '700px' }]
-                        }
-                    },
-                    'shrink-card-1': {
-                        key: 'col-1',
-                        transition: {
-                            duration: 800,
-                            easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
-                            styleProperties: [{ name: 'width', value: '180px' }]
-                        }
-                    },
-                    'show-content': {
-                        transitionProperties: [
-                            { name: 'opacity', value: '1', duration: 400, delay: 350 },
-                            { name: 'transform', value: 'translateY(0)', duration: 600, delay: 250 }
-                        ]
-                    },
-                    'align-icon-active': {
-                        transition: {
-                            duration: 800,
-                            easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
-                            styleProperties: [
-                                { name: 'transform', value: 'translate(-280px, -170px) scale(0.9)' },
-                                { name: 'opacity', value: '1' }
+                    'h-expand': {
+                        keyframeEffect: {
+                            name: 'h-exp',
+                            keyframes: [
+                                { width: v.dw },
+                                { width: v.ow, zIndex: 10 }
                             ]
-                        }
+                        },
+                        duration: Math.round(800 / v.spd),
+                        easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+                        fill: 'both'
                     },
-                    'reset-icon-card1': {
-                        key: 'col-1',
-                        selector: '.icon-wrapper',
-                        transition: {
-                            duration: 700,
-                            easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
-                            styleProperties: [{ name: 'transform', value: 'translate(0, 0) scale(1)' }, { name: 'opacity', value: '0.8' }]
-                        }
+                    'reveal': {
+                        keyframeEffect: {
+                            name: 't-rev',
+                            keyframes: [
+                                { opacity: 0, transform: 'translateY(20px)' },
+                                { opacity: 1, transform: 'translateY(0)' }
+                            ]
+                        },
+                        duration: Math.round(400 / v.spd),
+                        delay: Math.round(250 / v.spd),
+                        easing: 'ease-out',
+                        fill: 'both'
                     },
-                    'hide-text-card1': {
-                        key: 'col-1',
-                        selector: '.feature-text-group',
-                        transition: {
-                            duration: 400,
-                            easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
-                            styleProperties: [{ name: 'opacity', value: '0' }, { name: 'transform', value: 'translateY(20px)' }]
-                        }
+                    'icon-move': {
+                        keyframeEffect: {
+                            name: 'i-mov',
+                            keyframes: [
+                                { transform: 'translate(0, 0) scale(1)', opacity: 0.8 },
+                                { transform: 'translate(' + v.iTx + 'px, ' + v.iTy + 'px) scale(0.9)', opacity: 1 }
+                            ]
+                        },
+                        duration: Math.round(800 / v.spd),
+                        easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+                        fill: 'both'
                     }
                 },
                 interactions: []
             };
 
-            // Setup interaction for each card
             for (let i = 1; i <= 5; i++) {
                 const key = `col-${i}`;
                 const cardSelector = `#col-${i}-card`;
-
-                const interaction = {
+                config.interactions.push({
                     key,
                     trigger: 'hover',
                     conditions: ['desktop'],
-                    params: { method: 'toggle' },
+                    params: { type: 'alternate' },
                     effects: [
-                        { key, selector: cardSelector, effectId: 'expand-card' },
-                        { key, selector: `${cardSelector} .feature-text-group`, effectId: 'show-content' },
-                        { key, selector: `${cardSelector} .icon-wrapper`, effectId: 'align-icon-active' }
+                        { key, selector: cardSelector, effectId: 'h-expand' },
+                        { key, selector: `${cardSelector} .feature-text-group`, effectId: 'reveal' },
+                        { key, selector: `${cardSelector} .icon-wrapper`, effectId: 'icon-move' }
                     ]
-                };
-
-                // If we hover ANY card other than 1, we force Card 1 to close its content
-                if (i > 1) {
-                    interaction.effects.push(
-                        { effectId: 'shrink-card-1', selector: '#col-1-card' },
-                        { effectId: 'reset-icon-card1' },
-                        { effectId: 'hide-text-card1' }
-                    );
-                }
-
-                config.interactions.push(interaction);
+                });
             }
 
-            // Create the interaction instance
             Interact.create(config);
 
-            // Initial State: Simulate hover on Card 1 to open it by default on desktop
-            // We use dispatchEvent because trigger is not a function on the instance in this version
-            setTimeout(() => {
-                if (window.innerWidth >= 769) {
-                    const firstCard = document.querySelector('#col-1-card');
-                    if (firstCard) {
-                        firstCard.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-                    }
-                }
-            }, 100);
+            document.querySelectorAll('.feature-column').forEach(function(card) {
+                card.addEventListener('mouseenter', function() {
+                    requestAnimationFrame(patchAllAnimations);
+                });
+            });
 
-            // Handle layout switching for desktop specific styles
-            const container = document.getElementById('feature-container');
+            function patchAllAnimations() {
+                var cur = readVars();
+                updateTextScale(cur);
+                try {
+                    document.getAnimations().forEach(function(anim) {
+                        if (!anim.effect || !anim.effect.getKeyframes) return;
+                        var kf = anim.effect.getKeyframes();
+                        if (kf.length < 2) return;
+                        if (kf[0].width !== undefined) {
+                            anim.effect.setKeyframes([
+                                { width: cur.dw, offset: 0 },
+                                { width: cur.ow, zIndex: 10, offset: 1 }
+                            ]);
+                            anim.effect.updateTiming({ duration: Math.round(800 / cur.spd) });
+                        }
+                        else if (kf[0].transform !== undefined && kf[0].transform.indexOf('translate(') >= 0) {
+                            anim.effect.setKeyframes([
+                                { transform: 'translate(0, 0) scale(1)', opacity: 0.8, offset: 0 },
+                                { transform: 'translate(' + cur.iTx + 'px, ' + cur.iTy + 'px) scale(0.9)', opacity: 1, offset: 1 }
+                            ]);
+                            anim.effect.updateTiming({ duration: Math.round(800 / cur.spd) });
+                        }
+                        else if (kf[0].opacity !== undefined) {
+                            anim.effect.updateTiming({
+                                duration: Math.round(400 / cur.spd),
+                                delay: Math.round(250 / cur.spd)
+                            });
+                        }
+                    });
+                } catch(ex) {}
+            }
+
+            window.addEventListener('message', function(e) {
+                if (!e.data || !e.data.__explorer) return;
+                if (e.data.type === 'setCssVar' || e.data.type === 'setCss') {
+                    requestAnimationFrame(function() {
+                        patchAllAnimations();
+                        requestAnimationFrame(patchAllAnimations);
+                    });
+                }
+            });
+
             const toggleLayout = () => {
                 const isDesktop = window.innerWidth >= 769;
                 document.body.classList.toggle('desktop-layout', isDesktop);
@@ -388,7 +440,6 @@
             window.addEventListener('resize', toggleLayout);
             toggleLayout();
 
-            // Smooth horizontal scroll for mouse wheel on desktop
             container.addEventListener('wheel', (e) => {
                 if (window.innerWidth >= 769) {
                     if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {

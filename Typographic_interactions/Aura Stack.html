@@ -203,6 +203,9 @@
     <script type="module">
         import { Interact } from 'https://esm.sh/@wix/interact@1.93.0';
 
+        const BLUR_INTENSITY = 1;
+        const b = (px) => `blur(${px * BLUR_INTENSITY}px)`;
+
         const config = {
             interactions: [
                 {
@@ -218,9 +221,9 @@
                             keyframeEffect: {
                                 name: 's1-exit-blur',
                                 keyframes: [
-                                    { offset: 0, opacity: 1, filter: 'blur(0px)', transform: 'scale(1)' },
-                                    { offset: 0.2, opacity: 1, filter: 'blur(15px)', transform: 'scale(1)' },
-                                    { offset: 0.35, opacity: 0, filter: 'blur(30px)', transform: 'scale(0.9)' },
+                                    { offset: 0, opacity: 1, filter: b(0), transform: 'scale(1)' },
+                                    { offset: 0.2, opacity: 1, filter: b(15), transform: 'scale(1)' },
+                                    { offset: 0.35, opacity: 0, filter: b(30), transform: 'scale(0.9)' },
                                     { offset: 1, opacity: 0 }
                                 ]
                             }
@@ -249,12 +252,12 @@
                             keyframeEffect: {
                                 name: 's2-lifecycle',
                                 keyframes: [
-                                    { offset: 0, opacity: 0, transform: 'translateY(100px)', filter: 'blur(10px)' },
-                                    { offset: 0.35, opacity: 0, transform: 'translateY(100px)', filter: 'blur(10px)' },
-                                    { offset: 0.5, opacity: 1, transform: 'translateY(0)', filter: 'blur(0px)' }, // Entry
-                                    { offset: 0.65, opacity: 1, filter: 'blur(0px)', transform: 'scale(1)' }, // Steady
-                                    { offset: 0.8, opacity: 1, filter: 'blur(15px)', transform: 'scale(1)' }, // Exit Blur
-                                    { offset: 0.9, opacity: 0, filter: 'blur(30px)', transform: 'scale(0.95)' }, // Exit Fade
+                                    { offset: 0, opacity: 0, transform: 'translateY(100px)', filter: b(10) },
+                                    { offset: 0.35, opacity: 0, transform: 'translateY(100px)', filter: b(10) },
+                                    { offset: 0.5, opacity: 1, transform: 'translateY(0)', filter: b(0) },
+                                    { offset: 0.65, opacity: 1, filter: b(0), transform: 'scale(1)' },
+                                    { offset: 0.8, opacity: 1, filter: b(15), transform: 'scale(1)' },
+                                    { offset: 0.9, opacity: 0, filter: b(30), transform: 'scale(0.95)' },
                                     { offset: 1, opacity: 0 }
                                 ]
                             }
@@ -297,9 +300,9 @@
                             keyframeEffect: {
                                 name: 's3-lifecycle',
                                 keyframes: [
-                                    { offset: 0, opacity: 0, transform: 'translateY(100px)', filter: 'blur(10px)' },
-                                    { offset: 0.8, opacity: 0, transform: 'translateY(100px)', filter: 'blur(10px)' },
-                                    { offset: 0.95, opacity: 1, transform: 'translateY(0)', filter: 'blur(0px)' },
+                                    { offset: 0, opacity: 0, transform: 'translateY(100px)', filter: b(10) },
+                                    { offset: 0.8, opacity: 0, transform: 'translateY(100px)', filter: b(10) },
+                                    { offset: 0.95, opacity: 1, transform: 'translateY(0)', filter: b(0) },
                                     { offset: 1, opacity: 1 }
                                 ]
                             }

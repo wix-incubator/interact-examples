@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive 3D Card Deck Scroll</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Import @wix/interact library -->
+    <script type="module" src="https://esm.sh/@wix/interact@1.79.0"></script>
+    <style>
+        body {
+            background-color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            color: #f3f4f6;
+        }
+
+        /* 1. Main scrollable area to drive the animation */
+        .scroll-section {
+            height: 1000vh; /* Provides scrollable space */
+        }
+
+        /* 2. Sticky container that acts as the "viewport" for our animation */
+        .sticky-wrapper {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow: hidden;
+            /* Perspective is moved to the .animation-viewport */
+        }
+
+        /* NEW: Flex container for desktop/mobile layouts */
+        .animation-layout-container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            /* Desktop default: text below animation */
+            flex-direction: column;
+        }
+
+        /* NEW: Viewport for the 3D animation */
+        .animation-viewport {
+            position: relative;
+            width: 100%;
+            flex-grow: 1; /* Takes up all space except text */
+            perspective: 2000px; /* 3D space for child elements */
+        }
+        
+        /* NEW: Viewport for the text */
+        .text-viewport {
+            position: relative;
+            width: 100%;
+            /* Desktop height for bottom text */
+            height: 20vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 3. The card element styles */
+        .card {
+            position: absolute;
+            /* Desktop card size */
+            width: 500px;
+            height: 60vh;
+            max-width: 70vw;
+            top: 50%;
+            left: 50%;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            background: #1f2937;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            will-change: transform, opacity;
+            /* Start all cards at the center */
+            transform: translate(-50%, -50%); 
+        }
+
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        /* 4. Dynamic Title Container */
+        #dynamic-title-container {
+            /* Removed absolute positioning, now centered by parent .text-viewport */
+            z-index: 10;
+            padding: 0 2rem;
+            box-sizing: border-box;
+            color: #000000;
+            text-align: center;
+            pointer-events: none;
+        }
+        
+        #dynamic-title-text {
+            display: inline-block;
+            opacity: 0; /* Start hidden, JS will control opacity */
+        }
+
+        /* Styling for the text content injected by JS */
+        #dynamic-title-text h2 {
+            font-size: 2.25rem; /* 36px */
+            line-height: 2.5rem; /* 40px */
+            font-weight: 700;
+        }
+        #dynamic-title-text p {
+            font-size: 1.25rem; /* 20px */
+            line-height: 1.75rem; /* 28px */
+            color: #000000;
+        }
+
+        /* 5. Responsive Media Query for Mobile */
+        @media (max-width: 768px) {
+            .animation-layout-container {
+                /* Mobile: text next to animation */
+                flex-direction: row;
+            }
+
+            .animation-viewport {
+                /* Animation takes 60% of width */
+                width: 60%;
+                height: 100vh;
+            }
+
+            .text-viewport {
+                /* Text takes 40% of width */
+                width: 40%;
+                height: 100vh;
+                padding: 1rem;
+                align-items: center; /* Vertically center text */
+                justify-content: flex-start; /* NEW: Align content to the left */
+            }
+
+            .card {
+                /* Mobile-friendly portrait card size */
+                width: 250px;
+                height: 350px;
+                max-width: 90vw;
+            }
+
+            #dynamic-title-container {
+                text-align: left; /* Left-align text on mobile */
+            }
+
+            #dynamic-title-text h2 {
+                font-size: 1.5rem;
+                line-height: 1.75rem;
+            }
+            #dynamic-title-text p {
+                font-size: 1rem;
+                line-height: 1.25rem;
+                margin-top: 0.5rem; /* NEW: Adds gap */
+            }
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="scroll-section">
+        <!-- The sticky wrapper is the trigger for the viewProgress animation -->
+        <wix-interact-element data-wix-path=".sticky-wrapper">
+            <div class="sticky-wrapper">
+                
+                <!-- NEW: Layout container -->
+                <div class="animation-layout-container">
+
+                    <!-- NEW: Viewport for cards -->
+                    <div class="animation-viewport">
+                        <!-- Card 1 -->
+                        <wix-interact-element data-wix-path="#card-1">
+                            <div id="card-1" class="card">
+                                <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2414" class="card-image" alt="Cosmic Landscape">
+                            </div>
+                        </wix-interact-element>
+
+                        <!-- Card 2 -->
+                        <wix-interact-element data-wix-path="#card-2">
+                            <div id="card-2" class="card">
+                                <img src="https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=2670" class="card-image" alt="Galaxy View">
+                            </div>
+                        </wix-interact-element>
+                        
+                        <!-- Card 3 -->
+                        <wix-interact-element data-wix-path="#card-3">
+                            <div id="card-3" class="card">
+                                <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=2672" class="card-image" alt="Earth from Space">
+                            </div>
+                        </wix-interact-element>
+
+                        <!-- Card 4 -->
+                        <wix-interact-element data-wix-path="#card-4">
+                            <div id="card-4" class="card">
+                                <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2414" class="card-image" alt="Nebula">
+                            </div>
+                        </wix-interact-element>
+
+                        <!-- Card 5 -->
+                        <wix-interact-element data-wix-path="#card-5">
+                            <div id="card-5" class="card">
+                                <img src="https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=2670" class="card-image" alt="Lunar Surface">
+                            </div>
+                        </wix-interact-element>
+
+                        <!-- Card 6 -->
+                        <wix-interact-element data-wix-path="#card-6">
+                            <div id="card-6" class="card">
+                                <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2414" class="card-image" alt="Aurora Borealis">
+                            </div>
+                        </wix-interact-element>
+
+                        <!-- Card 7 -->
+                        <wix-interact-element data-wix-path="#card-7">
+                            <div id="card-7" class="card">
+                                <img src="https://images.unsplash.com/photo-1454789548928-9efd52dc4031?q=80&w=2680" class="card-image" alt="Astronaut">
+                            </div>
+                        </wix-interact-element>
+                    </div> <!-- End .animation-viewport -->
+
+                    <!-- NEW: Viewport for text -->
+                    <div class="text-viewport">
+                        <!-- Dynamic Title Element -->
+                        <wix-interact-element data-wix-path="#dynamic-title-container">
+                            <div id="dynamic-title-container">
+                                <span id="dynamic-title-text">
+                                    <!-- Content is set by JS -->
+                                </span>
+                            </div>
+                        </wix-interact-element>
+                    </div> <!-- End .text-viewport -->
+
+                </div> <!-- End .animation-layout-container -->
+
+            </div>
+        </wix-interact-element>
+    </div>
+
+        <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
+        
+        // --- NEW: Check for mobile viewport ---
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+        const cardCount = 7;
+        const effects = [];
+
+        // --- NEW: Define animation path for DESKTOP (Horizontal) ---
+        const desktopAnimationKeyframes = [
+            { offset: 0,   transform: 'translate(-50%, -50%) translateX(150%) translateZ(-900px) rotateY(-60deg) rotateX(15deg)', opacity: 0 },
+            { offset: 0.3, transform: 'translate(-50%, -50%) translateX(60%) translateZ(-300px) rotateY(-30deg) rotateX(5deg)', opacity: 1 },
+            { offset: 0.5, transform: 'translate(-50%, -50%) translateX(0) translateZ(0) rotateY(0deg) rotateX(0deg)', opacity: 1 },
+            { offset: 0.7, transform: 'translate(-50%, -50%) translateX(-60%) translateZ(-300px) rotateY(30deg) rotateX(-5deg)', opacity: 1 },
+            { offset: 1,   transform: 'translate(-50%, -50%) translateX(-150%) translateZ(-900px) rotateY(60deg) rotateX(-15deg)', opacity: 0 }
+        ];
+
+        // --- NEW: Define animation path for MOBILE (Vertical) ---
+        const mobileAnimationKeyframes = [
+            { offset: 0,   transform: 'translate(-50%, -50%) translateY(150%) translateZ(-900px) rotateX(60deg)', opacity: 0 },
+            { offset: 0.3, transform: 'translate(-50%, -50%) translateY(60%) translateZ(-300px) rotateX(30deg)', opacity: 1 },
+            { offset: 0.5, transform: 'translate(-50%, -50%) translateY(0) translateZ(0) rotateX(0deg)', opacity: 1 },
+            { offset: 0.7, transform: 'translate(-50%, -50%) translateY(-60%) translateZ(-300px) rotateX(-30deg)', opacity: 1 },
+            { offset: 1,   transform: 'translate(-50%, -50%) translateY(-150%) translateZ(-900px) rotateX(-60deg)', opacity: 0 }
+        ];
+
+        // --- NEW: Select the correct keyframes based on viewport ---
+        const animationKeyframes = isMobile ? mobileAnimationKeyframes : desktopAnimationKeyframes;
+
+        // Define the titles for each card
+        const titles = [
+            { title: "Stellar Nurseries", subtitle: "Where Stars Are Born" },
+            { title: "Galactic Wonders", subtitle: "A Universe of Possibility" },
+            { title: "Our Blue Planet", subtitle: "A fragile existence" },
+            { title: "Cosmic Clouds", subtitle: "The Dust of Creation" },
+            { title: "The Silent Moon", subtitle: "A Watcher in the Night" },
+            { title: "Celestial Dance", subtitle: "The Northern Lights" },
+            { title: "Final Frontier", subtitle: "The Journey Beyond" }
+        ];
+        
+        let currentTitleIndex = -1;
+        
+        // Create a staggered animation for each card
+        for (let i = 1; i <= cardCount; i++) {
+            const progressPerCard = 1 / (cardCount + 1); 
+            const start = (i - 1) * progressPerCard;
+            const end = start + progressPerCard * 2; // Make animations overlap
+
+            // Card movement effect
+            effects.push({
+                key: `#card-${i}`,
+                keyframeEffect: {
+                    name: `card-move-${i}`,
+                    // Use the responsively-selected keyframes
+                    keyframes: animationKeyframes 
+                },
+                rangeStart: { name: 'cover', offset: { type: 'percentage', value: start * 100 } },
+                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: end * 100 } },
+                easing: 'linear',
+                fill: 'both'
+            });
+        }
+
+        // Add a single customEffect to control the dynamic title
+        effects.push({
+            key: '#dynamic-title-container', // Target the container
+            customEffect: (el, progress) => {
+                const textEl = el.querySelector('#dynamic-title-text');
+                if (!textEl) return;
+
+                let newOpacity = 0;
+                let newTitleIndex = -1;
+                
+                // Loop through each card's potential range to find the active one
+                for (let i = 1; i <= cardCount; i++) {
+                    const progressPerCard = 1 / (cardCount + 1);
+                    const start = (i - 1) * progressPerCard;
+                    const animationDuration = progressPerCard * 2;
+                    
+                    // UPDATED: Tighter fade window centered at 0.5
+                    const fadeInStartPoint = start + 0.4 * animationDuration;
+                    const fadeInEndPoint = start + 0.5 * animationDuration;
+                    const fadeOutStartPoint = start + 0.5 * animationDuration; // Same as end point
+                    const fadeOutEndPoint = start + 0.6 * animationDuration;
+                    
+                    if (progress >= fadeInStartPoint && progress < fadeInEndPoint) {
+                        // Fading in
+                        const rangeDuration = fadeInEndPoint - fadeInStartPoint;
+                        if (rangeDuration > 0) {
+                            newOpacity = (progress - fadeInStartPoint) / rangeDuration;
+                        } else {
+                            newOpacity = 1;
+                        }
+                        newTitleIndex = i - 1; // Array index
+                        break;
+                    } else if (progress >= fadeInEndPoint && progress <= fadeOutStartPoint) {
+                        // Fully visible (at the exact center, 0.5)
+                        newOpacity = 1;
+                        newTitleIndex = i - 1;
+                        break;
+                    } else if (progress > fadeOutStartPoint && progress <= fadeOutEndPoint) {
+                        // Fading out
+                        const rangeDuration = fadeOutEndPoint - fadeOutStartPoint;
+                         if (rangeDuration > 0) {
+                            newOpacity = 1 - ((progress - fadeOutStartPoint) / rangeDuration);
+                         } else {
+                             newOpacity = 0;
+                         }
+                        newTitleIndex = i - 1; // Array index
+                        break;
+                    }
+                }
+
+                // Apply changes
+                if (newTitleIndex !== -1) {
+                    // We are in an active range
+                    if (newTitleIndex !== currentTitleIndex) {
+                        // Title needs to change
+                        const newTitle = titles[newTitleIndex];
+                        textEl.innerHTML = `<h2>${newTitle.title}</h2><p>${newTitle.subtitle}</p>`;
+                        currentTitleIndex = newTitleIndex;
+                    }
+                    // Apply the calculated opacity
+                    textEl.style.opacity = Math.max(0, Math.min(1, newOpacity));
+                } else {
+                    // Not in any range, ensure it's faded out
+                    textEl.style.opacity = 0;
+                    currentTitleIndex = -1; // Reset
+                }
+            },
+            // This effect runs for the entire scroll duration
+            rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 } },
+            rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 } },
+            fill: 'both'
+       });
+
+
+        const config = {
+            interactions: [{
+                key: '.sticky-wrapper',
+                trigger: 'viewProgress',
+                effects: effects // Pass in the array of all card and title effects
+            }]
+        };
+
+        Interact.create(config);
+    </script>
+
+</body>
+</html>
+
+
+

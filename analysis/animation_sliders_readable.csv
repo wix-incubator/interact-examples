@@ -1,0 +1,212 @@
+Animation,Slider Name,Tab,Slider Family
+3D Parallax Gallery,Tilt Angle,Animation,Angle / Tilt
+3D Parallax Gallery,Pointer Latency,Animation,Pointer Latency
+3D Parallax Gallery,Direction,Animation,Direction
+3D Parallax Gallery,Perspective,Animation,Perspective
+3D Parallax Gallery,Grid Gap,Layout,Gap / Spacing
+3D Parallax Gallery,Border Radius,Layout,Border Radius
+Accordion Scroll Horizontal,Panel Speed,Animation,Speed
+Accordion Scroll Horizontal,Open Width,Animation,Width / Height
+Accordion Scroll Horizontal,Panel Border Radius,Layout,Border Radius
+Accordion Scroll Horizontal,Panel Gap,Layout,Gap / Spacing
+Accordion Scroll Horizontal,Panel Default Width,Layout,Width / Height
+Accordion Scroll Horizontal,Panel Default Height,Layout,Width / Height
+Accordion Scroll Vertical,Panel Speed,Animation,Speed
+Accordion Scroll Vertical,Open Height,Animation,Width / Height
+Accordion Scroll Vertical,Panel Border Radius,Layout,Border Radius
+Accordion Scroll Vertical,Panel Gap,Layout,Gap / Spacing
+Accordion Scroll Vertical,Panel Default Height,Layout,Width / Height
+Accordion Scroll Vertical,Panel Default Width,Layout,Width / Height
+Blur Focus Gallery,Blur Intensity,Animation,Visual Effect
+Blur Focus Gallery,Grid Gap,Layout,Gap / Spacing
+Blur Focus Gallery,Border Radius,Layout,Border Radius
+Card Spread,Animation Speed,Animation,Speed
+Card Spread,Spread Distance,Animation,Spread
+Card Spread,Card Rotation,Animation,Angle / Tilt
+Card Spread,Card Border Radius,Layout,Border Radius
+Card Spread,Card Width,Layout,Width / Height
+Card Spread By Hover,Spread Distance,Animation,Spread
+Card Spread By Hover,Card Rotation,Animation,Angle / Tilt
+Card Spread By Hover,Card Border Radius,Layout,Border Radius
+Card Spread By Hover,Card Width,Layout,Width / Height
+Classic Horizontal Scroll,Animation Speed,Animation,Speed
+Classic Horizontal Scroll,Panel Width,Layout,Width / Height
+Classic Horizontal Scroll,Panel Height,Layout,Width / Height
+Classic Horizontal Scroll,Gap,Layout,Gap / Spacing
+Classic Horizontal Scroll,Outer Padding,Layout,Gap / Spacing
+Corner Fold Scroll,Animation Speed,Animation,Speed
+Corner Fold Scroll,Fold Point,Animation,Unique
+Corner Fold Scroll,Banner Height,Layout,Width / Height
+Cursor Trail,Pop Duration,Animation,Timing
+Cursor Trail,Density,Animation,Density / Count
+Cursor Trail,Gap / Stagger,Animation,Stagger
+Cursor Trail,Image Size,Layout,Size / Scale
+Cursor Trail,Border Radius,Layout,Border Radius
+Diagonal Shuffle,Animation Speed,Animation,Speed
+Diagonal Shuffle,Angle,Layout,Angle / Tilt
+Diagonal Shuffle,Card Border Radius,Layout,Border Radius
+Diagonal Shuffle,Card Max Width,Layout,Width / Height
+Digital Jukebox,Perspective,Layout,Perspective
+Digital Jukebox,Item Border Radius,Layout,Border Radius
+Digital Jukebox,Item Width,Layout,Width / Height
+Digital Jukebox,Item Height,Layout,Width / Height
+Digital Jukebox,Item Spacing,Layout,Gap / Spacing
+Dolphin Animation,Pop Duration,Animation,Timing
+Dolphin Animation,Density,Animation,Density / Count
+Dolphin Animation,Gap / Stagger,Animation,Stagger
+Dolphin Animation,Image Size,Layout,Size / Scale
+Dolphin Animation,Border Radius,Layout,Border Radius
+Endless Parallax,Animation Speed,Animation,Speed
+Endless Parallax,Tile Border Radius,Layout,Border Radius
+Endless Parallax,Image Size,Layout,Size / Scale
+Endless Parallax,Image Density,Layout,Density / Count
+Expanding Horizontal Scroll,Animation Speed,Animation,Speed
+Expanding Horizontal Scroll,Zoom Level,Animation,Size / Scale
+Expanding Horizontal Scroll,Panel Image Width,Layout,Width / Height
+Ferris Wheel,Rotation Speed,Animation,Speed
+Ferris Wheel,Rotation Direction,Animation,Direction
+Ferris Wheel,Tile Border Radius,Layout,Border Radius
+Ferris Wheel,Ring Size,Layout,Size / Scale
+Ferris Wheel,Tile Size,Layout,Size / Scale
+Horizontal & Vertical Scroll,Animation Speed,Animation,Speed
+Horizontal & Vertical Scroll,Card Width,Layout,Width / Height
+Horizontal & Vertical Scroll,Card Height,Layout,Width / Height
+Horizontal & Vertical Scroll,Card Gap,Layout,Gap / Spacing
+Horizontal & Vertical Scroll,Card Border Radius,Layout,Border Radius
+Horizontal Carousel Perspective,3D Depth,Animation,Size / Scale
+Horizontal Carousel Perspective,Card Spacing,Animation,Gap / Spacing
+Horizontal Carousel Perspective,Card Border Radius,Layout,Border Radius
+Horizontal Carousel Perspective,Card Width,Layout,Width / Height
+Horizontal Carousel Perspective,Card Height,Layout,Width / Height
+Horizontal Lanes,Lane Speed,Animation,Speed
+Horizontal Lanes,Image Border Radius,Layout,Border Radius
+Horizontal Lanes,Image Padding,Layout,Gap / Spacing
+Horizontal Lanes,Row Height,Layout,Width / Height
+Horizontally Scrolling Gallery,Hover Speed,Animation,Speed
+Horizontally Scrolling Gallery,Scroll Speed,Animation,Speed
+Horizontally Scrolling Gallery,Hover Shape,Animation,Hover Effect
+Horizontally Scrolling Gallery,Card Size,Layout,Size / Scale
+Horizontally Scrolling Gallery,Card Border Radius,Layout,Border Radius
+Rotating Gallery Grid,Max Rotation,Animation,Angle / Tilt
+Rotating Gallery Grid,Max Movement,Animation,Angle / Tilt
+Rotating Gallery Grid,Pointer Latency,Animation,Pointer Latency
+Rotating Gallery Grid,Direction,Animation,Direction
+Rotating Gallery Grid,Grid Gap,Layout,Gap / Spacing
+Rotating Gallery Grid,Card Border Radius,Layout,Border Radius
+Looped Tabs With Perspective,Marquee Speed,Animation,Speed
+Looped Tabs With Perspective,Perspective,Layout,Perspective
+Looped Tabs With Perspective,Card Border Radius,Layout,Border Radius
+Looped Tabs With Perspective,Card Gap,Layout,Gap / Spacing
+Breathing Gallery (MantaRay),Breathing Speed,Animation,Speed
+Breathing Gallery (MantaRay),Hover Size,Animation,Size / Scale
+Breathing Gallery (MantaRay),Image Border Radius,Layout,Border Radius
+Breathing Gallery (MantaRay),Image Overlap,Layout,Gap / Spacing
+Breathing Gallery (MantaRay),Image Base Size,Layout,Size / Scale
+Breathing Gallery (MantaRay),Size Variation,Layout,Size / Scale
+Mirror Hover Gallery,Stagger,Animation,Stagger
+Mirror Hover Gallery,Grid Gap,Layout,Gap / Spacing
+Mirror Hover Gallery,Row Height,Layout,Width / Height
+Mirror Hover Gallery,Card Border Radius,Layout,Border Radius
+Mouse Track Infinite Gallery,Gallery Speed,Animation,Speed
+Mouse Track Infinite Gallery,Blur Intensity,Animation,Visual Effect
+Mouse Track Infinite Gallery,Parallax Depth,Animation,Visual Effect
+Mouse Track Infinite Gallery,Item Size,Layout,Size / Scale
+Mouse Track Infinite Gallery,Image Border Radius,Layout,Border Radius
+Paragraph Reveal,Animation Speed,Animation,Speed
+Paragraph Reveal,Image Mask Width,Animation,Size / Scale
+Paragraph Reveal,Image Count,Animation,Density / Count
+Paragraph Reveal,Font Size,Layout,Typography
+Paragraph Reveal,Line Height,Layout,Typography
+Scroll 3D Animation,Animation Speed,Animation,Speed
+Scroll 3D Animation,Panel Gap (Depth),Layout,Gap / Spacing
+Scroll 3D Animation,Perspective,Layout,Perspective
+Scroll 3D Animation,Panel Border Radius,Layout,Border Radius
+Shape Scroll,Animation Speed,Animation,Speed
+Shape Scroll,Reveal Shape,Animation,Unique
+Shape Scroll,Panel Width,Layout,Width / Height
+Shape Scroll,Panel Height,Layout,Width / Height
+Shape Scroll,Panel Border Radius,Layout,Border Radius
+Small Carousel,Card Width,Layout,Width / Height
+Small Carousel,Card Height,Layout,Width / Height
+Small Carousel,Card Border Radius,Layout,Border Radius
+Small Carousel,Card Border Width,Layout,Size / Scale
+Snake Animation,Animation Speed,Animation,Speed
+Snake Animation,Image Count,Animation,Density / Count
+Snake Animation,Image Base Size,Layout,Size / Scale
+Snake Animation,Size Variation,Layout,Size / Scale
+Snake Animation,Wave Amplitude,Layout,Size / Scale
+Snake Animation,Image Border Radius,Layout,Border Radius
+Sticky Repeater Stack,Scroll Speed,Animation,Speed
+Sticky Repeater Stack,Card Border Radius,Layout,Border Radius
+Sticky Repeater Stack,Stack Gap,Layout,Gap / Spacing
+Title Folds Scroll,Animation Speed,Animation,Speed
+Title Folds Scroll,Card Entry Scale,Animation,Size / Scale
+Title Folds Scroll,Card Border Radius,Layout,Border Radius
+Title Folds Scroll,Card Height,Layout,Width / Height
+Title Folds Scroll,Image Border Radius,Layout,Border Radius
+Vertical Lanes,Lane Speed,Animation,Speed
+Vertical Lanes,Image Border Radius,Layout,Border Radius
+Vertical Lanes,Image Padding,Layout,Gap / Spacing
+Vertical Lanes,Column Width,Layout,Width / Height
+Wheel Carousel,Rotation Speed,Animation,Speed
+Wheel Carousel,Rotation Direction,Animation,Direction
+Wheel Carousel,Card Border Radius,Layout,Border Radius
+Wheel Carousel,Ring Size,Layout,Size / Scale
+Wheel Carousel,Card Size,Layout,Size / Scale
+Window Scroll,Animation Speed,Animation,Speed
+Window Scroll,Perspective,Layout,Perspective
+Window Scroll,Panel Height,Layout,Width / Height
+Window Scroll,Panel Width,Layout,Width / Height
+Window Scroll,Panel Border Radius,Layout,Border Radius
+Aura Stack,Animation Speed,Animation,Speed
+Aura Stack,Blur Intensity,Animation,Visual Effect
+Aura Stack,Main Title Size,Layout,Typography
+Aura Stack,Section Heading Size,Layout,Typography
+Aura Stack,Heading Letter Spacing,Layout,Typography
+Aura Stack,Featured Text Size,Layout,Typography
+Aura Stack,Column Gap,Layout,Gap / Spacing
+Aura Stack,Background Number Size,Layout,Typography
+Aura Stack,Content Max Width,Layout,Width / Height
+Book Animation,Perspective,Layout,Perspective
+Book Animation,Page Border Radius,Layout,Border Radius
+Book Animation,Page Padding,Layout,Gap / Spacing
+Circular Scroll Nav,Hover Shift,Animation,Hover Effect
+Circular Scroll Nav,Entrance Stagger,Animation,Stagger
+Circular Scroll Nav,Item Font Size,Layout,Typography
+Circular Scroll Nav,Gap Between Items,Layout,Gap / Spacing
+Editorial Text Reveal,Animation Speed,Animation,Speed
+Editorial Text Reveal,Main Title Size,Layout,Typography
+Editorial Text Reveal,Section Heading Size,Layout,Typography
+Editorial Text Reveal,Heading Letter Spacing,Layout,Typography
+Editorial Text Reveal,Featured Text Size,Layout,Typography
+Editorial Text Reveal,Column Gap,Layout,Gap / Spacing
+Editorial Text Reveal,Background Number Size,Layout,Typography
+Editorial Text Reveal,Content Max Width,Layout,Width / Height
+Headline Images Overlay,Animation Speed,Animation,Speed
+Headline Images Overlay,Text Font Size,Layout,Typography
+Headline Images Overlay,Content Padding,Layout,Gap / Spacing
+Headline Images Overlay,Image Grayscale,Layout,Visual Effect
+Headline Images Overlay,Mask Scale,Layout,Size / Scale
+IconText Pro Gallery,Panel Speed,Animation,Speed
+IconText Pro Gallery,Open Width,Animation,Width / Height
+IconText Pro Gallery,Panel Border Radius,Layout,Border Radius
+IconText Pro Gallery,Panel Gap,Layout,Gap / Spacing
+IconText Pro Gallery,Panel Default Width,Layout,Width / Height
+IconText Pro Gallery,Panel Default Height,Layout,Width / Height
+Marquee Scroll Velocity,Marquee Speed,Animation,Speed
+Marquee Scroll Velocity,Font Size,Layout,Typography
+Marquee Scroll Velocity,Row Gap,Layout,Gap / Spacing
+Marquee Scroll Velocity,Stroke Width,Layout,Typography
+Mirror Mouse Track,Tilt Angle,Animation,Angle / Tilt
+Mirror Mouse Track,Perspective,Animation,Perspective
+Mirror Mouse Track,Pointer Latency,Animation,Pointer Latency
+Mirror Mouse Track,Direction,Animation,Direction
+Mirror Mouse Track,Heading Font Size,Layout,Typography
+Text Fold Transition,Animation Speed,Animation,Speed
+Text Fold Transition,Content Max Width,Layout,Width / Height
+Text Fold Transition,Heading/Body Gap,Layout,Gap / Spacing
+Tunnel Vision,Parallax Range,Animation,Angle / Tilt
+Tunnel Vision,Pointer Latency,Animation,Pointer Latency
+Tunnel Vision,Direction,Animation,Direction
+Tunnel Vision,Font Size,Layout,Typography
+Tunnel Vision,Stroke Width,Layout,Typography
