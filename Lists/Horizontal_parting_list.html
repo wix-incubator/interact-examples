@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Split List — Horizontal Scroll</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Doto:wght@900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html {
+      overflow-y: scroll;
+      scrollbar-width: none;
+      scroll-snap-type: y mandatory;
+    }
+    html::-webkit-scrollbar { display: none; }
+    body {
+      background: #fff;
+      color: #111;
+      font-family: 'Space Mono', monospace;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: clip;
+    }
+
+    interact-element { display: block; }
+
+    /* ── Fixed overlay: image + indicators ── */
+    .fixed-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .fixed-layer interact-element[data-interact-key="ind"] {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+    }
+
+    .fixed-layer interact-element[data-interact-key="square"] {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .hero-text-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 60;
+      mix-blend-mode: difference;
+    }
+
+    .square-frame {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      overflow: clip;
+      background: #111;
+    }
+
+    .sq-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      visibility: hidden;
+    }
+    .sq-img.hero-img { visibility: visible; }
+
+    /* ── Hero overlay ── */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-name {
+      font-family: 'Doto', sans-serif;
+      font-weight: 900;
+      font-size: clamp(50px, 10vw, 140px);
+      letter-spacing: -1px;
+      line-height: 1;
+      color: #fff;
+    }
+
+    .hero-role {
+      font-size: 12px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-top: 16px;
+    }
+
+    /* ── Indicators — top + bottom center ── */
+    .indicators {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .ind-left,
+    .ind-right {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: grid;
+      font-family: 'Space Mono', monospace;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #000;
+    }
+
+    .ind-left { top: 40px; }
+    .ind-right { bottom: 40px; }
+
+    .ind-item {
+      grid-row: 1;
+      grid-column: 1;
+      visibility: hidden;
+      padding: 2px 6px;
+    }
+
+    /* ── Hero spacer (scroll hold before animation starts) ── */
+    .hero-spacer { height: 100vh; }
+
+    /* ── Single scroll zone (drives everything) ── */
+    .scroll-zone { height: 1200vh; }
+
+    .items-frame {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 100vw;
+      overflow: clip;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .projects-row {
+      display: flex;
+      height: 100%;
+    }
+
+    .projects-row > interact-element {
+      min-width: 60vw;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .project-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(32px, 4vw, 48px);
+      color: #e0e0e0;
+    }
+
+    main { position: relative; }
+
+    .snap-marker {
+      position: absolute;
+      left: 0;
+      width: 1px;
+      height: 1px;
+      scroll-snap-align: start;
+      pointer-events: none;
+    }
+
+    .half-top,
+    .half-bottom {
+      font-family: 'Doto', sans-serif;
+      font-size: clamp(75px, 8.94vw, 105px);
+      font-weight: 900;
+      letter-spacing: -1px;
+      text-transform: uppercase;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    /* ── End spacer ── */
+    .end-spacer { height: 100vh; }
+
+    .read-more-btn { display: none; }
+
+    /* ── Tablet (769–1240px) ── */
+    @media (min-width: 769px) and (max-width: 1240px) {
+      .half-top,
+      .half-bottom {
+        font-size: clamp(60px, 7vw, 85px);
+      }
+
+      .project-col {
+        gap: 36px;
+      }
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 768px) {
+      .ind-left { top: 30px; }
+      .ind-right { bottom: 30px; }
+
+      .ind-left,
+      .ind-right {
+        font-size: 13px;
+      }
+
+      .half-top,
+      .half-bottom {
+        font-size: 47px;
+      }
+
+      .project-col {
+        gap: 128px;
+      }
+
+      .projects-row > interact-element {
+        min-width: 80vw;
+      }
+
+      .hero-name {
+        font-size: clamp(36px, 9vw, 60px);
+      }
+
+      .hero-role {
+        font-size: 10px;
+        letter-spacing: 3px;
+      }
+
+      html, body { cursor: auto !important; }
+      .custom-cursor { display: none !important; }
+
+      .read-more-btn {
+        display: block;
+        position: fixed;
+        top: calc(50% + 218px);
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 15;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease, transform 0.2s ease;
+        font-family: 'Space Mono', monospace;
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: #111;
+        background: transparent;
+        border: 1px solid #aaa;
+        border-radius: 20px;
+        padding: 8px 20px;
+        white-space: nowrap;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .read-more-btn.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .read-more-btn.visible:hover {
+        transform: translateX(-50%) scale(1.12);
+      }
+
+      .read-more-btn.visible:active {
+        transform: translateX(-50%) scale(0.97);
+      }
+    }
+    /* ── Custom cursor ── */
+    html, body { cursor: none; }
+    .square-frame { pointer-events: auto; touch-action: pan-y; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+    .project-col { pointer-events: auto; }
+
+    .custom-cursor {
+      position: fixed;
+      left: 0; top: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1.5px solid #222;
+      pointer-events: none;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s ease, height 0.3s ease;
+      opacity: 0;
+    }
+
+    .custom-cursor svg { transition: transform 0.4s ease; }
+    .custom-cursor svg line { transition: opacity 0.3s ease; }
+
+    body.on-item:not(.expanded).cursor-hover .custom-cursor {
+      width: 72px;
+      height: 72px;
+    }
+
+    body.on-item:not(.expanded).cursor-hover .custom-cursor svg line {
+      opacity: 0.55;
+    }
+
+    body.expanded .custom-cursor svg {
+      transform: rotate(45deg);
+    }
+
+    /* ── Expand / collapse ── */
+    .expand-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+      padding: 12%;
+    }
+
+    body.expanded .expand-overlay {
+      opacity: 1;
+      transition: opacity 0.5s ease;
+    }
+
+    body.expanded .square-frame {
+      transform: scale(var(--expand-scale, 2));
+    }
+
+    .expand-desc {
+      color: rgba(255, 255, 255, 0.9);
+      font-family: 'Space Mono', monospace;
+      font-size: var(--desc-font-size, 8px);
+      line-height: 1.6;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    body.expanded .expand-desc {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.4s ease 0.25s, transform 0.4s ease 0.25s;
+    }
+
+    .projects-row { transition: opacity 0.3s ease; }
+    body.expanded .projects-row { opacity: 0; }
+
+    html.scroll-locked {
+      overflow: hidden !important;
+      scroll-snap-type: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fixed layer: indicators + image square -->
+  <div class="fixed-layer">
+    <interact-element data-interact-key="ind">
+      <div class="indicators">
+        <div class="ind-left">
+          <span class="ind-item n0">ITEM (1)</span>
+          <span class="ind-item n1">ITEM (2)</span>
+          <span class="ind-item n2">ITEM (3)</span>
+          <span class="ind-item n3">ITEM (4)</span>
+          <span class="ind-item n4">ITEM (5)</span>
+          <span class="ind-item n5">ITEM (6)</span>
+          <span class="ind-item n6">ITEM (7)</span>
+          <span class="ind-item n7">ITEM (8)</span>
+          <span class="ind-item n8">ITEM (9)</span>
+          <span class="ind-item n9">ITEM (10)</span>
+          <span class="ind-item n10">ITEM (11)</span>
+          <span class="ind-item n11">ITEM (12)</span>
+        </div>
+        <div class="ind-right">
+          <span class="ind-item y0">(2024)</span>
+          <span class="ind-item y1">(2024)</span>
+          <span class="ind-item y2">(2023)</span>
+          <span class="ind-item y3">(2025)</span>
+          <span class="ind-item y4">(2023)</span>
+          <span class="ind-item y5">(2024)</span>
+          <span class="ind-item y6">(2025)</span>
+          <span class="ind-item y7">(2023)</span>
+          <span class="ind-item y8">(2024)</span>
+          <span class="ind-item y9">(2025)</span>
+          <span class="ind-item y10">(2023)</span>
+          <span class="ind-item y11">(2024)</span>
+        </div>
+      </div>
+    </interact-element>
+
+    <interact-element data-interact-key="square">
+      <div class="square-frame">
+        <img class="sq-img hero-img"     src="https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?w=800&h=800&fit=crop&q=80" alt="">
+        <img class="sq-img proj-img-0"   src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&h=800&fit=crop&q=80" alt="">
+        <img class="sq-img proj-img-1"   src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&h=800&fit=crop&q=80" alt="">
+        <img class="sq-img proj-img-2"   src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=800&fit=crop&q=80" alt="">
+        <img class="sq-img proj-img-3"   src="https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=800&h=800&fit=crop&q=80" alt="">
+        <img class="sq-img proj-img-4"   src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=800&h=800&fit=crop&q=80" alt="">
+        <img class="sq-img proj-img-5"   src="https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=800&h=800&fit=crop&q=80" alt="">
+        <img class="sq-img proj-img-6"   src="https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=800&h=800&fit=crop&q=80" alt="">
+        <img class="sq-img proj-img-7"   src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=800&h=800&fit=crop&q=80" alt="">
+        <img class="sq-img proj-img-8"   src="https://images.unsplash.com/photo-1514539079130-25950c84af65?w=800&h=800&fit=crop&q=80" alt="">
+        <img class="sq-img proj-img-9"   src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&h=800&fit=crop&q=80" alt="">
+        <img class="sq-img proj-img-10"  src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&h=800&fit=crop&q=80" alt="">
+        <img class="sq-img proj-img-11"  src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=800&h=800&fit=crop&q=80" alt="">
+        <div class="expand-overlay"><p class="expand-desc"></p></div>
+      </div>
+    </interact-element>
+  </div>
+
+  <interact-element data-interact-key="hero-text" class="hero-text-layer">
+    <div class="hero-overlay">
+      <h1 class="hero-name">ALEX RIVIERA</h1>
+      <p class="hero-role">Creative Director</p>
+    </div>
+  </interact-element>
+
+  <main>
+    <div class="hero-spacer"></div>
+
+    <interact-element data-interact-key="scroll-zone">
+      <div class="scroll-zone">
+        <div class="items-frame">
+          <div class="projects-row">
+            <interact-element data-interact-key="p0"><div class="project-col"><span class="half-top">DUSK RISING</span><span class="half-bottom">EDITORIAL</span></div></interact-element>
+            <interact-element data-interact-key="p1"><div class="project-col"><span class="half-top">NEON DRIFT</span><span class="half-bottom">COMMERCIAL</span></div></interact-element>
+            <interact-element data-interact-key="p2"><div class="project-col"><span class="half-top">STILL WATERS</span><span class="half-bottom">FASHION</span></div></interact-element>
+            <interact-element data-interact-key="p3"><div class="project-col"><span class="half-top">PAPER CRANE</span><span class="half-bottom">BRANDING</span></div></interact-element>
+            <interact-element data-interact-key="p4"><div class="project-col"><span class="half-top">ECHO CHAMBER</span><span class="half-bottom">MUSIC VIDEO</span></div></interact-element>
+            <interact-element data-interact-key="p5"><div class="project-col"><span class="half-top">GLASS HOUSE</span><span class="half-bottom">ARCHITECTURE</span></div></interact-element>
+            <interact-element data-interact-key="p6"><div class="project-col"><span class="half-top">WILD LIGHT</span><span class="half-bottom">PHOTOGRAPHY</span></div></interact-element>
+            <interact-element data-interact-key="p7"><div class="project-col"><span class="half-top">SLOW BURN</span><span class="half-bottom">FILM</span></div></interact-element>
+            <interact-element data-interact-key="p8"><div class="project-col"><span class="half-top">DEEP CURRENT</span><span class="half-bottom">CAMPAIGN</span></div></interact-element>
+            <interact-element data-interact-key="p9"><div class="project-col"><span class="half-top">SILVER LINE</span><span class="half-bottom">EDITORIAL</span></div></interact-element>
+            <interact-element data-interact-key="p10"><div class="project-col"><span class="half-top">FIRST SNOW</span><span class="half-bottom">SHORT FILM</span></div></interact-element>
+            <interact-element data-interact-key="p11"><div class="project-col"><span class="half-top">OPEN FIELD</span><span class="half-bottom">BRANDING</span></div></interact-element>
+          </div>
+        </div>
+      </div>
+    </interact-element>
+
+    <div class="end-spacer"></div>
+  </main>
+
+  <script type="module">
+    import { Interact } from 'https://esm.sh/@wix/interact/web';
+
+    const mqMobile = window.matchMedia('(max-width: 768px)');
+    const mqTablet = window.matchMedia('(max-width: 1240px)');
+    let mobile = mqMobile.matches;
+    const tablet = !mobile && mqTablet.matches;
+
+    const SPLIT = mobile ? 80 : tablet ? 100 : 150;
+    const FINAL_SIZE = mobile ? '180px' : tablet ? '210px' : '280px';
+    const ITEM_COUNT = 12;
+    const ITEM_WIDTH = mobile ? 80 : 60;
+    const HERO_STEPS = 2.6;
+    const STEPS = ITEM_COUNT + HERO_STEPS;
+    const step = 1 / STEPS;
+    const START_TX = 50 + ITEM_WIDTH * (HERO_STEPS - 0.5);
+    const END_TX = 50 - ITEM_WIDTH / 2 - ITEM_COUNT * ITEM_WIDTH;
+    const C0 = { name: 'cover', offset: { value: 0, unit: 'percentage' } };
+    const C1 = { name: 'cover', offset: { value: 100, unit: 'percentage' } };
+
+    function cl(v) { return Math.round(Math.max(0.001, Math.min(0.999, v)) * 10000) / 10000; }
+
+    const effects = [];
+
+    // ── Shrink: full-screen → square (during first zone before item 0 centers) ──
+    effects.push({
+      key: 'square',
+      selector: '.square-frame',
+      rangeStart: C0, rangeEnd: C1, fill: 'both',
+      keyframeEffect: {
+        name: 'shrink',
+        keyframes: [
+          { offset: 0,               width: '100vw', height: '100vh', borderRadius: '0px', boxShadow: '0 0 0 0 rgba(0,0,0,0)' },
+          { offset: 0.02,            width: '100vw', height: '100vh', borderRadius: '0px', boxShadow: '0 0 0 0 rgba(0,0,0,0)' },
+          { offset: cl(HERO_STEPS * step * 0.65), width: FINAL_SIZE, height: FINAL_SIZE, borderRadius: '0px', boxShadow: '0 0 0 0 rgba(0,0,0,0)' },
+          { offset: 1,               width: FINAL_SIZE, height: FINAL_SIZE, borderRadius: '0px', boxShadow: '0 0 0 0 rgba(0,0,0,0)' },
+        ],
+      },
+    });
+
+    // ── Hero text fade (fades quickly in first zone) ──
+    effects.push({
+      key: 'hero-text',
+      selector: '.hero-overlay',
+      rangeStart: C0, rangeEnd: C1, fill: 'both',
+      keyframeEffect: {
+        name: 'heroHide',
+        keyframes: [
+          { offset: 0,              opacity: '1' },
+          { offset: 0.01,           opacity: '1' },
+          { offset: cl(HERO_STEPS * step * 0.4), opacity: '0' },
+          { offset: 1,              opacity: '0' },
+        ],
+      },
+    });
+
+    // ── Cross-dissolve: hero image fades out as first item image fades in ──
+    const dissolveStart = HERO_STEPS * step * 0.45;
+    const dissolveEnd = HERO_STEPS * step * 0.95;
+
+    effects.push({
+      key: 'square', selector: '.hero-img',
+      rangeStart: C0, rangeEnd: C1, fill: 'both',
+      keyframeEffect: {
+        name: 'heroImgFade',
+        keyframes: [
+          { offset: 0, opacity: '1' },
+          { offset: cl(dissolveStart), opacity: '1' },
+          { offset: cl(dissolveEnd), opacity: '0' },
+          { offset: cl(dissolveEnd + 0.001), opacity: '0', visibility: 'hidden' },
+          { offset: 1, opacity: '0', visibility: 'hidden' },
+        ],
+      },
+    });
+
+    // ── Row slide: items enter from right, exit to left ──
+    effects.push({
+      selector: '.projects-row',
+      rangeStart: C0, rangeEnd: C1, fill: 'both',
+      keyframeEffect: {
+        name: 'rowSlide',
+        keyframes: [
+          { offset: 0, transform: `translateX(${START_TX}vw)` },
+          { offset: 1, transform: `translateX(${END_TX}vw)` },
+        ],
+      },
+    });
+
+    // ── Per-item effects ──
+    for (let i = 0; i < ITEM_COUNT; i++) {
+      const center = (i + HERO_STEPS) * step;
+      const visStart = (i + HERO_STEPS - 0.5) * step;
+      const visEnd = (i + HERO_STEPS + 0.5) * step;
+
+      // Trapezoidal split: ramps open, holds fully open through center, ramps closed
+      const rampIn = cl(center - step * 0.7);
+      const plateauIn = cl(center - step * 0.5);
+      const plateauOut = cl(center + step * 0.5);
+      const rampOut = cl(center + step * 0.7);
+
+      // Split top (moves up)
+      effects.push({
+        key: `p${i}`, selector: '.half-top',
+        rangeStart: C0, rangeEnd: C1, fill: 'both',
+        keyframeEffect: {
+          name: `sT${i}`,
+          keyframes: [
+            { offset: 0, transform: 'translateY(0)' },
+            { offset: rampIn, transform: 'translateY(0)' },
+            { offset: plateauIn, transform: `translateY(-${SPLIT}px)` },
+            { offset: plateauOut, transform: `translateY(-${SPLIT}px)` },
+            { offset: rampOut, transform: 'translateY(0)' },
+            { offset: 1, transform: 'translateY(0)' },
+          ],
+        },
+      });
+
+      // Split bottom (moves down)
+      effects.push({
+        key: `p${i}`, selector: '.half-bottom',
+        rangeStart: C0, rangeEnd: C1, fill: 'both',
+        keyframeEffect: {
+          name: `sB${i}`,
+          keyframes: [
+            { offset: 0, transform: 'translateY(0)' },
+            { offset: rampIn, transform: 'translateY(0)' },
+            { offset: plateauIn, transform: `translateY(${SPLIT}px)` },
+            { offset: plateauOut, transform: `translateY(${SPLIT}px)` },
+            { offset: rampOut, transform: 'translateY(0)' },
+            { offset: 1, transform: 'translateY(0)' },
+          ],
+        },
+      });
+
+      // Highlight
+      effects.push({
+        key: `p${i}`, selector: '.project-col',
+        rangeStart: C0, rangeEnd: C1, fill: 'both',
+        keyframeEffect: {
+          name: `hl${i}`,
+          keyframes: [
+            { offset: 0, color: '#e0e0e0' },
+            { offset: cl(visStart - 0.001), color: '#e0e0e0' },
+            { offset: cl(visStart), color: '#000' },
+            { offset: cl(visEnd), color: '#000' },
+            { offset: cl(visEnd + 0.001), color: '#e0e0e0' },
+            { offset: 1, color: '#e0e0e0' },
+          ],
+        },
+      });
+
+      // Image visibility
+      const imgKf = [
+        { offset: 0, visibility: 'hidden' },
+        { offset: cl(visStart - 0.001), visibility: 'hidden' },
+        { offset: cl(visStart), visibility: 'visible' },
+        { offset: cl(visEnd - 0.001), visibility: 'visible' },
+        { offset: cl(visEnd), visibility: 'hidden' },
+        { offset: 1, visibility: 'hidden' },
+      ];
+
+      if (i === 0) {
+        const imgKf0 = [
+          { offset: 0, visibility: 'hidden' },
+          { offset: cl(dissolveStart - 0.001), visibility: 'hidden' },
+          { offset: cl(dissolveStart), visibility: 'visible' },
+          { offset: cl(visEnd - 0.001), visibility: 'visible' },
+          { offset: cl(visEnd), visibility: 'hidden' },
+          { offset: 1, visibility: 'hidden' },
+        ];
+        effects.push({
+          key: 'square', selector: '.proj-img-0',
+          rangeStart: C0, rangeEnd: C1, fill: 'both',
+          keyframeEffect: { name: 'imgVis0', keyframes: imgKf0 },
+        });
+        effects.push({
+          key: 'square', selector: '.proj-img-0',
+          rangeStart: C0, rangeEnd: C1, fill: 'both',
+          keyframeEffect: {
+            name: 'imgDissolve0',
+            keyframes: [
+              { offset: 0, opacity: '0' },
+              { offset: cl(dissolveStart), opacity: '0' },
+              { offset: cl(dissolveEnd), opacity: '1' },
+              { offset: 1, opacity: '1' },
+            ],
+          },
+        });
+      } else {
+        effects.push({
+          key: 'square', selector: `.proj-img-${i}`,
+          rangeStart: C0, rangeEnd: C1, fill: 'both',
+          keyframeEffect: { name: `imgVis${i}`, keyframes: imgKf },
+        });
+      }
+
+      // Number indicator
+      effects.push({
+        key: 'ind', selector: `.n${i}`,
+        rangeStart: C0, rangeEnd: C1, fill: 'both',
+        keyframeEffect: { name: `nVis${i}`, keyframes: imgKf.map(k => ({ ...k })) },
+      });
+
+      // Year indicator
+      effects.push({
+        key: 'ind', selector: `.y${i}`,
+        rangeStart: C0, rangeEnd: C1, fill: 'both',
+        keyframeEffect: { name: `yVis${i}`, keyframes: imgKf.map(k => ({ ...k })) },
+      });
+    }
+
+    Interact.create({
+      interactions: [{
+        key: 'scroll-zone',
+        trigger: 'viewProgress',
+        effects,
+      }],
+    });
+
+    const mainEl = document.querySelector('main');
+    const scrollZoneEl = document.querySelector('[data-interact-key="scroll-zone"]');
+    let rangeStart, rangeTotal;
+
+    function computePositions() {
+      const rect = scrollZoneEl.getBoundingClientRect();
+      const elTop = rect.top + window.scrollY;
+      const elHeight = rect.height;
+      const vh = window.innerHeight;
+      rangeStart = elTop - vh;
+      rangeTotal = elHeight + vh;
+    }
+
+    function createSnapMarkers() {
+      document.querySelectorAll('.snap-marker').forEach(m => m.remove());
+      const heroM = document.createElement('div');
+      heroM.className = 'snap-marker';
+      heroM.style.top = '0px';
+      mainEl.appendChild(heroM);
+      for (let i = 0; i < ITEM_COUNT; i++) {
+        const scrollTarget = rangeStart + rangeTotal * (i + HERO_STEPS) / STEPS;
+        const m = document.createElement('div');
+        m.className = 'snap-marker';
+        m.style.top = scrollTarget + 'px';
+        mainEl.appendChild(m);
+      }
+      const endM = document.createElement('div');
+      endM.className = 'snap-marker';
+      endM.style.top = (rangeStart + rangeTotal) + 'px';
+      mainEl.appendChild(endM);
+    }
+
+    computePositions();
+    createSnapMarkers();
+
+    // ── Custom cursor + expand / collapse ──
+    const cursor = document.getElementById('cursor');
+    const descEl = document.querySelector('.expand-desc');
+    let isExpanded = false;
+
+    const DESCRIPTIONS = [
+      'A cinematic editorial exploring light and shadow through urban landscapes at golden hour.',
+      'Brand campaign for a luxury automotive line, blending motion and color in abstract compositions.',
+      'High fashion editorial shot at alpine lakes, capturing stillness and elegance in nature.',
+      'Complete visual identity for a boutique origami studio, from logo to packaging design.',
+      'Visual narrative for an indie artist exploring isolation through mirrored spaces and echo.',
+      'Architectural documentation of modernist homes emphasizing transparency, light and form.',
+      'A photographic series capturing the raw beauty of natural light in untamed landscapes.',
+      'Short film exploring the passage of time in a single continuous unbroken shot.',
+      'Environmental awareness campaign using underwater photography and mixed media elements.',
+      'Monochrome editorial for a contemporary art magazine, emphasizing texture and contrast.',
+      'A poetic short film documenting the first snowfall of the season in rural Japan.',
+      'Visual identity and campaign for an outdoor lifestyle brand rooted in minimalism.',
+    ];
+
+    const finalPx = parseInt(FINAL_SIZE);
+    function setExpandScale() {
+      const s = Math.min(window.innerWidth * 0.85, window.innerHeight * 0.8) / finalPx;
+      document.documentElement.style.setProperty('--expand-scale', s.toFixed(2));
+      document.documentElement.style.setProperty('--desc-font-size', (18 / s).toFixed(1) + 'px');
+    }
+    setExpandScale();
+
+    function getCurrentItem() {
+      const progress = (window.scrollY - rangeStart) / rangeTotal;
+      const s = 1 / STEPS;
+      for (let i = 0; i < ITEM_COUNT; i++) {
+        if (Math.abs(progress - (i + HERO_STEPS) * s) < s * 0.45) return i;
+      }
+      return -1;
+    }
+
+    document.addEventListener('pointermove', (e) => {
+      if (mobile) return;
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+      cursor.style.opacity = '1';
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      const hovering = el && (el.closest('.square-frame') || el.closest('.project-col'));
+      document.body.classList.toggle('cursor-hover', !!hovering);
+    });
+    document.addEventListener('pointerleave', () => { if (!mobile) cursor.style.opacity = '0'; });
+    document.addEventListener('pointerenter', () => { if (!mobile) cursor.style.opacity = '1'; });
+
+    const readMoreBtn = document.getElementById('readMoreBtn');
+
+    function updateReadMore() {
+      if (!mobile) { readMoreBtn.classList.remove('visible'); return; }
+      const idx = getCurrentItem();
+      readMoreBtn.classList.toggle('visible', idx >= 0 && !isExpanded);
+    }
+
+    function updateOnItem() {
+      document.body.classList.toggle('on-item', getCurrentItem() >= 0);
+    }
+    window.addEventListener('scroll', () => { updateOnItem(); updateReadMore(); });
+    updateOnItem();
+    updateReadMore();
+
+    function expand(idx) {
+      isExpanded = true;
+      descEl.textContent = DESCRIPTIONS[idx];
+      document.body.classList.add('expanded');
+      document.documentElement.classList.add('scroll-locked');
+      updateReadMore();
+    }
+
+    function collapse() {
+      isExpanded = false;
+      document.body.classList.remove('expanded');
+      document.documentElement.classList.remove('scroll-locked');
+      updateReadMore();
+    }
+
+    document.addEventListener('click', (e) => {
+      if (isExpanded) { collapse(); return; }
+      if (mobile) return;
+      const idx = getCurrentItem();
+      if (idx >= 0) expand(idx);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (isExpanded) { collapse(); return; }
+        const idx = getCurrentItem();
+        if (idx >= 0) expand(idx);
+      }
+      if (e.key === 'Escape' && isExpanded) collapse();
+    });
+
+    readMoreBtn.addEventListener('click', (e) => {
+      if (!mobile) return;
+      e.stopPropagation();
+      if (!isExpanded) {
+        const idx = getCurrentItem();
+        if (idx >= 0) expand(idx);
+      }
+    });
+
+    mqMobile.addEventListener('change', () => location.reload());
+    mqTablet.addEventListener('change', () => location.reload());
+
+    window.addEventListener('resize', () => {
+      computePositions();
+      createSnapMarkers();
+      setExpandScale();
+    });
+  </script>
+
+  <button class="read-more-btn" id="readMoreBtn">Read more</button>
+
+  <div class="custom-cursor" id="cursor">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <line x1="8" y1="2" x2="8" y2="14" stroke="#111" stroke-width="2"/>
+      <line x1="2" y1="8" x2="14" y2="8" stroke="#111" stroke-width="2"/>
+    </svg>
+  </div>
+
+</body>
+</html>
