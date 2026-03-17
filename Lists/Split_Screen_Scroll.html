@@ -42,14 +42,11 @@
     .left-bg {
       position: absolute;
       inset: 0;
-      background: url('https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1200&q=80') center/cover no-repeat;
+      background: linear-gradient(to right, #0d5a2e 0%, #062e18 40%, transparent 100%);
     }
 
     .left-overlay {
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.35) 100%);
+      display: none;
     }
 
     .left-inner h1 {
@@ -156,6 +153,10 @@
       .left-inner h1 {
         font-size: clamp(4.2rem, 15vw, 6.75rem);
         text-align: center;
+      }
+
+      .left-bg {
+        background: linear-gradient(to bottom, #0d5a2e 0%, #062e18 40%, transparent 100%);
       }
 
       .right-panel {
