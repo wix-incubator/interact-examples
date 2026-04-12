@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Lock Toggle</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            
+            /* State Backgrounds - Switched to pure black for "On" state */
+            --on-bg: #000000;    /* Unlocked state bg (Pure Black) */
+            --off-bg: #FFD882;   /* Locked state bg */
+            
+            /* Slider Colors */
+            --slider-on: #FFD882;  
+            --slider-off: #000000; 
+            
+            /* Icon Colors */
+            --icon-on: #000000;    
+            --icon-off: #ffffff;   
+            
+            --transition-speed: 0.6s;
+            --stroke-color: #FFD882; 
+            --border-width: 2px;
+            
+            /* Icon Size */
+            --icon-size: clamp(20px, 5vw, 24px);
+            
+            /* Dimensions */
+            --container-width: 140px;
+            --container-height: 60px;
+            --margin: 6px;
+            
+            /* Fixed slider size */
+            --slider-size: calc(var(--container-height) - (var(--margin) * 2) - (var(--border-width) * 2));
+            --travel-distance: calc(var(--container-width) - var(--slider-size) - (var(--margin) * 2) - (var(--border-width) * 2));
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--bg-color);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        .toggle-container {
+            position: relative;
+            width: var(--container-width);
+            height: var(--container-height);
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            transition: transform 0.2s ease-out;
+        }
+
+        #toggle-input {
+            display: none;
+        }
+
+        .toggle-track {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50px;
+            transition: background-color var(--transition-speed) ease;
+            box-sizing: border-box;
+            border: var(--border-width) solid var(--stroke-color);
+            background-color: var(--off-bg);
+        }
+
+        .slider {
+            position: absolute;
+            top: var(--margin);
+            left: var(--margin);
+            width: var(--slider-size);
+            height: var(--slider-size);
+            border-radius: 50%;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 
+                transform var(--transition-speed) cubic-bezier(0.65, 0, 0.35, 1),
+                background-color var(--transition-speed) ease;
+        }
+
+        .slider-icon-stack {
+            position: relative;
+            width: var(--icon-size);
+            height: var(--icon-size);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slider-icon {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 
+                opacity var(--transition-speed) ease,
+                transform var(--transition-speed) cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        /* --- Shackle Animation --- */
+        .shackle-path {
+            stroke-dasharray: 25;
+            stroke-dashoffset: 9;
+            transition: stroke-dashoffset var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* --- Animation for Locked: Rattling --- */
+        @keyframes lock-rattle {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-1.5px) rotate(-3deg); }
+            50% { transform: translateX(1.5px) rotate(3deg); }
+            75% { transform: translateX(-1.5px) rotate(-1.5deg); }
+            100% { transform: translateX(0); }
+        }
+
+        /* --- STATE: OFF (Locked) --- */
+        #toggle-input:not(:checked) + .toggle-track { background-color: var(--off-bg); }
+        #toggle-input:not(:checked) + .toggle-track .slider {
+            transform: translateX(var(--travel-distance)) rotate(360deg);
+            background-color: var(--slider-off);
+        }
+        
+        #toggle-input:not(:checked) + .toggle-track .icon-unlocked { 
+            opacity: 0; 
+            transform: rotate(-45deg) scale(0.5); 
+        }
+        #toggle-input:not(:checked) + .toggle-track .icon-locked { 
+            opacity: 1; 
+            transform: rotate(0deg) scale(1);
+            color: var(--icon-off);
+        }
+
+        /* --- STATE: ON (Unlocked) --- */
+        #toggle-input:checked + .toggle-track { background-color: var(--on-bg); }
+        #toggle-input:checked + .toggle-track .slider {
+            transform: translateX(0) rotate(0deg);
+            background-color: var(--slider-on);
+        }
+
+        #toggle-input:checked + .toggle-track .icon-unlocked { 
+            opacity: 1; 
+            transform: rotate(0deg) scale(1);
+            color: var(--icon-on);
+        }
+        #toggle-input:checked + .toggle-track .icon-locked { 
+            opacity: 0; 
+            transform: rotate(45deg) scale(0.5); 
+        }
+
+        /* --- HOVER INTERACTIONS --- */
+        .toggle-container:hover { transform: scale(1.02); }
+
+        #toggle-input:checked + .toggle-track .slider:hover { 
+            transform: translateX(6px) rotate(0deg); 
+        }
+        #toggle-input:not(:checked) + .toggle-track .slider:hover { 
+            transform: translateX(calc(var(--travel-distance) - 6px)) rotate(360deg); 
+        }
+
+        #toggle-input:checked + .toggle-track .slider:hover .icon-unlocked .shackle-path {
+            stroke-dashoffset: 6.5; 
+        }
+
+        #toggle-input:not(:checked) + .toggle-track .slider:hover .icon-locked svg {
+            animation: lock-rattle 0.2s linear infinite;
+        }
+
+        .slider:active { transform: scale(0.92) !important; }
+    </style>
+</head>
+<body>
+
+    <label class="toggle-container">
+        <input type="checkbox" id="toggle-input" checked>
+        <div class="toggle-track">
+            <div class="slider">
+                <div class="slider-icon-stack">
+                    <!-- Unlocked Icon -->
+                    <span class="slider-icon icon-unlocked">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path class="shackle-path" d="M7 11V7a5 5 0 0 1 10 0v4" />
+                            <path d="M5 11 h14 v8 a2 2 0 0 1 -2 2 H7 a2 2 0 0 1 -2 -2 v-8 z" />
+                            <circle cx="12" cy="15.5" r="1" fill="currentColor" stroke="none" />
+                            <path d="M12 16.5v1.5" stroke-width="2" />
+                        </svg>
+                    </span>
+                    <!-- Locked Icon -->
+                    <span class="slider-icon icon-locked">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                            <path d="M5 11 h14 v8 a2 2 0 0 1 -2 2 H7 a2 2 0 0 1 -2 -2 v-8 z" />
+                            <circle cx="12" cy="15.5" r="1" fill="currentColor" stroke="none" />
+                            <path d="M12 16.5v1.5" stroke-width="2" />
+                        </svg>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </label>
+
+</body>
+</html>

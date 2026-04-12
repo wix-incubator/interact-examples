@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smiley Navigation</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React and ReactDOM CDNs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX transpilation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Standardized Blink Animation */
+        @keyframes wink {
+            0%, 10%, 90%, 100% { 
+                transform: scaleY(1); 
+            }
+            30%, 70% { 
+                transform: scaleY(0.15); 
+            }
+        }
+        
+        .animate-wink {
+            animation: wink 0.4s ease-in-out;
+            transform-origin: center;
+            transform-box: fill-box;
+        }
+
+        /* SVG Consistency: Force all strokes to be exactly 2px */
+        svg path, svg circle, svg ellipse {
+            vector-effect: non-scaling-stroke;
+            stroke-width: 2px !important;
+        }
+
+        /* Hover for Nav Buttons: Solid yellow background, black text */
+        .nav-tab-hover:not(.active-tab):hover {
+            background-color: #FFD882 !important;
+            color: black !important;
+            opacity: 1 !important;
+        }
+
+        /* Jumpy & Squishy Transition Logic */
+        .morph-container {
+            transition: width 0.8s cubic-bezier(0.34, 1.2, 0.64, 1), 
+                        height 0.8s cubic-bezier(0.34, 1.2, 0.64, 1), 
+                        background-color 0.4s ease-in-out;
+        }
+
+        /* Updated Responsive Font: Min 14px, Max 16px */
+        .tab-font {
+            font-size: 14px;
+        }
+        @media (min-width: 640px) {
+            .tab-font {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useCallback } = React;
+
+        const App = () => {
+            const [isExpanded, setIsExpanded] = useState(false);
+            const [isClosing, setIsClosing] = useState(false);
+            const [isWinking, setIsWinking] = useState(false);
+            const [activeTab, setActiveTab] = useState('Home');
+            const [facePos, setFacePos] = useState({ x: 0, y: 0 });
+            const tabs = ['Home', 'Index', 'Contacts'];
+
+            const themeColor = '#FFD882';
+
+            const handleToggle = () => {
+                if (!isExpanded) {
+                    setIsExpanded(true);
+                    setIsWinking(false);
+                    setIsClosing(false);
+                    setFacePos({ x: 0, y: 0 });
+                }
+            };
+
+            const handleClose = (e) => {
+                e.stopPropagation();
+                setIsExpanded(false);
+                setIsClosing(true);
+                setTimeout(() => {
+                    setIsClosing(false);
+                }, 800);
+            };
+
+            const triggerWink = useCallback(() => {
+                if (!isExpanded && !isClosing) {
+                    setIsWinking(false);
+                    setTimeout(() => {
+                        setIsWinking(true);
+                        setTimeout(() => setIsWinking(false), 450);
+                    }, 10);
+                }
+            }, [isExpanded, isClosing]);
+
+            const handleMouseMove = (e) => {
+                if (isExpanded) return;
+                const rect = e.currentTarget.getBoundingClientRect();
+                
+                const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                const y = ((e.clientY - rect.top) / rect.height) * 2 - 1;
+                
+                setFacePos({ x: x * 15, y: y * 15 });
+            };
+
+            const handleMouseEnter = () => triggerWink();
+            const handleMouseLeave = () => {
+                setFacePos({ x: 0, y: 0 });
+                triggerWink();
+            };
+
+            return (
+                <div className="flex items-center justify-center min-h-screen p-4 overflow-hidden">
+                    <div className="w-full max-w-2xl flex justify-start items-center">
+                        <div
+                            onMouseEnter={handleMouseEnter}
+                            onMouseLeave={handleMouseLeave}
+                            onMouseMove={handleMouseMove}
+                            className={`
+                                relative flex items-stretch border-2 overflow-hidden 
+                                morph-container group
+                                ${isExpanded 
+                                    ? 'w-full sm:max-w-[420px] h-[60px] bg-black rounded-full shadow-[0_0_20px_rgba(255,216,130,0.15)]' 
+                                    : `w-[60px] h-[60px] rounded-full cursor-pointer 
+                                       ${isClosing ? 'bg-[#FFD882]' : 'bg-black hover:bg-[#FFD882]'}`
+                                }
+                            `}
+                            style={{ borderColor: themeColor }}
+                        >
+                            
+                            {/* INITIAL STATE: Smiley Face with tracking */}
+                            {!isExpanded && (
+                                <div 
+                                    onClick={handleToggle}
+                                    className="flex-1 flex items-center justify-center transition-all duration-300"
+                                >
+                                    <svg 
+                                        viewBox="0 0 100 100" 
+                                        className={`w-10 h-10 fill-none transition-all duration-300 
+                                            ${isClosing ? 'stroke-black' : 'stroke-[#FFD882] group-hover:stroke-black'}`}
+                                        strokeLinecap="round"
+                                    >
+                                        <g style={{ 
+                                            transform: `translate(${facePos.x}px, ${facePos.y}px)`,
+                                            transition: 'transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1)'
+                                        }}>
+                                            <ellipse 
+                                                cx="35" cy="42" rx="4" ry="4"
+                                                className={`transition-colors duration-300 stroke-none ${isWinking ? 'animate-wink' : ''} 
+                                                    ${isClosing ? 'fill-black' : 'fill-[#FFD882] group-hover:fill-black'}`} 
+                                            />
+                                            <ellipse 
+                                                cx="65" cy="42" rx="4" ry="4"
+                                                className={`transition-colors duration-300 stroke-none ${isWinking ? 'animate-wink' : ''} 
+                                                    ${isClosing ? 'fill-black' : 'fill-[#FFD882] group-hover:fill-black'}`} 
+                                            />
+                                            <path d="M 30 60 Q 50 80 70 60" />
+                                        </g>
+                                    </svg>
+                                </div>
+                            )}
+
+                            {/* EXPANDED STATE: Navigation Bar */}
+                            {isExpanded && (
+                                <div className="flex-1 flex items-stretch animate-in fade-in slide-in-from-left-4 duration-500">
+                                    <div className="flex-1 flex items-stretch">
+                                        {tabs.map((tab, idx) => (
+                                            <button
+                                                key={tab}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setActiveTab(tab);
+                                                }}
+                                                style={{ 
+                                                    backgroundColor: activeTab === tab ? themeColor : 'black',
+                                                    color: activeTab === tab ? 'black' : themeColor
+                                                }}
+                                                className={`
+                                                    flex-1 flex items-center justify-center font-medium transition-all duration-200 
+                                                    outline-none tab-font nav-tab-hover
+                                                    ${activeTab === tab ? 'active-tab' : ''}
+                                                    ${idx === 0 ? 'rounded-l-full pl-2' : ''}
+                                                `}
+                                            >
+                                                {tab}
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    {/* RIGHT SIDE: Sideways Smiley (Close button) */}
+                                    <div 
+                                        className="px-4 sm:px-6 flex items-center justify-center bg-black cursor-pointer transition-all duration-300 rounded-r-full group/smiley hover:bg-[#FFD882]"
+                                        onClick={handleClose}
+                                    >
+                                        <div className="relative w-8 h-8 transform rotate-90 transition-transform duration-300 ease-in-out group-hover/smiley:rotate-0">
+                                            <svg 
+                                                viewBox="0 0 100 100" 
+                                                className="w-full h-full fill-none stroke-[#FFD882] transition-colors duration-200 group-hover/smiley:stroke-black"
+                                                strokeLinecap="round"
+                                            >
+                                                <ellipse cx="35" cy="40" rx="4" ry="4" className="fill-[#FFD882] stroke-none transition-colors duration-200 group-hover/smiley:fill-black" />
+                                                <ellipse cx="65" cy="40" rx="4" ry="4" className="fill-[#FFD882] stroke-none transition-colors duration-200 group-hover/smiley:fill-black" />
+                                                <path d="M 30 65 Q 50 85 70 65" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

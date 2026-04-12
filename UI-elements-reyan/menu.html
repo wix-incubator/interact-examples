@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morphing Minimalist Menu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <!-- Importing Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400; 
+            background: radial-gradient(circle at center, #141414 0%, #080808 100%);
+            background-attachment: fixed;
+            color: #FFD882;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* CORE MORPHING LOGIC */
+        #menuContainer {
+            position: fixed;
+            z-index: 50;
+            top: 32px;
+            right: 32px;
+            background-color: #000000;
+            border: 2px solid #FFD882;
+            overflow: hidden; 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            
+            /* Updated State: 60px Circle */
+            width: 60px;
+            height: 60px;
+            border-radius: 30px; /* Radius is exactly half of 60px */
+            
+            /* Symmetrical and smooth transitions */
+            transition: 
+                width 0.8s cubic-bezier(0.5, 0, 0.1, 1),
+                height 0.8s cubic-bezier(0.5, 0, 0.1, 1),
+                border-radius 0.8s cubic-bezier(0.5, 0, 0.1, 1),
+                box-shadow 0.8s ease,
+                border-color 0.4s ease,
+                transform 0.8s cubic-bezier(0.5, 0, 0.1, 1);
+        }
+
+        /* Hover effect for the button state only */
+        #menuContainer:not(.is-open):hover {
+            transform: scale(1.08);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        /* OPEN STATE: Morphs into the square panel */
+        #menuContainer.is-open {
+            width: calc(100% - 80px); 
+            height: calc(85% - 64px); 
+            border-radius: 12px; 
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+            transform: scale(1);
+        }
+
+        /* Desktop Sizing for Open State */
+        @media (min-width: 768px) {
+            #menuContainer.is-open {
+                width: 380px;
+                height: 610px; 
+            }
+        }
+
+        /* REFINED TOGGLE BUTTON */
+        #toggleBtn {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: absolute;
+            z-index: 100;
+            top: -2px; /* Adjusted for 60px container */
+            right: -2px;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #toggleBtn:hover {
+            transform: scale(1.15);
+        }
+
+        #toggleBtn:active {
+            transform: scale(0.95);
+        }
+
+        #line1, #line2 {
+            position: absolute;
+            transition: transform 0.6s cubic-bezier(0.5, 0, 0.1, 1), background-color 0.3s ease;
+            transform-origin: center;
+            background-color: #FFD882;
+            width: 30px; 
+            height: 2px;  
+            border-radius: 99px;
+            pointer-events: none;
+        }
+
+        /* Closed state positioning (Stacked lines) */
+        #line1 { transform: translateY(-4px); }
+        #line2 { transform: translateY(4px); }
+
+        /* Squeeze animation for button hover in closed state */
+        #menuContainer:not(.is-open) #toggleBtn:hover #line1 { transform: translateY(-3px); }
+        #menuContainer:not(.is-open) #toggleBtn:hover #line2 { transform: translateY(3px); }
+
+        /* REFINED X MORPH */
+        .is-active #line1 { 
+            transform: translateY(0) rotate(45deg); 
+        }
+        .is-active #line2 { 
+            transform: translateY(0) rotate(-45deg); 
+        }
+
+        /* Content Masking & Flow */
+        nav {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            overflow-x: hidden !important;
+            touch-action: pan-y; 
+            -webkit-mask-image: 
+                linear-gradient(to bottom, transparent 0%, black 22%, black 78%, transparent 100%),
+                linear-gradient(to right, transparent 0%, black 20%, black 100%);
+            mask-image: 
+                linear-gradient(to bottom, transparent 0%, black 22%, black 78%, transparent 100%),
+                linear-gradient(to right, transparent 0%, black 20%, black 100%);
+            -webkit-mask-composite: source-in;
+            mask-composite: intersect;
+        }
+        
+        nav::-webkit-scrollbar { display: none; }
+
+        #contentWrapper {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s cubic-bezier(0.5, 0, 0.1, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .is-open #contentWrapper {
+            opacity: 1;
+            pointer-events: auto;
+            transition: opacity 0.4s ease 0.3s;
+        }
+
+        .stagger-item {
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
+            pointer-events: none;
+            display: flex;
+            justify-content: flex-start;
+            position: relative;
+            width: 100%;
+            transform-origin: left center; 
+        }
+        
+        .is-open .stagger-item {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .menu-link {
+            transform: translateX(-40px);
+            opacity: 0;
+            transition: 
+                color 0.2s ease, 
+                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.5s ease-out,
+                padding-left 0.4s cubic-bezier(0.65, 0, 0.35, 1); 
+            
+            color: #FFD882; 
+            font-family: 'Inter', sans-serif;
+            font-weight: 500; 
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+            font-size: clamp(14px, 1.1vw + 10px, 16px);
+            letter-spacing: 0.05em;
+            padding-left: 0; 
+        }
+
+        .is-open .menu-link {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .menu-link:hover { 
+            font-weight: 700; 
+            padding-left: 28px; 
+        }
+        
+        .menu-link:hover::before { content: '['; margin-right: 12px; }
+        .menu-link:hover::after { content: ']'; margin-left: 12px; }
+
+        #overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            z-index: 40;
+            transition: opacity 0.6s ease;
+        }
+    </style>
+</head>
+<body class="m-0 p-0 min-h-screen overflow-hidden">
+
+    <div id="overlay" class="opacity-0 pointer-events-none"></div>
+
+    <div id="menuContainer" class="flex flex-col">
+        <button id="toggleBtn" aria-label="Toggle Menu">
+            <span id="line1"></span>
+            <span id="line2"></span>
+        </button>
+
+        <div id="contentWrapper">
+            <nav id="navItems" class="flex-1 overflow-y-auto flex flex-col relative">
+                <div id="itemsList" class="flex flex-col space-y-10 md:space-y-12 px-6 md:px-10 py-32">
+                    <div class="stagger-item"><a href="#" class="menu-link">Core</a></div>
+                    <div class="stagger-item"><a href="#" class="menu-link">Infrastructure</a></div>
+                    <div class="stagger-item"><a href="#" class="menu-link">Innovations</a></div>
+                    <div class="stagger-item"><a href="#" class="menu-link">Solutions</a></div>
+                    <div class="stagger-item"><a href="#" class="menu-link">Interface</a></div>
+                    <div class="stagger-item"><a href="#" class="menu-link">Terminal</a></div>
+                    <div class="stagger-item"><a href="#" class="menu-link">Security</a></div>
+                    <div class="stagger-item"><a href="#" class="menu-link">Ecosystem</a></div>
+                    <div class="stagger-item"><a href="#" class="menu-link">Lab</a></div>
+                    <div class="stagger-item"><a href="#" class="menu-link">Archive</a></div>
+                    <div class="stagger-item"><a href="#" class="menu-link">Network</a></div>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <script>
+        const toggleBtn = document.getElementById('toggleBtn');
+        const menuContainer = document.getElementById('menuContainer');
+        const overlay = document.getElementById('overlay');
+        const navItems = document.getElementById('navItems');
+        const itemsList = document.getElementById('itemsList');
+        
+        let items = [];
+        let isOpen = false;
+        let singleSetHeight = 0;
+        let animationFrameId = null;
+
+        function initInfiniteLoop() {
+            const originalItems = Array.from(itemsList.children);
+            for (let i = 0; i < 2; i++) {
+                originalItems.forEach(item => {
+                    const clone = item.cloneNode(true);
+                    itemsList.appendChild(clone);
+                });
+            }
+            items = Array.from(document.querySelectorAll('.stagger-item'));
+            items.forEach((item, idx) => {
+                const delay = (idx % originalItems.length) * 0.03 + 0.1;
+                item.style.transitionDelay = `${delay}s`;
+                const link = item.querySelector('.menu-link');
+                link.style.transitionDelay = `${delay}s`;
+            });
+            const style = window.getComputedStyle(itemsList);
+            const gap = parseInt(style.getPropertyValue('row-gap')) || 40;
+            singleSetHeight = (itemsList.scrollHeight - parseInt(style.paddingTop) * 2 + gap) / 3;
+        }
+
+        initInfiniteLoop();
+
+        function handleInfiniteScroll() {
+            const scrollTop = navItems.scrollTop;
+            if (scrollTop >= singleSetHeight * 2) {
+                navItems.scrollTop = scrollTop - singleSetHeight;
+            } else if (scrollTop <= singleSetHeight * 0.2) {
+                navItems.scrollTop = scrollTop + singleSetHeight;
+            }
+            updateRingEffect();
+        }
+
+        function updateRingEffect() {
+            const containerRect = navItems.getBoundingClientRect();
+            const isDesktop = window.innerWidth >= 768;
+            const targetHeight = isDesktop ? 610 : window.innerHeight * 0.85 - 64;
+            const containerCenterY = (containerRect.height || targetHeight) / 2;
+            
+            items.forEach((item) => {
+                const itemRect = item.getBoundingClientRect();
+                const itemCenterInContainer = itemRect.top - containerRect.top + (itemRect.height / 2);
+                const dy = itemCenterInContainer - containerCenterY;
+                const R = containerCenterY; 
+                
+                const normalizedY = Math.min(1, Math.max(-1, dy / R));
+                const circleFactor = Math.sqrt(1 - Math.pow(normalizedY, 2));
+                
+                const bulgeIntensity = 0.4; 
+                const maxTranslateX = R * bulgeIntensity;
+                const cmToPx = 37.8;
+                const leftShift = 1.8 * cmToPx;
+                
+                const translateX = (circleFactor * maxTranslateX) - leftShift;
+                const scale = 0.95 + (circleFactor * 0.25);
+                const rotation = normalizedY * 25; 
+                
+                item.style.transform = `translateX(${translateX}px) scale(${scale}) rotate(${rotation}deg)`;
+            });
+        }
+
+        function transitionLoop() {
+            updateRingEffect();
+            animationFrameId = requestAnimationFrame(transitionLoop);
+        }
+
+        function toggleMenu() {
+            isOpen = !isOpen;
+
+            if (isOpen) {
+                menuContainer.classList.add('is-open');
+                toggleBtn.classList.add('is-active');
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+                overlay.classList.add('opacity-100');
+                
+                navItems.scrollTop = singleSetHeight;
+                transitionLoop();
+                setTimeout(() => cancelAnimationFrame(animationFrameId), 1200);
+            } else {
+                menuContainer.classList.remove('is-open');
+                toggleBtn.classList.remove('is-active');
+                overlay.classList.remove('opacity-100');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+                
+                transitionLoop();
+                
+                setTimeout(() => {
+                    cancelAnimationFrame(animationFrameId);
+                    if (!isOpen) {
+                        items.forEach(item => {
+                            const link = item.querySelector('.menu-link');
+                            link.style.color = '';
+                            link.style.fontWeight = '';
+                            link.style.transition = '';
+                            link.style.paddingLeft = '';
+                        });
+                    }
+                }, 1000);
+            }
+        }
+
+        navItems.addEventListener('scroll', handleInfiniteScroll, { passive: true });
+
+        document.querySelectorAll('.menu-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                link.style.transition = 'none';
+                link.style.color = '#FFFFFF';
+                link.style.fontWeight = '700';
+                
+                setTimeout(() => {
+                    toggleMenu();
+                }, 350);
+            });
+        });
+
+        toggleBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isOpen) toggleMenu();
+        });
+    </script>
+</body>
+</html>

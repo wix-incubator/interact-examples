@@ -2,19 +2,37 @@
 
 ## What This Project Is
 
-A collection of `@wix/interact` animation examples (HTML files) organized into three directories, plus an **Animation Explorer** (`explorer.html`) that lets you preview each animation in an iframe and control it with customization sliders.
+A collection of `@wix/interact` animation examples (~130 standalone HTML files) organized across multiple directories, plus an **Animation Explorer** (`explorer.html`) that lets you preview each animation in an iframe and control it with customization sliders.
 
 ### Directory Structure
 
 ```
 interact-examples/
-├── explorer.html                  ← The explorer UI (single self-contained HTML file)
-├── animation_sliders.csv          ← CSV catalog of all animations + their sliders (to be updated at the end)
+├── explorer.html                  ← The explorer UI (single self-contained HTML file, ~2600 lines)
+├── full-lean.md                   ← @wix/interact API documentation reference
 ├── AGENTS.md                      ← This file
-├── Gallery-and-Carousel/                     ← 37 image gallery/layout animations
-├── text_Image/                    ← 3 text + image animations
-└── Typographic_interactions/      ← 23 typographic animations
+├── CLAUDE.md                      ← Claude Code guidance
+├── Gallery-and-Carousel/          ← 41 gallery/carousel/layout animations
+├── Typographic_interactions/      ← 32 typographic/text animations
+├── Image_Background/              ← 19 image/background effect animations
+├── Lists/                         ← 8 list/repeater animations
+├── text_Image/                    ← 5 HTML files + 3 subdirectories (text + image combos)
+├── UI-elements-reyan/             ← 10 UI element animations (Reyan's implementations)
+├── interact-UI-elements/          ← 10 UI element animations (interact implementations)
+├── interact-WIP/                  ← 2 work-in-progress animations
+├── Animations not Interact/       ← 1 non-interact animation (for reference)
+├── analysis/                      ← Slider analysis CSVs, taxonomies, matrices, build scripts
+└── explorer-screenshots/          ← Screenshots of the explorer UI
 ```
+
+### Explorer Coverage
+
+The explorer currently contains **63 animations** across 3 directories:
+- **Gallery-and-Carousel**: 37 of 41 on disk (missing: 3DSmallCarousel, CardSpread_7, Looping_Sphere_Gallery, SpecimenCardGallery)
+- **text_Image**: 3 of 8 on disk (missing: pointer-scale-scroll-blur, pointer-track-scroll-fade, shape-mask-parallax, scroll-blur-split-layout, scroll-tilt-reveal)
+- **Typographic_interactions**: 23 of 32 on disk (missing: 3D-Rolodex-Flip, Accelerated3DSpin, Mindshift Transition, The Iris Gate, Waterfall_Text, cards-peel-off-scroll, stacked-text-cards-scroll, text-cards-slide-in, text-fade-3d-perspective)
+
+**Not yet in explorer**: Image_Background (19), Lists (8), UI-elements-reyan (10), interact-UI-elements (10), interact-WIP (2).
 
 ---
 
@@ -26,10 +44,11 @@ We are **manually going through each animation one by one** in `explorer.html` t
 2. Add new sliders that are useful for each specific animation
 3. Remove sliders that don't work or aren't meaningful
 4. Adjust slider ranges (min/max/step/default) to sensible values
+5. Add new animations from disk that are not yet in the explorer
 
 All slider configurations are **hardcoded** in the `animations` array inside `explorer.html`. They are NOT loaded from the CSV at runtime.
 
-**After all animations are finalized**, the `animation_sliders.csv` will be updated to match the final state of `explorer.html`.
+**After all animations are finalized**, the CSV files in `analysis/` will be updated to match the final state of `explorer.html`.
 
 ---
 
@@ -37,11 +56,11 @@ All slider configurations are **hardcoded** in the `animations` array inside `ex
 
 ### explorer.html Architecture
 
-The explorer is a single HTML file with:
+The explorer is a single-file SPA (~2600 lines) with:
 
 - **Sidebar**: Collapsible list of all animations, grouped by directory, with search
-- **Preview iframe**: Loads each animation via `fetch` → HTML modification → `srcdoc`
-- **Slider panel**: Two tabs (Animation / Layout) with range sliders per animation
+- **Preview iframe**: Full-bleed preview loading animations via `fetch` → HTML modification → `srcdoc`
+- **Slider panel**: Draggable glass-morphism panel with two tabs (Animation / Layout) with range sliders per animation
 - **Keyboard nav**: Arrow keys to switch animations, Cmd+B to toggle sidebar
 
 ### How Animations Load (srcdoc + Bridge)
@@ -130,16 +149,34 @@ Scroll-driven animations use `viewProgress` as their trigger. The "Scroll Speed"
 
 ---
 
+## Analysis Directory
+
+The `analysis/` folder contains prior slider analysis work:
+
+- `animation_sliders.csv` / `animation_sliders_readable.csv` / `new_animation_sliders.csv` — CSV catalogs of animations + sliders (snapshots, not yet synced with current explorer state)
+- `animation_taxonomies.csv` / `animation_taxonomies.md` — Pattern categorization of animations
+- `conclusions.md` — Analysis findings (14 pattern categories, slider coverage insights)
+- `slider_analysis.md` — Detailed slider audit notes
+- `slider_animation_matrix` files — Cross-reference matrices (CSV + XLSX)
+- `build_matrix.py` — Script to generate the matrix
+
+**Do NOT edit these files** until the explorer slider audit is complete.
+
+---
+
 ## What's Next
 
-Go through each animation in the explorer, one at a time. For each:
+1. **Audit existing 63 explorer animations** — go through each one, test sliders, fix ranges, add/remove as needed
+2. **Add missing animations** from existing directories to the explorer (18 files in Gallery-and-Carousel, text_Image, Typographic_interactions not yet included)
+3. **Add new directories** to the explorer — Image_Background (19), Lists (8), and potentially UI-elements-reyan / interact-UI-elements
+4. **Update analysis CSVs** to reflect the final slider configurations
+
+For each animation:
 - Visually inspect the animation
 - Test existing sliders — do they work? Are ranges sensible?
 - Add useful sliders that are missing
 - Remove sliders that don't produce meaningful results
 - Note any animations that need special handling (e.g., CornerFoldScroll and textFoldTransition use multiple 100vh sections that aren't caught by the > 200vh scroll speed threshold)
-
-After all animations are done, update `animation_sliders.csv` to reflect the final slider configurations.
 
 ---
 
@@ -164,3 +201,4 @@ Then open `http://localhost:3000/explorer.html` (or whatever port).
 - **Some text_Image files use JSX/React** (e.g., `extrude_Swivel`) and won't render in a vanilla iframe.
 - **The bridge's `setSpeed`** (playbackRate) compresses scroll-driven animation ranges instead of extending them — that's why scroll-driven animations use the HTML-source-scaling approach instead.
 - **CSS slider overrides** use `!important` which can conflict with existing `!important` rules in the animation source.
+- **UI element animations** (UI-elements-reyan, interact-UI-elements) are a different category from the gallery/typographic animations — they demonstrate form controls, toggles, dropdowns, etc. and may need different slider patterns.

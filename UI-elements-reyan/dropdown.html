@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Capsule Dropdown</title>
+    <!-- Tailwind CSS for layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+          
+        body {
+            background-color: black;
+            margin: 0;
+            overflow-x: hidden;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .font-inter {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .responsive-text {
+            font-size: clamp(14px, 1.1vw + 10px, 16px);
+        }
+
+        .capsule-dropdown {
+            height: 60px;
+        }
+
+        .dramatic-motion {
+            transition: transform 0.6s cubic-bezier(0.34, 1.75, 0.64, 1), 
+                        border-color 0.4s ease-out,
+                        background-color 0.4s ease-out,
+                        opacity 0.4s ease-out;
+        }
+
+        @keyframes dramatic-reveal {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .menu-item-reveal {
+            animation: dramatic-reveal 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            /* Prevents thin lines during animation */
+            backface-visibility: hidden;
+            transform: translateZ(0);
+        }
+
+        .dropdown-animate-in {
+            animation: dramatic-reveal 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* Fix for sub-pixel rendering gaps */
+        .no-gap-container {
+            backface-visibility: hidden;
+            transform: translateZ(0);
+            -webkit-mask-image: -webkit-radial-gradient(white, black);
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+    </style>
+</head>
+<body class="flex items-start justify-center min-h-screen p-4 sm:p-10 pt-20 sm:pt-32">
+
+    <div id="dropdown-container" class="relative w-full max-w-[280px] text-left">
+        <span id="announcer" class="sr-only" aria-live="polite">Select Option selected</span>
+
+        <button
+            id="dropdown-button"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-label="Select an option"
+            aria-controls="dropdown-menu"
+            class="capsule-dropdown font-inter responsive-text dramatic-motion flex items-center justify-between px-6 rounded-xl border-2 w-full bg-black outline-none font-normal relative z-20 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#FFD882] focus-visible:ring-offset-black"
+            style="border-color: #FFD882; color: #FFD882;"
+        >
+            <span id="button-text" class="truncate mr-3 tracking-tight transition-all duration-300 ease-out">
+                Select Option
+            </span>
+            
+            <span id="chevron-wrapper" class="dramatic-motion shrink-0" style="width: 22px; height: 22px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </span>
+        </button>
+
+        <div 
+            id="dropdown-menu" 
+            role="listbox" 
+            aria-label="Options"
+            class="absolute left-0 w-full origin-top rounded-xl bg-black border-2 border-[#FFD882] focus:outline-none z-10 overflow-hidden hidden no-gap-container"
+            style="top: 70px;"
+        >
+            <div id="options-list" class="py-0 px-0">
+                <!-- Options injected via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BRAND_YELLOW = "#FFD882";
+        
+        const ICONS = {
+            'user': `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+            'bell': `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>`,
+            'shield': `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>`,
+            'settings': `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>`,
+            'log-out': `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>`
+        };
+
+        const options = [
+            { label: 'Profile Settings', icon: 'user' },
+            { label: 'Notifications', icon: 'bell' },
+            { label: 'Privacy & Security', icon: 'shield' },
+            { label: 'System Preferences', icon: 'settings' },
+            { label: 'Sign Out', icon: 'log-out' },
+        ];
+
+        let isOpen = false;
+        let isHovered = false;
+        let selectedOption = "Select Option";
+        let hoveredOption = null;
+        let activeIndex = -1;
+        let parallax = { x: 0, y: 0, r: 0 };
+
+        const container = document.getElementById('dropdown-container');
+        const button = document.getElementById('dropdown-button');
+        const buttonText = document.getElementById('button-text');
+        const chevronWrapper = document.getElementById('chevron-wrapper');
+        const menu = document.getElementById('dropdown-menu');
+        const optionsList = document.getElementById('options-list');
+        const announcer = document.getElementById('announcer');
+
+        function renderOptions() {
+            optionsList.innerHTML = options.map((option, index) => `
+                <button
+                    role="option"
+                    data-index="${index}"
+                    aria-selected="${selectedOption === option.label}"
+                    class="menu-item-reveal flex items-center w-full px-6 sm:px-8 py-3.5 text-left font-inter responsive-text font-normal transition-all duration-300 group rounded-none border-none outline-none ${activeIndex === index ? 'bg-[#FFD882] text-black' : 'text-[#FFD882] hover:bg-[#FFD882] hover:text-black'}"
+                    style="animation-delay: ${index * 50}ms; border: none;"
+                >
+                    <span class="mr-4 opacity-60 group-hover:opacity-100 group-hover:scale-125 transition-all duration-300 ease-out shrink-0" aria-hidden="true">
+                        ${ICONS[option.icon]}
+                    </span>
+                    <span class="truncate group-hover:font-medium transition-all duration-300">
+                        ${option.label}
+                    </span>
+                </button>
+            `).join('');
+            
+            const itemBtns = document.querySelectorAll('[role="option"]');
+            itemBtns.forEach(btn => {
+                const index = parseInt(btn.dataset.index);
+                btn.onclick = (e) => { e.stopPropagation(); handleSelect(options[index]); };
+                btn.onmouseenter = () => { hoveredOption = options[index].label; activeIndex = index; updateUI(); };
+                btn.onmousemove = handleItemMouseMove;
+                btn.onmouseleave = () => { hoveredOption = null; parallax = { x: 0, y: 0, r: 0 }; updateUI(); };
+            });
+        }
+
+        function updateUI() {
+            if (isOpen || isHovered) {
+                button.style.transform = `translate(${parallax.x}px, ${-12 + parallax.y}px) scale(1.04) rotate(${parallax.r}deg)`;
+            } else {
+                button.style.transform = `translate(0px, 0px) scale(1) rotate(0deg)`;
+            }
+
+            if (isOpen) {
+                chevronWrapper.style.transform = 'rotate(180deg)';
+                if (menu.classList.contains('hidden')) {
+                    menu.classList.remove('hidden');
+                    menu.classList.add('dropdown-animate-in');
+                }
+                button.setAttribute('aria-expanded', 'true');
+            } else {
+                chevronWrapper.style.transform = isHovered ? 'rotate(25deg)' : 'rotate(0deg)';
+                menu.classList.add('hidden');
+                menu.classList.remove('dropdown-animate-in');
+                button.setAttribute('aria-expanded', 'false');
+            }
+
+            buttonText.textContent = hoveredOption || selectedOption;
+
+            const itemBtns = document.querySelectorAll('[role="option"]');
+            itemBtns.forEach((btn, idx) => {
+                if (idx === activeIndex) {
+                    btn.style.backgroundColor = BRAND_YELLOW;
+                    btn.style.color = 'black';
+                } else {
+                    btn.style.backgroundColor = 'transparent';
+                    btn.style.color = BRAND_YELLOW;
+                }
+            });
+        }
+
+        function handleToggle() {
+            isOpen = !isOpen;
+            if (isOpen) {
+                activeIndex = 0;
+                hoveredOption = options[0].label;
+                renderOptions();
+            } else {
+                hoveredOption = null;
+            }
+            updateUI();
+        }
+
+        function handleSelect(option) {
+            selectedOption = option.label;
+            hoveredOption = null;
+            parallax = { x: 0, y: 0, r: 0 };
+            isOpen = false;
+            activeIndex = -1;
+            announcer.textContent = `${selectedOption} selected`;
+            updateUI();
+            button.focus();
+        }
+
+        function handleItemMouseMove(e) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const normX = (e.clientX - centerX) / (rect.width / 2);
+            const normY = (e.clientY - centerY) / (rect.height / 2);
+            parallax = { x: normX * 12, y: normY * 6, r: normX * 2 };
+            updateUI();
+        }
+
+        button.addEventListener('mouseenter', () => { isHovered = true; updateUI(); });
+        button.addEventListener('mouseleave', () => { isHovered = false; updateUI(); });
+        button.addEventListener('click', handleToggle);
+
+        document.addEventListener('mousedown', (e) => {
+            if (!container.contains(e.target)) {
+                isOpen = false;
+                hoveredOption = null;
+                updateUI();
+            }
+        });
+
+        container.addEventListener('keydown', (e) => {
+            if (!isOpen) {
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    isOpen = true;
+                    activeIndex = 0;
+                    hoveredOption = options[0].label;
+                    renderOptions();
+                    updateUI();
+                }
+                return;
+            }
+            switch (e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    activeIndex = (activeIndex + 1) % options.length;
+                    hoveredOption = options[activeIndex].label;
+                    updateUI();
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    activeIndex = (activeIndex - 1 + options.length) % options.length;
+                    hoveredOption = options[activeIndex].label;
+                    updateUI();
+                    break;
+                case 'Enter':
+                case ' ':
+                    e.preventDefault();
+                    if (activeIndex !== -1) handleSelect(options[activeIndex]);
+                    break;
+                case 'Escape':
+                case 'Tab':
+                    isOpen = false;
+                    hoveredOption = null;
+                    updateUI();
+                    button.focus();
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>

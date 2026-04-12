@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Toggle Switch</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            
+            /* State Backgrounds */
+            --on-bg: #000000;    /* Updated to pure black */
+            --off-bg: #FFD882;   
+            
+            /* Slider Colors */
+            --slider-on: #FFD882;  
+            --slider-off: #000000; 
+            
+            /* Icon Colors */
+            --icon-on: #000000;    
+            --icon-off: #ffffff;   
+            
+            /* Inactive labels */
+            --label-inactive-dark: rgba(0, 0, 0, 0.4);
+            --label-inactive-light: rgba(255, 255, 255, 0.3);
+            
+            --transition-speed: 0.4s;
+            --stroke-color: #FFD882; 
+            
+            /* Icon Size */
+            --icon-size: clamp(20px, 5vw, 24px);
+            
+            /* Dimensions */
+            --container-width: 140px;
+            --container-height: 60px;
+            --margin: 6px;
+            --anchor-pos: 86px;
+
+            --bg-moon-shadow: #000000; /* Updated to match the black on-state background */
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--bg-color);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .toggle-container {
+            position: relative;
+            width: var(--container-width);
+            height: var(--container-height);
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            transition: transform 0.2s ease-out;
+        }
+
+        #toggle-input {
+            display: none;
+        }
+
+        .toggle-track {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50px;
+            transition: background-color var(--transition-speed) ease, box-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            box-sizing: border-box;
+            border: 2px solid var(--stroke-color);
+            background-color: var(--off-bg);
+        }
+
+        .label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: var(--icon-size);
+            height: var(--icon-size);
+            z-index: 1;
+            transition: color var(--transition-speed) ease, opacity var(--transition-speed) ease;
+        }
+
+        .slider {
+            position: absolute;
+            top: var(--margin);
+            bottom: var(--margin);
+            border-radius: 40px;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 
+                left var(--transition-speed) cubic-bezier(0.65, 0, 0.35, 1),
+                right var(--transition-speed) cubic-bezier(0.65, 0, 0.35, 1),
+                background-color var(--transition-speed) ease;
+        }
+
+        .slider-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: var(--icon-size);
+            height: var(--icon-size);
+            transition: opacity 0.2s ease, color var(--transition-speed) ease;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        /* --- Sun Animation --- */
+        @keyframes sun-pulse-rotate {
+            0%   { transform: rotate(0deg) scale(1.15); }
+            12.5% { transform: rotate(45deg) scale(1); }
+            25%  { transform: rotate(90deg) scale(1.15); }
+            37.5% { transform: rotate(135deg) scale(1); }
+            50%  { transform: rotate(180deg) scale(1.15); }
+            62.5% { transform: rotate(225deg) scale(1); }
+            75%  { transform: rotate(270deg) scale(1.15); }
+            87.5% { transform: rotate(315deg) scale(1); }
+            100% { transform: rotate(360deg) scale(1.15); }
+        }
+
+        /* --- Moon Loop --- */
+        @keyframes moon-horizontal-loop {
+            0%     { transform: translate(11px, 0); }   
+            25%    { transform: translate(24px, 0); }   
+            25.01% { transform: translate(-24px, 0); }  
+            50%    { transform: translate(-11px, 0); }  
+            75%    { transform: translate(0, 0); }      
+            100%   { transform: translate(11px, 0); }   
+        }
+
+        /* --- STATE: OFF --- */
+        .toggle-track { background-color: var(--off-bg); }
+        .label-on { color: var(--label-inactive-dark); visibility: visible; }
+        .label-off { visibility: hidden; }
+        
+        .slider {
+            left: var(--anchor-pos);
+            right: var(--margin);
+            background-color: var(--slider-off);
+            transition-delay: 0.05s, 0s; 
+        }
+        .slider-icon { color: var(--icon-off); }
+
+        /* --- STATE: ON --- */
+        #toggle-input:checked + .toggle-track { background-color: var(--on-bg); }
+        #toggle-input:checked + .toggle-track .label-on { visibility: hidden; }
+        #toggle-input:checked + .toggle-track .label-off {
+            visibility: visible;
+            color: var(--label-inactive-light);
+        }
+
+        #toggle-input:checked + .toggle-track .slider {
+            left: var(--margin);
+            right: var(--anchor-pos);
+            background-color: var(--slider-on);
+            transition-delay: 0s, 0.05s;
+        }
+        #toggle-input:checked + .toggle-track .slider .slider-icon { color: var(--icon-on); }
+
+        /* --- HOVER INTERACTIONS --- */
+        .toggle-container:has(.slider:hover) { transform: scale(1.02); }
+
+        #toggle-input:checked + .toggle-track .slider:hover { right: calc(var(--anchor-pos) - 14px); }
+        #toggle-input:not(:checked) + .toggle-track .slider:hover { left: calc(var(--anchor-pos) - 14px); }
+
+        #toggle-input:checked + .toggle-track .slider:hover .slider-icon svg {
+            animation: sun-pulse-rotate 3s linear infinite;
+        }
+
+        #toggle-input:not(:checked) + .toggle-track .slider:hover .moon-shadow-layer {
+            animation: moon-horizontal-loop 6s linear infinite;
+        }
+
+        .slider:active { transform: scale(0.99); }
+
+        .moon-bg-shadow {
+            fill: var(--bg-moon-shadow);
+        }
+    </style>
+</head>
+<body>
+
+    <label class="toggle-container">
+        <input type="checkbox" id="toggle-input" checked>
+        <div class="toggle-track">
+            <!-- Background Sun Icon -->
+            <span class="label label-on">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" shape-rendering="geometricPrecision">
+                    <circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/>
+                    <path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+                </svg>
+            </span>
+            
+            <div class="slider">
+                <span class="slider-icon" id="slider-label">
+                    <!-- Initial state: Sun (Checked) -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" shape-rendering="geometricPrecision">
+                        <circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/>
+                        <path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+                    </svg>
+                </span>
+            </div>
+
+            <!-- Background Moon Icon -->
+            <span class="label label-off">
+                <svg viewBox="0 0 24 24" fill="none" shape-rendering="geometricPrecision">
+                    <defs>
+                        <clipPath id="moon-clip-bg">
+                            <circle cx="12" cy="12" r="8" />
+                        </clipPath>
+                    </defs>
+                    <circle cx="12" cy="12" r="7.8" fill="currentColor" stroke="none" />
+                    <g clip-path="url(#moon-clip-bg)">
+                        <circle class="moon-bg-shadow" cx="12" cy="12" r="12" stroke="none" transform="translate(11, 0)" />
+                    </g>
+                </svg>
+            </span>
+        </div>
+    </label>
+
+    <script>
+        const input = document.getElementById('toggle-input');
+        const sliderIconContainer = document.getElementById('slider-label');
+
+        const sunIcon = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" shape-rendering="geometricPrecision">
+                <circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/>
+                <path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+            </svg>`;
+        
+        const moonIcon = `
+            <svg viewBox="0 0 24 24" fill="none" shape-rendering="geometricPrecision">
+                <defs>
+                    <clipPath id="moon-clip-slider">
+                        <circle cx="12" cy="12" r="8" />
+                    </clipPath>
+                </defs>
+                <circle cx="12" cy="12" r="7.8" fill="currentColor" stroke="none" />
+                <g clip-path="url(#moon-clip-slider)">
+                    <circle class="moon-shadow-layer" cx="12" cy="12" r="12" fill="#000000" stroke="none" transform="translate(11, 0)" />
+                </g>
+            </svg>`;
+
+        input.addEventListener('change', () => {
+            sliderIconContainer.style.opacity = '0';
+            setTimeout(() => {
+                sliderIconContainer.innerHTML = input.checked ? sunIcon : moonIcon;
+                sliderIconContainer.style.opacity = '1';
+            }, 400); 
+        });
+    </script>
+</body>
+</html>

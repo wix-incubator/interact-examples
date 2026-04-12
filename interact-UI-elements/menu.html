@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Morphing Menu — @wix/interact</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: radial-gradient(circle at center, #141414 0%, #080808 100%);
+      background-attachment: fixed;
+      color: #FFD882;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    interact-element { display: contents; }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 40;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .overlay.clickable {
+      pointer-events: auto;
+    }
+
+    .menu-container {
+      position: fixed;
+      z-index: 50;
+      top: 32px;
+      right: 32px;
+      width: 60px;
+      height: 60px;
+      border-radius: 30px;
+      background-color: #000;
+      border: 2px solid #FFD882;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        box-shadow 0.4s ease;
+    }
+
+    .menu-container:not(.is-open):hover {
+      transform: scale(1.08);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+    }
+
+    .toggle-btn {
+      position: absolute;
+      z-index: 100;
+      top: -2px;
+      right: -2px;
+      width: 60px;
+      height: 60px;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      outline: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .toggle-btn:focus-visible {
+      box-shadow: 0 0 0 3px #FFD882;
+      border-radius: 30px;
+    }
+
+    .hamburger-line {
+      position: absolute;
+      transform-origin: center;
+      background-color: #FFD882;
+      width: 30px;
+      height: 2px;
+      border-radius: 99px;
+      pointer-events: none;
+    }
+
+    #line1 { transform: translateY(-4px); }
+    #line2 { transform: translateY(4px); }
+
+    .content-wrapper {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .menu-container.is-open .content-wrapper {
+      pointer-events: auto;
+    }
+
+    nav {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      touch-action: pan-y;
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 22%, black 78%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 20%, black 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, black 22%, black 78%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 20%, black 100%);
+      -webkit-mask-composite: source-in;
+      mask-composite: intersect;
+    }
+
+    nav::-webkit-scrollbar { display: none; }
+
+    .items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      padding: 128px 24px;
+    }
+
+    @media (min-width: 768px) {
+      .items-list {
+        gap: 48px;
+        padding: 128px 40px;
+      }
+    }
+
+    .stagger-item {
+      pointer-events: none;
+      display: flex;
+      justify-content: flex-start;
+      position: relative;
+      width: 100%;
+      transform-origin: left center;
+    }
+
+    .menu-container.is-open .stagger-item {
+      pointer-events: auto;
+    }
+
+    .menu-link {
+      color: #FFD882;
+      font-family: inherit;
+      font-weight: 500;
+      font-size: clamp(14px, 1.1vw + 10px, 16px);
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      padding-left: 0;
+      transition: color 0.2s ease,
+        padding-left 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    .menu-link:hover {
+      font-weight: 700;
+      padding-left: 28px;
+      color: #fff;
+    }
+
+    .menu-link:hover::before { content: '['; margin-right: 12px; }
+    .menu-link:hover::after { content: ']'; margin-left: 12px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .menu-container, .hamburger-line, .menu-link, .overlay {
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <interact-element data-interact-key="overlay">
+    <div class="overlay" id="overlay" aria-hidden="true"></div>
+  </interact-element>
+
+  <interact-element data-interact-key="menu-container">
+    <div class="menu-container" id="menuContainer">
+      <interact-element data-interact-key="toggle-btn">
+        <button type="button" class="toggle-btn" id="toggleBtn" aria-label="Toggle menu">
+          <interact-element data-interact-key="line1">
+            <span class="hamburger-line" id="line1"></span>
+          </interact-element>
+          <interact-element data-interact-key="line2">
+            <span class="hamburger-line" id="line2"></span>
+          </interact-element>
+        </button>
+      </interact-element>
+
+      <interact-element data-interact-key="content-wrapper">
+        <div class="content-wrapper" id="contentWrapper">
+          <nav id="navItems">
+            <div class="items-list" id="itemsList">
+              <div class="stagger-item"><a href="#" class="menu-link">Core</a></div>
+              <div class="stagger-item"><a href="#" class="menu-link">Infrastructure</a></div>
+              <div class="stagger-item"><a href="#" class="menu-link">Innovations</a></div>
+              <div class="stagger-item"><a href="#" class="menu-link">Solutions</a></div>
+              <div class="stagger-item"><a href="#" class="menu-link">Interface</a></div>
+              <div class="stagger-item"><a href="#" class="menu-link">Terminal</a></div>
+              <div class="stagger-item"><a href="#" class="menu-link">Security</a></div>
+              <div class="stagger-item"><a href="#" class="menu-link">Ecosystem</a></div>
+              <div class="stagger-item"><a href="#" class="menu-link">Lab</a></div>
+              <div class="stagger-item"><a href="#" class="menu-link">Archive</a></div>
+              <div class="stagger-item"><a href="#" class="menu-link">Network</a></div>
+            </div>
+          </nav>
+        </div>
+      </interact-element>
+    </div>
+  </interact-element>
+
+  <script type="module">
+    import { Interact } from 'https://esm.sh/@wix/interact@2.1.2/web?bundle';
+
+    const EASING = 'cubic-bezier(0.22, 0.61, 0.36, 1)';
+    const DURATION = 700;
+
+    Interact.create({
+      effects: {
+        'container-morph': {
+          keyframeEffect: {
+            name: 'container-morph',
+            keyframes: [
+              { width: '60px', height: '60px', borderRadius: '30px' },
+              { width: '380px', height: '610px', borderRadius: '12px' }
+            ]
+          },
+          duration: DURATION,
+          easing: EASING,
+          fill: 'both'
+        },
+        'line1-morph': {
+          keyframeEffect: {
+            name: 'line1-morph',
+            keyframes: [
+              { transform: 'translateY(-4px)' },
+              { transform: 'translateY(0) rotate(45deg)' }
+            ]
+          },
+          duration: DURATION,
+          easing: EASING,
+          fill: 'both'
+        },
+        'line2-morph': {
+          keyframeEffect: {
+            name: 'line2-morph',
+            keyframes: [
+              { transform: 'translateY(4px)' },
+              { transform: 'translateY(0) rotate(-45deg)' }
+            ]
+          },
+          duration: DURATION,
+          easing: EASING,
+          fill: 'both'
+        },
+        'content-fade': {
+          keyframeEffect: {
+            name: 'content-fade',
+            keyframes: [{ opacity: 0 }, { opacity: 1 }]
+          },
+          duration: DURATION,
+          easing: EASING,
+          fill: 'both'
+        },
+        'overlay-fade': {
+          keyframeEffect: {
+            name: 'overlay-fade',
+            keyframes: [{ opacity: 0 }, { opacity: 1 }]
+          },
+          duration: DURATION,
+          easing: EASING,
+          fill: 'both'
+        },
+        'btn-hover': {
+          transition: {
+            duration: 200,
+            easing: 'ease-out',
+            styleProperties: [
+              { name: 'transform', value: 'scale(1.15)' }
+            ]
+          }
+        }
+      },
+      interactions: [
+        {
+          key: 'toggle-btn',
+          trigger: 'click',
+          params: { type: 'alternate' },
+          effects: [
+            { key: 'menu-container', effectId: 'container-morph' },
+            { key: 'line1', effectId: 'line1-morph' },
+            { key: 'line2', effectId: 'line2-morph' },
+            { key: 'content-wrapper', effectId: 'content-fade' },
+            { key: 'overlay', effectId: 'overlay-fade' }
+          ]
+        },
+        {
+          key: 'toggle-btn',
+          trigger: 'hover',
+          params: { method: 'toggle' },
+          effects: [
+            { key: 'toggle-btn', effectId: 'btn-hover' }
+          ]
+        }
+      ]
+    });
+
+    const toggleBtn = document.getElementById('toggleBtn');
+    const menuContainer = document.getElementById('menuContainer');
+    const overlay = document.getElementById('overlay');
+    const navItems = document.getElementById('navItems');
+    const itemsList = document.getElementById('itemsList');
+
+    let isOpen = false;
+    let singleSetHeight = 0;
+    let rafId = null;
+    let items = [];
+
+    function initInfiniteLoop() {
+      const original = Array.from(itemsList.children);
+      for (let i = 0; i < 2; i++) {
+        original.forEach((el) => itemsList.appendChild(el.cloneNode(true)));
+      }
+      items = Array.from(itemsList.querySelectorAll('.stagger-item'));
+      const style = window.getComputedStyle(itemsList);
+      const gap = parseInt(style.getPropertyValue('row-gap')) || 40;
+      const pt = parseInt(style.paddingTop) || 128;
+      singleSetHeight = (itemsList.scrollHeight - pt * 2 + gap) / 3;
+    }
+
+    initInfiniteLoop();
+
+    function handleInfiniteScroll() {
+      const st = navItems.scrollTop;
+      if (st >= singleSetHeight * 2) navItems.scrollTop = st - singleSetHeight;
+      else if (st <= singleSetHeight * 0.2) navItems.scrollTop = st + singleSetHeight;
+      updateRingEffect();
+    }
+
+    function updateRingEffect() {
+      const rect = navItems.getBoundingClientRect();
+      const isDesktop = window.innerWidth >= 768;
+      const targetHeight = isDesktop ? 610 : window.innerHeight * 0.85 - 64;
+      const centerY = (rect.height || targetHeight) / 2;
+
+      items.forEach((item) => {
+        const ir = item.getBoundingClientRect();
+        const itemCenter = ir.top - rect.top + ir.height / 2;
+        const dy = itemCenter - centerY;
+        const R = centerY;
+
+        const normalizedY = Math.min(1, Math.max(-1, dy / R));
+        const circleFactor = Math.sqrt(1 - normalizedY * normalizedY);
+
+        const bulgeIntensity = 0.4;
+        const maxTranslateX = R * bulgeIntensity;
+        const leftShift = 1.8 * 37.8;
+        const translateX = circleFactor * maxTranslateX - leftShift;
+        const scale = 0.95 + circleFactor * 0.25;
+        const rotation = normalizedY * 25;
+
+        item.style.transform = `translateX(${translateX}px) scale(${scale}) rotate(${rotation}deg)`;
+      });
+    }
+
+    function rafLoop() {
+      updateRingEffect();
+      rafId = requestAnimationFrame(rafLoop);
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      isOpen = !isOpen;
+      menuContainer.classList.toggle('is-open', isOpen);
+      overlay.classList.toggle('clickable', isOpen);
+      overlay.setAttribute('aria-hidden', String(!isOpen));
+
+      if (isOpen) {
+        navItems.scrollTop = singleSetHeight;
+        rafLoop();
+        setTimeout(() => cancelAnimationFrame(rafId), 1200);
+      } else {
+        rafLoop();
+        setTimeout(() => cancelAnimationFrame(rafId), 1000);
+      }
+    });
+
+    overlay.addEventListener('click', () => {
+      if (isOpen) toggleBtn.click();
+    });
+
+    navItems.addEventListener('scroll', handleInfiniteScroll, { passive: true });
+
+    document.querySelectorAll('.menu-link').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (isOpen) toggleBtn.click();
+      });
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen) toggleBtn.click();
+    });
+  </script>
+</body>
+</html>
