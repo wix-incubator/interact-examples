@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@wix/interact - Named Effects Demo</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111;
+            --bg-tertiary: #1a1a1a;
+            --border-color: #2a2a2a;
+            --text-primary: #e5e5e5;
+            --text-secondary: #999;
+            --text-muted: #666;
+            --accent: #a88fb8;
+            --accent-blue: #82aaff;
+            --accent-green: #c3e88d;
+            --accent-orange: #f78c6c;
+            --accent-cyan: #89ddff;
+            --accent-yellow: #ffcb6b;
+        }
+        
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px 20px;
+            overflow-x: hidden;
+        }
+        
+        /* Demo Section */
+        .demo-section {
+            display: flex;
+            align-items: center;
+            gap: 0px;
+            margin-left: calc(50vw - 280px);
+        }
+        
+        /* Embedded Demo Styles */
+        .demo-container {
+            background: #0a0a0a;
+            border-radius: 24px; 
+            padding: 12px 12px;
+            display: flex;
+            align-items: center;
+            gap: 64px;
+            border: 1px solid #333;
+        }
+        
+        .preview-area {
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .shapes-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+        }
+        
+        .shape {
+            position: absolute;
+            border: 0.5px solid currentColor;
+            background: transparent;
+        }
+        
+        .circle {
+            border-radius: 50%;
+        }
+        
+        .square-outer {
+            width: 140px;
+            height: 140px;
+            top: calc(50% - 70px);
+            left: calc(50% - 70px);
+            color: rgba(232, 232, 232, 0.6);
+            background: rgba(232, 232, 232, 0.1);
+            z-index: 10;
+        }
+        
+        .circle-large {
+            width: 100px;
+            height: 100px;
+            top: calc(50% - 50px);
+            left: calc(50% - 50px);
+            color: #e8e8e8cc;
+            background: #0a0a0a;
+            z-index: 20;
+        }
+        
+        .circle-small {
+            width: 60px;
+            height: 60px;
+            top: calc(50% - 30px);
+            left: calc(50% - 30px);
+            color: #ffffffee;
+            background: rgba(232, 232, 232, 0.1);
+            z-index: 30;
+        }
+        
+        .effect-roulette {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .arrow {
+            font-size: 11px;
+            font-weight: 200;
+            color: white;
+            opacity: 0.4;
+        }
+        
+        .effect-list-wrapper {
+            position: relative;
+            height: 220px;
+            width: 120px;
+        }
+        
+        .effect-list-wrapper::before,
+        .effect-list-wrapper::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 60px;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .effect-list-wrapper::before {
+            top: 0;
+            background: linear-gradient(to bottom, #0a0a0a, transparent);
+        }
+        
+        .effect-list-wrapper::after {
+            bottom: 0;
+            background: linear-gradient(to top, #0a0a0a, transparent);
+        }
+        
+        .effect-list {
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-snap-type: y mandatory;
+            scrollbar-width: none;
+            padding: 90px 0;
+        }
+        
+        .effect-list::-webkit-scrollbar { display: none; }
+        
+        .effect-item {
+            scroll-snap-align: center;
+            padding: 6px 0;
+            cursor: pointer;
+            transition: transform 0.25s ease, opacity 0.2s ease, color 0.2s ease;
+            font-weight: 100;
+            font-size: 13px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #ffd882;
+            opacity: 0.5;
+            text-align: left;
+            transform-origin: left center;
+        }
+        
+        .effect-item:hover { opacity: 0.8; }
+        
+        .effect-item.active {
+            font-weight: 100;
+            transform: scale(1.25);
+            color: white;
+            opacity: 1;
+        }
+        
+        .code-panel {
+            background: #0a0a0a;
+            border-radius: 24px;
+            padding: 12px 32px;
+            width: fit-content;
+            font-size: 12px;
+            line-height: 1.6;
+            border: 1px solid #333;
+            overflow: hidden;
+            transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                        width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .demo-connector {
+            width: 64px;
+            height: 1px;
+            background: #333;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .demo-connector::before,
+        .demo-connector::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #333;
+            border-radius: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .demo-connector::before {
+            left: 0;
+        }
+        
+        .demo-connector::after {
+            left: 100%;
+        }
+        
+        .code-content {
+            font-family: 'JetBrains Mono', monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        
+        .demo-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 20px;
+            margin-left: calc(50vw - 247px);
+        }
+        
+        .replay-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .replay-btn:hover {
+            background: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .demo-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .demo-hint kbd {
+            background: var(--bg-tertiary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+        }
+        
+        /* Syntax highlighting */
+        .keyword { color: #c792ea; }
+        .string { color: #c3e88d; }
+        .property { color: #82aaff; }
+        .number { color: #f78c6c; }
+        .punctuation { color: #89ddff; }
+        .comment { color: #546e7a; font-style: italic; }
+        .type { color: #ffcb6b; }
+    </style>
+</head>
+<body>
+    <!-- Interactive Demo -->
+    <div class="demo-section">
+        <div class="demo-container">
+            <div class="preview-area">
+                <div class="shapes-container">
+                    <interact-element data-interact-key="square-outer">
+                        <div class="shape square-outer"></div>
+                    </interact-element>
+                    <interact-element data-interact-key="circle-large">
+                        <div class="shape circle circle-large"></div>
+                    </interact-element>
+                    <interact-element data-interact-key="circle-small">
+                        <div class="shape circle circle-small"></div>
+                    </interact-element>
+                </div>
+            </div>
+            
+            <div class="effect-roulette">
+                <div class="arrow">→</div>
+                <div class="effect-list-wrapper">
+                    <div class="effect-list" id="effectList"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-connector"></div>
+        
+        <div class="code-panel">
+            <div class="code-content" id="codeSnippet"></div>
+        </div>
+    </div>
+    
+    <div class="demo-controls">
+        <button class="replay-btn" id="replayBtn">↻ Replay</button>
+    </div>
+    
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@2.0.0-rc.6/dist/es/web.js';
+
+        const effects = {
+            FadeIn: { namedEffect: { type: 'FadeIn' }, duration: 600 },
+            SlideIn: { namedEffect: { type: 'SlideIn', direction: 'bottom', power: 'medium' }, duration: 600 },
+            BounceIn: { namedEffect: { type: 'BounceIn', direction: 'center', power: 'medium' }, duration: 700 },
+            BlurIn: { namedEffect: { type: 'BlurIn', power: 'hard' }, duration: 600 },
+            SpinIn: { namedEffect: { type: 'SpinIn', direction: 'clockwise', power: 'medium' }, duration: 700 },
+            ExpandIn: { namedEffect: { type: 'ExpandIn', direction: 'center', power: 'medium' }, duration: 600 },
+            FlipIn: { namedEffect: { type: 'FlipIn', direction: 'left', power: 'medium' }, duration: 600 },
+            FoldIn: { namedEffect: { type: 'FoldIn', direction: 'top', power: 'medium' }, duration: 600 },
+            DropIn: { namedEffect: { type: 'DropIn', power: 'medium' }, duration: 650 },
+            GlideIn: { namedEffect: { type: 'GlideIn', direction: 315, power: 'medium' }, duration: 600 },
+            TurnIn: { namedEffect: { type: 'TurnIn', direction: 'top-left', power: 'medium' }, duration: 600 },
+            ArcIn: { namedEffect: { type: 'ArcIn', direction: 'bottom', power: 'medium' }, duration: 700 },
+            FloatIn: { namedEffect: { type: 'FloatIn', direction: 'bottom' }, duration: 800 },
+            RevealIn: { namedEffect: { type: 'RevealIn', direction: 'bottom' }, duration: 600 },
+            GrowIn: { namedEffect: { type: 'GrowIn', direction: 45, power: 'medium' }, duration: 600 },
+            ShuttersIn: { namedEffect: { type: 'ShuttersIn', direction: 'right', power: 'medium' }, duration: 700 },
+            Pulse: { namedEffect: { type: 'Pulse', power: 'medium' }, duration: 600, iterations: 2, alternate: true },
+            Bounce: { namedEffect: { type: 'Bounce', power: 'medium' }, duration: 700, iterations: 2, alternate: true },
+            Spin: { namedEffect: { type: 'Spin', direction: 'clockwise', power: 'medium' }, duration: 800, iterations: 2 },
+            Jello: { namedEffect: { type: 'Jello', power: 'medium' }, duration: 800, iterations: 2, alternate: true },
+            Swing: { namedEffect: { type: 'Swing', power: 'medium', direction: 'top' }, duration: 700, iterations: 2, alternate: true },
+            Rubber: { namedEffect: { type: 'Rubber', power: 'medium' }, duration: 700, iterations: 2, alternate: true },
+            Flash: { namedEffect: { type: 'Flash' }, duration: 600, iterations: 2 },
+            Wiggle: { namedEffect: { type: 'Wiggle', power: 'medium' }, duration: 500, iterations: 2, alternate: true },
+            Flip: { namedEffect: { type: 'Flip', direction: 'horizontal', power: 'medium' }, duration: 800, iterations: 2 },
+        };
+        
+        const effectOrder = [
+            { category: 'Entrance', items: ['FadeIn', 'SlideIn', 'BounceIn', 'BlurIn', 'SpinIn', 'ExpandIn', 'FlipIn', 'FoldIn', 'DropIn', 'GlideIn', 'TurnIn', 'ArcIn', 'FloatIn', 'RevealIn', 'GrowIn', 'ShuttersIn'] },
+            { category: 'Ongoing', items: ['Pulse', 'Bounce', 'Spin', 'Jello', 'Swing', 'Rubber', 'Flash', 'Wiggle', 'Flip'] }
+        ];
+        
+        const effectListEl = document.getElementById('effectList');
+        const codeSnippetEl = document.getElementById('codeSnippet');
+        const codePanelEl = document.querySelector('.code-panel');
+        const allItems = [];
+        let currentIndex = 0;
+        let currentInstance = null;
+        let isProgrammaticScroll = false;
+        
+        function updateCodeSnippet(effectName) {
+            const effectConfig = effects[effectName];
+            if (!effectConfig) return;
+            
+            const ne = effectConfig.namedEffect;
+            const dur = effectConfig.duration;
+            const iter = effectConfig.iterations || 1;
+            const alt = effectConfig.alternate || false;
+            
+            let neProps = `<span class="property">type</span><span class="punctuation">:</span> <span class="string">'${ne.type}'</span>`;
+            
+            if (ne.direction !== undefined) {
+                const dirVal = typeof ne.direction === 'number' ? ne.direction : `'${ne.direction}'`;
+                neProps += `<span class="punctuation">,</span>\n    <span class="property">direction</span><span class="punctuation">:</span> <span class="${typeof ne.direction === 'number' ? 'number' : 'string'}">${dirVal}</span>`;
+            }
+            if (ne.power !== undefined) {
+                neProps += `<span class="punctuation">,</span>\n    <span class="property">power</span><span class="punctuation">:</span> <span class="string">'${ne.power}'</span>`;
+            }
+            
+            let effectOpts = `<span class="property">duration</span><span class="punctuation">:</span> <span class="number">${dur}</span>`;
+            if (iter !== 1) {
+                effectOpts += `<span class="punctuation">,</span>\n  <span class="property">iterations</span><span class="punctuation">:</span> <span class="number">${iter}</span>`;
+            }
+            if (alt) {
+                effectOpts += `<span class="punctuation">,</span>\n  <span class="property">alternate</span><span class="punctuation">:</span> <span class="keyword">true</span>`;
+            }
+            
+            const code = `<span class="punctuation">{</span>
+  <span class="property">namedEffect</span><span class="punctuation">:</span> <span class="punctuation">{</span>
+    ${neProps}
+  <span class="punctuation">}</span><span class="punctuation">,</span>
+  ${effectOpts}
+<span class="punctuation">}</span>`;
+            
+            // Animate height and width transition
+            const currentHeight = codePanelEl.offsetHeight;
+            const currentWidth = codePanelEl.offsetWidth;
+            codePanelEl.style.height = currentHeight + 'px';
+            codePanelEl.style.width = currentWidth + 'px';
+            
+            // Update content
+            codeSnippetEl.innerHTML = code;
+            
+            // Get new dimensions
+            codePanelEl.style.height = 'auto';
+            codePanelEl.style.width = 'fit-content';
+            const newHeight = codePanelEl.offsetHeight;
+            const newWidth = codePanelEl.offsetWidth;
+            
+            // Animate from current to new
+            codePanelEl.style.height = currentHeight + 'px';
+            codePanelEl.style.width = currentWidth + 'px';
+            requestAnimationFrame(() => {
+                codePanelEl.style.height = newHeight + 'px';
+                codePanelEl.style.width = newWidth + 'px';
+            });
+            
+            // Clean up after transition
+            const onTransitionEnd = (e) => {
+                if (e.propertyName === 'height') {
+                    codePanelEl.style.height = 'auto';
+                    codePanelEl.style.width = 'fit-content';
+                    codePanelEl.removeEventListener('transitionend', onTransitionEnd);
+                }
+            };
+            codePanelEl.addEventListener('transitionend', onTransitionEnd);
+        }
+        
+        const staggerDelays = [0, 100, 200];
+        const shapeKeys = ['square-outer', 'circle-large', 'circle-small'];
+        
+        effectOrder.forEach(cat => {
+            cat.items.forEach(name => {
+                const item = document.createElement('div');
+                item.className = 'effect-item';
+                item.textContent = name;
+                effectListEl.appendChild(item);
+                allItems.push({ name, element: item });
+            });
+        });
+        
+        function generateConfig(effectName) {
+            const effectConfig = effects[effectName];
+            if (!effectConfig) return null;
+            
+            const interactions = shapeKeys.map((key, index) => ({
+                key: key,
+                trigger: 'pageVisible',
+                params: { type: 'once' },
+                effects: [{
+                    namedEffect: effectConfig.namedEffect,
+                    duration: effectConfig.duration,
+                    delay: staggerDelays[index],
+                    iterations: effectConfig.iterations || 1,
+                    alternate: effectConfig.alternate || false,
+                    fill: 'both',
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+                }]
+            }));
+            
+            return { effects: {}, interactions: interactions };
+        }
+        
+        function playEffect(index, fromScroll = false) {
+            const item = allItems[index];
+            if (!item) return;
+            
+            allItems.forEach(i => i.element.classList.remove('active'));
+            item.element.classList.add('active');
+            
+            if (!fromScroll) {
+                isProgrammaticScroll = true;
+                item.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Reset flag after scroll animation completes
+                setTimeout(() => { isProgrammaticScroll = false; }, 400);
+            }
+            
+            updateCodeSnippet(item.name);
+            
+            if (currentInstance) {
+                currentInstance.destroy();
+                currentInstance = null;
+            }
+            
+            shapeKeys.forEach(key => {
+                const element = document.querySelector(`[data-interact-key="${key}"]`);
+                if (element) {
+                    const shape = element.querySelector('.shape');
+                    if (shape) {
+                        shape.style.opacity = '1';
+                        shape.style.filter = '';
+                        shape.style.clipPath = '';
+                        shape.style.transform = '';
+                    }
+                }
+            });
+            
+            const config = generateConfig(item.name);
+            if (config) {
+                requestAnimationFrame(() => {
+                    currentInstance = Interact.create(config);
+                });
+            }
+        }
+        
+        let scrollTimer;
+        effectListEl.addEventListener('scroll', () => {
+            // Skip if this scroll was triggered programmatically
+            if (isProgrammaticScroll) return;
+            
+            clearTimeout(scrollTimer);
+            scrollTimer = setTimeout(() => {
+                const rect = effectListEl.getBoundingClientRect();
+                const centerY = rect.top + rect.height / 2;
+                let closest = 0, minDist = Infinity;
+                
+                allItems.forEach((item, i) => {
+                    const r = item.element.getBoundingClientRect();
+                    const dist = Math.abs(r.top + r.height / 2 - centerY);
+                    if (dist < minDist) { minDist = dist; closest = i; }
+                });
+                
+                if (closest !== currentIndex) {
+                    currentIndex = closest;
+                    playEffect(currentIndex, true);
+                }
+            }, 120);
+        });
+        
+        allItems.forEach((item, i) => {
+            item.element.addEventListener('click', () => {
+                currentIndex = i;
+                playEffect(i);
+            });
+        });
+        
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowDown' || e.key === 'j') {
+                e.preventDefault();
+                currentIndex = Math.min(currentIndex + 1, allItems.length - 1);
+                playEffect(currentIndex);
+            } else if (e.key === 'ArrowUp' || e.key === 'k') {
+                e.preventDefault();
+                currentIndex = Math.max(currentIndex - 1, 0);
+                playEffect(currentIndex);
+            }
+        });
+        
+        document.getElementById('replayBtn').addEventListener('click', () => playEffect(currentIndex));
+        
+        Interact.forceReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        
+        setTimeout(() => playEffect(0), 300);
+    </script>
+</body>
+</html>

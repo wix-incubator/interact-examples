@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@wix/interact - Hover KeyframeEffect Demo</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111;
+            --bg-tertiary: #1a1a1a;
+            --border-color: #2a2a2a;
+            --text-primary: #e5e5e5;
+            --text-secondary: #999;
+            --text-muted: #666;
+            --accent: #a88fb8;
+            --accent-blue: #82aaff;
+            --accent-green: #c3e88d;
+            --accent-orange: #f78c6c;
+            --accent-cyan: #89ddff;
+            --accent-yellow: #ffcb6b;
+        }
+        
+        body {
+            background: #404d5e;
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px 20px;
+            overflow-x: hidden;
+        }
+        
+        .demo-section {
+            display: flex;
+            align-items: flex-end;
+            gap: 0px;
+            margin-left: calc(50vw - 280px);
+        }
+        
+        .demo-container {
+            background: #404d5e;
+            border-radius: 24px;
+            padding: 12px 12px;
+            display: flex;
+            align-items: center;
+            gap: 64px;
+            border: 1px solid #cdc4ff;
+        }
+        
+        .preview-area {
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .shapes-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+        }
+        
+        .shape {
+            position: absolute;
+            border: 0.5px solid currentColor;
+            background: transparent;
+        }
+        
+        .circle {
+            border-radius: 50%;
+        }
+        
+        .square-outer {
+            width: 140px;
+            height: 140px;
+            top: calc(50% - 70px);
+            left: calc(50% - 70px);
+            color: rgba(232, 232, 232, 0.6);
+            background: rgba(231, 240, 255, 0.4);
+            z-index: 10;
+        }
+        
+        .circle-large {
+            width: 100px;
+            height: 100px;
+            top: calc(50% - 50px);
+            left: calc(50% - 50px);
+            color: #e8e8e8cc;
+            background: #404d5e;
+            z-index: 20;
+        }
+        
+        .circle-small {
+            width: 60px;
+            height: 60px;
+            top: calc(50% - 30px);
+            left: calc(50% - 30px);
+            color: #ffffffee;
+            background: rgba(231, 240, 255, 0.4);
+            z-index: 30;
+        }
+        
+        .code-panel {
+            background: #404d5e;
+            border-radius: 24px;
+            padding: 12px 32px;
+            width: fit-content;
+            font-size: 12px;
+            line-height: 1.6;
+            border: 1px solid #cdc4ff;
+            overflow: hidden;
+        }
+        
+        .demo-connector {
+            width: 64px;
+            height: 1px;
+            background: #cdc4ff;
+            flex-shrink: 0;
+            position: relative;
+            margin-bottom: calc((180px + 24px + 2px) / 2);
+        }
+        
+        .demo-connector::before,
+        .demo-connector::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #cdc4ff;
+            border-radius: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .demo-connector::before {
+            left: 0;
+        }
+        
+        .demo-connector::after {
+            left: 100%;
+        }
+        
+        .code-content {
+            font-family: 'JetBrains Mono', monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        
+        .demo-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 20px;
+            margin-left: calc(50vw - 247px);
+        }
+        
+        .keyword { color: #c792ea; }
+        .string { color: #c3e88d; }
+        .property { color: #82aaff; }
+        .number { color: #f78c6c; }
+        .punctuation { color: #89ddff; }
+        .comment { color: #546e7a; font-style: italic; }
+        .type { color: #ffcb6b; }
+    </style>
+</head>
+<body>
+    <div class="demo-section">
+        <interact-element data-interact-key="demo-box">
+            <div class="demo-container">
+                <div class="preview-area">
+                    <div class="shapes-container">
+                        <div class="shape square-outer"></div>
+                        <div class="shape circle circle-large"></div>
+                        <div class="shape circle circle-small"></div>
+                    </div>
+                </div>
+            </div>
+        </interact-element>
+        
+        <div class="demo-connector"></div>
+        
+        <div class="code-panel">
+            <div class="code-content"><span class="punctuation">{</span>
+  <span class="property">key</span><span class="punctuation">:</span> <span class="string">'demo-box'</span><span class="punctuation">,</span>
+  <span class="property">trigger</span><span class="punctuation">:</span> <span class="string">'hover'</span><span class="punctuation">,</span>
+  <span class="property">params</span><span class="punctuation">:</span> <span class="punctuation">{</span> <span class="property">type</span><span class="punctuation">:</span> <span class="string">'alternate'</span> <span class="punctuation">}</span><span class="punctuation">,</span>
+  <span class="property">effects</span><span class="punctuation">:</span> <span class="punctuation">[</span>
+    <span class="punctuation">{</span>
+      <span class="property">selector</span><span class="punctuation">:</span> <span class="string">'.square-outer'</span><span class="punctuation">,</span>
+      <span class="property">keyframeEffect</span><span class="punctuation">:</span> <span class="punctuation">{</span>
+        <span class="property">keyframes</span><span class="punctuation">:</span> <span class="punctuation">[</span>
+          <span class="punctuation">{</span> <span class="property">transform</span><span class="punctuation">:</span> <span class="string">'rotate(0deg) scale(1)'</span> <span class="punctuation">}</span><span class="punctuation">,</span>
+          <span class="punctuation">{</span> <span class="property">transform</span><span class="punctuation">:</span> <span class="string">'rotate(45deg) scale(0.85)'</span> <span class="punctuation">}</span>
+        <span class="punctuation">]</span>
+      <span class="punctuation">}</span><span class="punctuation">,</span>
+      <span class="property">duration</span><span class="punctuation">:</span> <span class="number">600</span><span class="punctuation">,</span>
+      <span class="property">easing</span><span class="punctuation">:</span> <span class="string">'cubic-bezier(0.4, 0, 0.2, 1)'</span><span class="punctuation">,</span>
+      <span class="property">fill</span><span class="punctuation">:</span> <span class="string">'both'</span>
+    <span class="punctuation">}</span>
+  <span class="punctuation">]</span>
+<span class="punctuation">}</span></div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@2.0.0-rc.6/dist/es/web.js';
+        
+        const config = {
+            interactions: [
+                {
+                    key: 'demo-box',
+                    trigger: 'hover',
+                    params: { type: 'alternate' },
+                    effects: [
+                        {
+                            selector: '.square-outer',
+                            keyframeEffect: {
+                                keyframes: [
+                                    { transform: 'rotate(0deg) scale(1)' },
+                                    { transform: 'rotate(45deg) scale(0.85)' }
+                                ]
+                            },
+                            duration: 600,
+                            easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                            fill: 'both'
+                        },
+                    ]
+                }
+            ]
+        };
+        
+        Interact.forceReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        
+        Interact.create(config);
+    </script>
+</body>
+</html>

@@ -129,12 +129,10 @@ This configuration declares what user/system triggers occur on which source elem
   - **Purpose**: A registry of reusable, named effect definitions that can be referenced from interactions via `EffectRef`.
   - **Key (string)**: The effect id. MUST be unique across the registry.
   - **Value (Effect)**: A full effect definition. See Effect rules below.
-
 - **sequences?: Record<string, SequenceConfig>**
   - **Purpose**: A registry of reusable sequence definitions that can be referenced from interactions via `SequenceConfigRef`.
   - **Key (string)**: The sequence id. MUST be unique across the registry.
   - **Value (SequenceConfig)**: A full sequence definition. See Sequences section below.
-
 - **conditions?: Record<string, Condition>**
   - **Purpose**: Named predicates that gate interactions/effects by runtime context.
   - **Key (string)**: The condition id. MUST be unique across the registry.
@@ -144,7 +142,6 @@ This configuration declares what user/system triggers occur on which source elem
       - `'container'`: The predicate SHOULD be a valid CSS container query condition string relative to the relevant container context.
       - `'selector'`: The predicate is a CSS selector pattern. If it contains `&`, the `&` is replaced with the base element selector; otherwise the predicate is appended to the base selector. Used for conditional styling (e.g., `:nth-of-type(odd)`, `.active`).
     - **predicate?**: OPTIONAL textual predicate for the given type. If omitted, the condition is treated as always-true (i.e., a no-op guard).
-
 - **interactions: Interaction[]**
   - **Purpose**: Declarative mapping from a source element and trigger to one or more target effects.
   - Each `Interaction` contains:
@@ -201,18 +198,17 @@ This configuration declares what user/system triggers occur on which source elem
             - Only use with `ScrubEffect` mouse presets (`namedEffect`) or `customEffect` that consumes pointer progress; avoid `keyframeEffect` with `pointerMove` unless mapping a single axis via `axis`.
           - When using `customEffect` with `pointerMove`, the progress parameter is an object:
             - ```typescript
-              type Progress = {
-                x: number; // 0-1: horizontal position (0 = left edge, 1 = right edge)
-                y: number; // 0-1: vertical position (0 = top edge, 1 = bottom edge)
-                v?: {
-                  // Velocity (optional)
-                  x: number; // Horizontal velocity
-                  y: number; // Vertical velocity
-                };
-                active?: boolean; // Whether mouse is currently in the hit area
+            type Progress = {
+              x: number; // 0-1: horizontal position (0 = left edge, 1 = right edge)
+              y: number; // 0-1: vertical position (0 = top edge, 1 = bottom edge)
+              v?: {
+                // Velocity (optional)
+                x: number; // Horizontal velocity
+                y: number; // Vertical velocity
               };
-              ```
-
+              active?: boolean; // Whether mouse is currently in the hit area
+            };
+            ```
     - **conditions?: string[]**
       - OPTIONAL. Array of condition ids that MUST all pass for this trigger to be active.
     - **selector?: string**
@@ -238,16 +234,13 @@ Sequences let you group multiple effects into a single coordinated timeline with
   - `offsetEasing?: string | ((p: number) => number)` — Easing function for stagger distribution. Named easings: `'linear'`, `'quadIn'`, `'quadOut'`, `'sineOut'`, `'cubicIn'`, `'cubicOut'`, `'cubicInOut'`. Also accepts `'cubic-bezier(...)'` strings or a JS function `(p: number) => number`. Default `'linear'`.
   - `sequenceId?: string` — Id for caching and referencing. Auto-generated if omitted.
   - `conditions?: string[]` — Condition ids that MUST all pass for this sequence to be active.
-
 - **SequenceConfigRef** type (referencing a reusable sequence):
   - `sequenceId: string` — REQUIRED. MUST match a key in `InteractConfig.sequences`.
   - `delay?`, `offset?`, `offsetEasing?`, `conditions?` — OPTIONAL overrides merged on top of the referenced sequence.
-
 - Effects within a sequence follow the same rules as standalone effects. Each effect can:
   - Target a different element via `key` (cross-element sequences).
   - Use `listContainer` to target list children (each child becomes a separate effect in the sequence).
   - Reference the effects registry via `effectId`.
-
 - A sequence is treated as a single animation unit by the trigger handler—it plays, reverses, and alternates as one.
 
 **Example — viewEnter staggered list using `listContainer`**:
@@ -402,7 +395,6 @@ The config remains the same for both integrations—only the HTML/JSX setup diff
       - With `listContainer`: Uses `querySelectorAll` within the container to find matching elements as list items. For dynamically added list items, uses `querySelector` within each item to find a single matching element.
   - **effectId?: string**
     - For `EffectRef` this field is REQUIRED and MUST reference an entry in `effects`.
-
 - Composition and fill usage
   - **composite** (similar to CSS `animation-composition` / WAAPI `composite`):
     - Controls how this effect combines with other effects targeting the same element/property.
@@ -416,64 +408,61 @@ The config remains the same for both integrations—only the HTML/JSX setup diff
     - `'backwards'`: the start state applies before the effect begins (or before `rangeStart` for scrub/during `delay` for time effects).
     - `'both'`: combines `'backwards'` and `'forwards'`.
     - For scroll-driven animations (`viewProgress`), prefer `fill: 'both'` to preserve start/end states around the active range and avoid flicker on rapid scroll.
-
 - Types of `Effect` (exactly one MUST be provided via discriminated fields):
   1. **TimeEffect** (discrete animation over time)
-     - `duration`: number (REQUIRED)
-     - `easing?`: string (CSS/WAAPI easing)
-     - `iterations?`: number (>=1 or Infinity)
-     - `alternate?`: boolean (direction alternation)
-     - `fill?`: `'none' | 'forwards' | 'backwards' | 'both'`
-     - `composite?`: `'replace' | 'add' | 'accumulate'`
-     - `reversed?`: boolean
-     - `delay?`: number (ms)
-     - One of:
-       - `keyframeEffect`: `{ name: string; keyframes: Keyframe[] }`
-       - `namedEffect`: `NamedEffect` (from `@wix/motion-presets`)
-       - `customEffect`: `(element: Element, progress: any) => void`
-
+    - `duration`: number (REQUIRED)
+    - `easing?`: string (CSS/WAAPI easing)
+    - `iterations?`: number (>=1 or Infinity)
+    - `alternate?`: boolean (direction alternation)
+    - `fill?`: `'none' | 'forwards' | 'backwards' | 'both'`
+    - `composite?`: `'replace' | 'add' | 'accumulate'`
+    - `reversed?`: boolean
+    - `delay?`: number (ms)
+    - One of:
+      - `keyframeEffect`: `{ name: string; keyframes: Keyframe[] }`
+      - `namedEffect`: `NamedEffect` (from `@wix/motion-presets`)
+      - `customEffect`: `(element: Element, progress: any) => void`
   2. **ScrubEffect** (animation driven by scroll/progress)
-     - `easing?`: string
-     - `iterations?`: number (NOT Infinity)
-     - `alternate?`: boolean
-     - `fill?`: `'none' | 'forwards' | 'backwards' | 'both'`
-     - `composite?`: `'replace' | 'add' | 'accumulate'`
-     - `reversed?`: boolean
-     - `rangeStart`: `RangeOffset`
-     - `rangeEnd`: `RangeOffset`
-     - `centeredToTarget?`: boolean // If `true` centers the coordinate range at the target element, otherwise uses source element
-     - `transitionDuration?`: number (ms for smoothing on progress jumps)
-     - `transitionDelay?`: number
-     - `transitionEasing?`: `ScrubTransitionEasing`
-     - One of `keyframeEffect | namedEffect | customEffect` (see above)
-     - For mouse-effects driven by the `pointerMove` trigger, avoid `keyframeEffect` unless using `params: { axis: 'x' | 'y' }` to map a single pointer axis to linear 0–1 progress. For 2D effects, use `namedEffect` mouse presets or `customEffect` instead.
-     - For scroll `namedEffect` presets (e.g., `*Scroll`) used with a `viewProgress` trigger, include `range: 'in' | 'out' | 'continuous'` in the `namedEffect` options; prefer `'continuous'` for simplicity.
-     - RangeOffset (used by `rangeStart`/`rangeEnd`):
-       - Type: `{ name: 'entry' | 'exit' | 'contain' | 'cover' | 'entry-crossing' | 'exit-crossing'; offset: LengthPercentage }`
-       - name?: Optional logical anchor derived from ViewTimeline concepts.
-         - 'entry': Leading edge of the target crosses into the view/container.
-         - 'exit': Trailing edge of the target crosses out of the view/container.
-         - 'contain': Interval where the target is fully within the view/container.
-         - 'cover': Interval where the view/container is fully covered by the target.
-         - 'entry-crossing': The moment the target's center crosses the entry boundary.
-         - 'exit-crossing': The moment the target's center crosses the exit boundary.
-         - If omitted, the runtime chooses a context-appropriate anchor; specify explicitly for deterministic behavior.
-       - offset: A `LengthPercentage` that shifts the anchor boundary.
-         - Explicit format: `{ value: number; unit: 'percentage' | 'px' | 'em' | 'rem' | 'vh' | 'vw' | 'vmin' | 'vmax' }`
-         - Percentages are interpreted along the relevant scroll axis relative to the observation area (e.g., viewport or container size).
-         - Positive values move the anchor "forward" along the scroll direction; negative values move it "backward".
-       - Examples:
-         - Start when the element is 20% inside the viewport: `rangeStart: { name: 'entry', offset: { value: 20, unit: 'percentage' } }`
-         - End when the element is leaving: `rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } }`
-
+    - `easing?`: string
+    - `iterations?`: number (NOT Infinity)
+    - `alternate?`: boolean
+    - `fill?`: `'none' | 'forwards' | 'backwards' | 'both'`
+    - `composite?`: `'replace' | 'add' | 'accumulate'`
+    - `reversed?`: boolean
+    - `rangeStart`: `RangeOffset`
+    - `rangeEnd`: `RangeOffset`
+    - `centeredToTarget?`: boolean // If `true` centers the coordinate range at the target element, otherwise uses source element
+    - `transitionDuration?`: number (ms for smoothing on progress jumps)
+    - `transitionDelay?`: number
+    - `transitionEasing?`: `ScrubTransitionEasing`
+    - One of `keyframeEffect | namedEffect | customEffect` (see above)
+    - For mouse-effects driven by the `pointerMove` trigger, avoid `keyframeEffect` unless using `params: { axis: 'x' | 'y' }` to map a single pointer axis to linear 0–1 progress. For 2D effects, use `namedEffect` mouse presets or `customEffect` instead.
+    - For scroll `namedEffect` presets (e.g., `*Scroll`) used with a `viewProgress` trigger, include `range: 'in' | 'out' | 'continuous'` in the `namedEffect` options; prefer `'continuous'` for simplicity.
+    - RangeOffset (used by `rangeStart`/`rangeEnd`):
+      - Type: `{ name: 'entry' | 'exit' | 'contain' | 'cover' | 'entry-crossing' | 'exit-crossing'; offset: LengthPercentage }`
+      - name?: Optional logical anchor derived from ViewTimeline concepts.
+        - 'entry': Leading edge of the target crosses into the view/container.
+        - 'exit': Trailing edge of the target crosses out of the view/container.
+        - 'contain': Interval where the target is fully within the view/container.
+        - 'cover': Interval where the view/container is fully covered by the target.
+        - 'entry-crossing': The moment the target's center crosses the entry boundary.
+        - 'exit-crossing': The moment the target's center crosses the exit boundary.
+        - If omitted, the runtime chooses a context-appropriate anchor; specify explicitly for deterministic behavior.
+      - offset: A `LengthPercentage` that shifts the anchor boundary.
+        - Explicit format: `{ value: number; unit: 'percentage' | 'px' | 'em' | 'rem' | 'vh' | 'vw' | 'vmin' | 'vmax' }`
+        - Percentages are interpreted along the relevant scroll axis relative to the observation area (e.g., viewport or container size).
+        - Positive values move the anchor "forward" along the scroll direction; negative values move it "backward".
+      - Examples:
+        - Start when the element is 20% inside the viewport: `rangeStart: { name: 'entry', offset: { value: 20, unit: 'percentage' } }`
+        - End when the element is leaving: `rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } }`
   3. **TransitionEffect** (CSS transition-style state toggles)
-     - `key?`: string (target override; see TARGET CASCADE)
-     - `effectId?`: string (when used as a reference identity)
-     - One of:
-       - `transition?`: `{ duration?: number; delay?: number; easing?: string; styleProperties: { name: string; value: string }[] }`
-         - Applies a single transition options block to all listed style properties.
-       - `transitionProperties?`: `Array<{ name: string; value: string; duration?: number; delay?: number; easing?: string }>`
-         - Allows per-property transition options. If both `transition` and `transitionProperties` are provided, the system SHOULD apply both with per-property entries taking precedence for overlapping properties.
+    - `key?`: string (target override; see TARGET CASCADE)
+    - `effectId?`: string (when used as a reference identity)
+    - One of:
+      - `transition?`: `{ duration?: number; delay?: number; easing?: string; styleProperties: { name: string; value: string }[] }`
+        - Applies a single transition options block to all listed style properties.
+      - `transitionProperties?`: `Array<{ name: string; value: string; duration?: number; delay?: number; easing?: string }>`
+        - Allows per-property transition options. If both `transition` and `transitionProperties` are provided, the system SHOULD apply both with per-property entries taking precedence for overlapping properties.
 
 ### Authoring rules for animation payloads (`namedEffect`, `keyframeEffect`, `customEffect`):
 
@@ -493,7 +482,7 @@ The config remains the same for both integrations—only the HTML/JSX setup diff
 ### Target resolution and list context
 
 - When applying an effect, the system resolves the final target as:
-  `Effect.key -> registry Effect.key (for EffectRef) -> Interaction.key`.
+`Effect.key -> registry Effect.key (for EffectRef) -> Interaction.key`.
 - If a `listContainer` is present on the interaction, the selector resolution may be widened to include list items (optionally filtered by `listItemSelector`), and then further refined by any provided `selector`.
 
 ### Reduced motion
@@ -502,3 +491,4 @@ The config remains the same for both integrations—only the HTML/JSX setup diff
 - Use `conditions` to provide responsive and accessible behavior:
   - Define media conditions such as `'(prefers-reduced-motion: reduce)'` and breakpoint queries, and attach them to interactions/effects to disable, simplify, or swap animations when appropriate.
   - Provide alternative reduced‑motion variants (e.g., shorter durations, fewer transforms, no perpetual motion/parallax/3D), and select them via `conditions` or effect references so that users who prefer reduced motion get a gentler experience.
+

@@ -21,48 +21,55 @@ A collection of `@wix/interact` animation examples — ~130 standalone HTML file
 
 ### Directory Layout
 
-| Directory | Count | Description |
-|-----------|-------|-------------|
-| `Gallery-and-Carousel/` | 41 | Gallery, carousel, and layout animations |
-| `Typographic_interactions/` | 32 | Text and typography animations |
-| `Image_Background/` | 19 | Image/background effects (shape masks, reveals, slideshows) |
-| `Lists/` | 8 | List and repeater animations |
-| `text_Image/` | 5 + 3 subdirs | Text + image combo animations |
-| `UI-elements-reyan/` | 10 | UI element animations (Reyan's versions) |
-| `interact-UI-elements/` | 10 | UI element animations (interact versions) |
-| `interact-WIP/` | 2 | Work-in-progress animations |
-| `Animations not Interact/` | 1 | Non-interact reference animation |
-| `analysis/` | — | Slider analysis CSVs, taxonomies, matrices, build scripts |
+
+| Directory                   | Count         | Description                                                 |
+| --------------------------- | ------------- | ----------------------------------------------------------- |
+| `Gallery-and-Carousel/`     | 41            | Gallery, carousel, and layout animations                    |
+| `Typographic_interactions/` | 32            | Text and typography animations                              |
+| `Image_Background/`         | 19            | Image/background effects (shape masks, reveals, slideshows) |
+| `Lists/`                    | 8             | List and repeater animations                                |
+| `text_Image/`               | 5 + 3 subdirs | Text + image combo animations                               |
+| `UI-elements-reyan/`        | 10            | UI element animations (Reyan's versions)                    |
+| `interact-UI-elements/`     | 10            | UI element animations (interact versions)                   |
+| `interact-WIP/`             | 2             | Work-in-progress animations                                 |
+| `Animations not Interact/`  | 1             | Non-interact reference animation                            |
+| `analysis/`                 | —             | Slider analysis CSVs, taxonomies, matrices, build scripts   |
+
 
 ## Architecture
 
 ### Animation HTML Files
 
 Each animation is a self-contained HTML file that:
+
 1. Imports `@wix/interact` from CDN (`esm.sh`)
 2. Wraps interactive elements in `<interact-element data-interact-key="...">` custom elements
 3. Calls `Interact.create(config)` once with a declarative config object
 
 The config has three sections:
-- **`effects`**: Named, reusable effect definitions (keyframe, named preset, CSS transition, or custom JS)
-- **`conditions`**: Named predicates gating interactions by media query, container query, or CSS selector state
-- **`interactions`**: Trigger → element → effects mappings
+
+- `**effects`**: Named, reusable effect definitions (keyframe, named preset, CSS transition, or custom JS)
+- `**conditions`**: Named predicates gating interactions by media query, container query, or CSS selector state
+- `**interactions`**: Trigger → element → effects mappings
 
 ### explorer.html
 
 A single-file SPA (~2600 lines). Its key mechanism: animation HTML is `fetch()`-ed, a `<base href>` and a **bridge script** are injected, then loaded via `iframe.srcdoc`. The bridge monkey-patches `Element.prototype.animate` to intercept Web Animations and responds to `postMessage` commands:
 
-| Command | Effect |
-|---------|--------|
-| `setSpeed` | Calls `updatePlaybackRate()` on all tracked animations |
-| `setCss` | Injects a CSS `!important` rule into the iframe |
-| `setCssVar` | Sets a CSS custom property on `:root` |
-| `setScrollSpeed` | Triggers an iframe reload with height-scaled HTML |
-| `reset` | Reloads the iframe at default state |
+
+| Command          | Effect                                                 |
+| ---------------- | ------------------------------------------------------ |
+| `setSpeed`       | Calls `updatePlaybackRate()` on all tracked animations |
+| `setCss`         | Injects a CSS `!important` rule into the iframe        |
+| `setCssVar`      | Sets a CSS custom property on `:root`                  |
+| `setScrollSpeed` | Triggers an iframe reload with height-scaled HTML      |
+| `reset`          | Reloads the iframe at default state                    |
+
 
 The **scroll speed slider** works differently from all others: it modifies the animation's HTML source before loading — scaling `height` values > 200vh or > 2000px by `1/speed` — because `@wix/interact` computes ViewTimeline scroll ranges at initialization time and playbackRate changes compress the range instead of extending it.
 
 All slider configuration lives in the `animations` array inside `explorer.html`. Each entry has:
+
 ```js
 {
   dir, file, name, desc,
@@ -81,13 +88,14 @@ All slider configuration lives in the `animations` array inside `explorer.html`.
 **Stacking contexts**: Avoid `transform`, `filter`, `opacity < 1`, `will-change`, `isolation: isolate` on any ancestor of a `viewProgress` target — they freeze ViewTimeline sampling. Apply visual effects to inner children instead.
 
 **Effect types** (in preference order):
+
 1. `namedEffect` — GPU-tuned presets from `@wix/motion-presets` (FadeIn, ParallaxScroll, Tilt3DMouse, etc.)
 2. `keyframeEffect: { name, keyframes }` — standard WAAPI keyframes for custom animations
 3. `customEffect: (element, progress) => void` — only when DOM manipulation or randomness is required
 
 **Scroll-driven fill**: Always use `fill: 'both'` for `viewProgress` animations to avoid flicker at range boundaries.
 
-**`pointerMove` + `keyframeEffect`**: Requires `params: { axis: 'x' | 'y' }`. For 2D pointer effects, use `namedEffect` mouse presets (TrackMouse, Tilt3DMouse) or `customEffect`.
+`**pointerMove` + `keyframeEffect`**: Requires `params: { axis: 'x' | 'y' }`. For 2D pointer effects, use `namedEffect` mouse presets (TrackMouse, Tilt3DMouse) or `customEffect`.
 
 **State toggles**: Use `TransitionEffect` with `StateParams.method: 'toggle'|'add'|'remove'|'clear'` for CSS-transition-style state. Use `PointerTriggerParams.type: 'alternate'|'repeat'|'once'|'state'` for time-based animations.
 
@@ -107,3 +115,4 @@ Manually reviewing each animation in `explorer.html` to audit and improve slider
 - **Some `text_Image/` files use JSX/React** (e.g., `extrude_Swivel`) and won't render in a vanilla iframe.
 - **CSS slider `!important` overrides** can conflict with existing `!important` rules in animation source.
 - **UI element animations** (UI-elements-reyan, interact-UI-elements) are a different category from gallery/typographic animations — they demonstrate form controls, toggles, dropdowns, etc.
+

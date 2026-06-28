@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@wix/interact - Scroll Effects Demo</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111;
+            --bg-tertiary: #1a1a1a;
+            --border-color: #2a2a2a;
+            --text-primary: #e5e5e5;
+            --text-secondary: #999;
+            --text-muted: #666;
+            --accent: #a88fb8;
+            --accent-blue: #82aaff;
+            --accent-green: #c3e88d;
+            --accent-orange: #f78c6c;
+            --accent-cyan: #89ddff;
+            --accent-yellow: #ffcb6b;
+        }
+        
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px 20px;
+            overflow-x: hidden;
+        }
+        
+        /* Demo Section */
+        .demo-section {
+            display: flex;
+            align-items: center;
+            gap: 0px;
+            margin-left: calc(50vw - 280px);
+        }
+        
+        /* Embedded Demo Styles */
+        /* demo-container is the scroll viewport */
+        .demo-container {
+            background: #0a0a0a;
+            border-radius: 24px; 
+            padding: 12px;
+            display: flex;
+            gap: 64px;
+            border: 1px solid #333;
+            height: 260px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: none;
+        }
+        
+        .demo-container::-webkit-scrollbar { display: none; }
+        
+        /* preview-column is 3x the height of demo-container, shapes centered */
+        .preview-column {
+            width: 180px;
+            height: 1416px; /* 5 * (260 - 24) = 5 * viewport height minus padding */
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .shapes-container {
+            width: 160px;
+            position: relative;
+            z-index: 20;
+        }
+        
+        /* Wrapper for the animated shapes - vertical stack */
+        .shapes-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+        
+        .shapes-inner interact-element {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .animated-shape {
+            border: 0.5px solid currentColor;
+            background: transparent;
+        }
+        
+        /* Circle - top */
+        .circle-shape {
+            width: 100px;
+            height: 100px;
+            color: #ffffffcc;
+            background: rgba(232, 232, 232, 0.08);
+            border-radius: 50%;
+        }
+        
+        /* Square - middle (rotated) */
+        .square-shape {
+            width: 90px;
+            height: 90px;
+            color: #e8e8e8cc;
+            background: rgba(232, 232, 232, 0.08);
+        }
+        
+        /* Triangle - bottom (using SVG for proper outline) */
+        .triangle-shape {
+            width: 100px;
+            height: 87px;
+            background: transparent;
+            border: none;
+            position: relative;
+        }
+        
+        .triangle-shape svg {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            inset: 0;
+        }
+        
+        .triangle-shape polygon {
+            fill: rgba(232, 232, 232, 0.08);
+            stroke: #ffffffcc;
+            stroke-width: 0.5;
+        }
+        
+        .effect-roulette {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: sticky;
+            top: calc(50% - 110px);
+            align-self: flex-start;
+        }
+        
+        .arrow {
+            font-size: 11px;
+            font-weight: 200;
+            color: white;
+            opacity: 0.4;
+        }
+        
+        .effect-list-wrapper {
+            position: relative;
+            height: 220px;
+            width: 140px;
+        }
+        
+        .effect-list-wrapper::before,
+        .effect-list-wrapper::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 60px;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .effect-list-wrapper::before {
+            top: 0;
+            background: linear-gradient(to bottom, #0a0a0a, transparent);
+        }
+        
+        .effect-list-wrapper::after {
+            bottom: 0;
+            background: linear-gradient(to top, #0a0a0a, transparent);
+        }
+        
+        .effect-list {
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-snap-type: y mandatory;
+            scrollbar-width: none;
+            padding: 90px 0;
+        }
+        
+        .effect-list::-webkit-scrollbar { display: none; }
+        
+        .effect-item {
+            scroll-snap-align: center;
+            padding: 6px 0;
+            cursor: pointer;
+            transition: transform 0.25s ease, opacity 0.2s ease, color 0.2s ease;
+            font-weight: 100;
+            font-size: 13px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #ffd882;
+            opacity: 0.5;
+            text-align: left;
+            transform-origin: left center;
+        }
+        
+        .effect-item:hover { opacity: 0.8; }
+        
+        .effect-item.active {
+            font-weight: 100;
+            transform: scale(1.25);
+            color: white;
+            opacity: 1;
+        }
+        
+        .code-panel {
+            background: #0a0a0a;
+            border-radius: 24px;
+            padding: 12px 32px;
+            width: fit-content;
+            font-size: 12px;
+            line-height: 1.6;
+            border: 1px solid #333;
+            overflow: hidden;
+            transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                        width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .demo-connector {
+            width: 64px;
+            height: 1px;
+            background: #333;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .demo-connector::before,
+        .demo-connector::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #333;
+            border-radius: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .demo-connector::before {
+            left: 0;
+        }
+        
+        .demo-connector::after {
+            left: 100%;
+        }
+        
+        .code-content {
+            font-family: 'JetBrains Mono', monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        
+        .demo-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 20px;
+            margin-left: calc(50vw - 247px);
+        }
+        
+        .replay-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .replay-btn:hover {
+            background: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .demo-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .demo-hint kbd {
+            background: var(--bg-tertiary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+        }
+        
+        /* Syntax highlighting */
+        .keyword { color: #c792ea; }
+        .string { color: #c3e88d; }
+        .property { color: #82aaff; }
+        .number { color: #f78c6c; }
+        .punctuation { color: #89ddff; }
+        .comment { color: #546e7a; font-style: italic; }
+        .type { color: #ffcb6b; }
+        
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: var(--text-muted);
+            opacity: 0.5;
+            animation: bounce 1.5s ease infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(2px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Interactive Demo -->
+    <div class="demo-section">
+        <div class="demo-container" id="scrollRoot">
+            <div class="preview-column">
+                <div class="shapes-container">
+                    <div class="shapes-inner">
+                        <interact-element data-interact-key="circle-shape">
+                            <div class="animated-shape circle-shape"></div>
+                        </interact-element>
+                        <interact-element data-interact-key="square-shape">
+                            <div class="animated-shape square-shape"></div>
+                        </interact-element>
+                        <interact-element data-interact-key="triangle-shape">
+                            <div class="animated-shape triangle-shape">
+                                <svg viewBox="0 0 100 87">
+                                    <polygon points="50,0 100,87 0,87"/>
+                                </svg>
+                            </div>
+                        </interact-element>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="effect-roulette">
+                <div class="arrow">→</div>
+                <div class="effect-list-wrapper">
+                    <div class="effect-list" id="effectList"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-connector"></div>
+        
+        <div class="code-panel">
+            <div class="code-content" id="codeSnippet"></div>
+        </div>
+    </div>
+    
+    <div class="demo-controls">
+        <button class="replay-btn" id="replayBtn">↻ Reset Scroll</button>
+        <span class="demo-hint">Scroll in demo area to see effect • Use <kbd>↑</kbd><kbd>↓</kbd> to change</span>
+    </div>
+    
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@2.0.0-rc.6/dist/es/web.js';
+
+        const effects = {
+            // Basic Effects
+            FadeScroll: { 
+                namedEffect: { type: 'FadeScroll', opacity: 0, range: 'continuous' }
+            },
+            BlurScroll: { 
+                namedEffect: { type: 'BlurScroll', power: 'medium', range: 'continuous' }
+            },
+            // Movement Effects
+            ParallaxScroll: { 
+                namedEffect: { type: 'ParallaxScroll', speed: 0.5 }
+            },
+            MoveScroll: { 
+                namedEffect: { type: 'MoveScroll', power: 'soft', angle: 315, range: 'continuous' }
+            },
+            SlideScroll: { 
+                namedEffect: { type: 'SlideScroll', direction: 'left', range: 'in' }
+            },
+            PanScroll: { 
+                namedEffect: { type: 'PanScroll', direction: 'left', startFromOffScreen: false, distance: { value: 100, type: 'px' }, range: 'continuous' }
+            },
+            // Rotation Effects
+            SpinScroll: { 
+                namedEffect: { type: 'SpinScroll', direction: 'clockwise', power: 'medium', range: 'continuous' }
+            },
+            FlipScroll: { 
+                namedEffect: { type: 'FlipScroll', direction: 'horizontal', power: 'medium', range: 'continuous' }
+            },
+            TiltScroll: { 
+                namedEffect: { type: 'TiltScroll', direction: 'right', power: 'medium', range: 'continuous' }
+            },
+            TurnScroll: { 
+                namedEffect: { type: 'TurnScroll', spin: 'clockwise', direction: 'left', power: 'soft', range: 'continuous' }
+            },
+            ArcScroll: { 
+                namedEffect: { type: 'ArcScroll', direction: 'vertical', range: 'continuous' }
+            },
+            Spin3dScroll: { 
+                namedEffect: { type: 'Spin3dScroll', power: 'medium', range: 'continuous' }
+            },
+            // Scale Effects
+            GrowScroll: { 
+                namedEffect: { type: 'GrowScroll', direction: 'center', power: 'medium', range: 'continuous' }
+            },
+            ShrinkScroll: { 
+                namedEffect: { type: 'ShrinkScroll', direction: 'center', power: 'medium', range: 'continuous' }
+            },
+            StretchScroll: { 
+                namedEffect: { type: 'StretchScroll', power: 'medium', range: 'continuous' }
+            },
+            // Reveal Effects
+            RevealScroll: { 
+                namedEffect: { type: 'RevealScroll', direction: 'top', range: 'continuous' }
+            },
+            ShapeScroll: { 
+                namedEffect: { type: 'ShapeScroll', shape: 'circle', power: 'soft', range: 'continuous' }
+            },
+            ShuttersScroll: { 
+                namedEffect: { type: 'ShuttersScroll', direction: 'right', shutters: 8, range: 'continuous' }
+            },
+            // Combined Effects
+            SkewPanScroll: { 
+                namedEffect: { type: 'SkewPanScroll', direction: 'right', power: 'hard', range: 'continuous' }
+            },
+        };
+        
+        const effectOrder = [
+            { category: 'Basic', items: ['FadeScroll', 'BlurScroll'] },
+            { category: 'Movement', items: ['ParallaxScroll', 'MoveScroll', 'SlideScroll', 'PanScroll'] },
+            { category: 'Rotation', items: ['SpinScroll', 'FlipScroll', 'TiltScroll', 'TurnScroll', 'ArcScroll', 'Spin3dScroll'] },
+            { category: 'Scale', items: ['GrowScroll', 'ShrinkScroll', 'StretchScroll'] },
+            { category: 'Reveal', items: ['RevealScroll', 'ShapeScroll', 'ShuttersScroll'] },
+            { category: 'Combined', items: ['SkewPanScroll'] }
+        ];
+        
+        const effectListEl = document.getElementById('effectList');
+        const codeSnippetEl = document.getElementById('codeSnippet');
+        const codePanelEl = document.querySelector('.code-panel');
+        const scrollRootEl = document.getElementById('scrollRoot');
+        const allItems = [];
+        let currentIndex = 0;
+        let currentInstance = null;
+        let isProgrammaticScroll = false;
+        
+        function updateCodeSnippet(effectName) {
+            const effectConfig = effects[effectName];
+            if (!effectConfig) return;
+            
+            const ne = effectConfig.namedEffect;
+            
+            let neProps = `<span class="property">type</span><span class="punctuation">:</span> <span class="string">'${ne.type}'</span>`;
+            
+            if (ne.opacity !== undefined) {
+                neProps += `<span class="punctuation">,</span>\n    <span class="property">opacity</span><span class="punctuation">:</span> <span class="number">${ne.opacity}</span>`;
+            }
+            if (ne.power !== undefined) {
+                neProps += `<span class="punctuation">,</span>\n    <span class="property">power</span><span class="punctuation">:</span> <span class="string">'${ne.power}'</span>`;
+            }
+            if (ne.direction !== undefined) {
+                neProps += `<span class="punctuation">,</span>\n    <span class="property">direction</span><span class="punctuation">:</span> <span class="string">'${ne.direction}'</span>`;
+            }
+            if (ne.speed !== undefined) {
+                neProps += `<span class="punctuation">,</span>\n    <span class="property">speed</span><span class="punctuation">:</span> <span class="number">${ne.speed}</span>`;
+            }
+            if (ne.angle !== undefined) {
+                neProps += `<span class="punctuation">,</span>\n    <span class="property">angle</span><span class="punctuation">:</span> <span class="number">${ne.angle}</span>`;
+            }
+            if (ne.spin !== undefined) {
+                neProps += `<span class="punctuation">,</span>\n    <span class="property">spin</span><span class="punctuation">:</span> <span class="string">'${ne.spin}'</span>`;
+            }
+            if (ne.shape !== undefined) {
+                neProps += `<span class="punctuation">,</span>\n    <span class="property">shape</span><span class="punctuation">:</span> <span class="string">'${ne.shape}'</span>`;
+            }
+            if (ne.shutters !== undefined) {
+                neProps += `<span class="punctuation">,</span>\n    <span class="property">shutters</span><span class="punctuation">:</span> <span class="number">${ne.shutters}</span>`;
+            }
+            if (ne.startFromOffScreen !== undefined) {
+                neProps += `<span class="punctuation">,</span>\n    <span class="property">startFromOffScreen</span><span class="punctuation">:</span> <span class="keyword">${ne.startFromOffScreen}</span>`;
+            }
+            if (ne.distance !== undefined) {
+                neProps += `<span class="punctuation">,</span>\n    <span class="property">distance</span><span class="punctuation">:</span> <span class="punctuation">{</span> <span class="property">value</span><span class="punctuation">:</span> <span class="number">${ne.distance.value}</span><span class="punctuation">,</span> <span class="property">type</span><span class="punctuation">:</span> <span class="string">'${ne.distance.type}'</span> <span class="punctuation">}</span>`;
+            }
+            if (ne.range !== undefined) {
+                neProps += `<span class="punctuation">,</span>\n    <span class="property">range</span><span class="punctuation">:</span> <span class="string">'${ne.range}'</span>`;
+            }
+            
+            const code = `<span class="punctuation">{</span>
+  <span class="property">namedEffect</span><span class="punctuation">:</span> <span class="punctuation">{</span>
+    ${neProps}
+  <span class="punctuation">}</span>
+<span class="punctuation">}</span>`;
+            
+            // Animate height and width transition
+            const currentHeight = codePanelEl.offsetHeight;
+            const currentWidth = codePanelEl.offsetWidth;
+            codePanelEl.style.height = currentHeight + 'px';
+            codePanelEl.style.width = currentWidth + 'px';
+            
+            // Update content
+            codeSnippetEl.innerHTML = code;
+            
+            // Get new dimensions
+            codePanelEl.style.height = 'auto';
+            codePanelEl.style.width = 'fit-content';
+            const newHeight = codePanelEl.offsetHeight;
+            const newWidth = codePanelEl.offsetWidth;
+            
+            // Animate from current to new
+            codePanelEl.style.height = currentHeight + 'px';
+            codePanelEl.style.width = currentWidth + 'px';
+            requestAnimationFrame(() => {
+                codePanelEl.style.height = newHeight + 'px';
+                codePanelEl.style.width = newWidth + 'px';
+            });
+            
+            // Clean up after transition
+            const onTransitionEnd = (e) => {
+                if (e.propertyName === 'height') {
+                    codePanelEl.style.height = 'auto';
+                    codePanelEl.style.width = 'fit-content';
+                    codePanelEl.removeEventListener('transitionend', onTransitionEnd);
+                }
+            };
+            codePanelEl.addEventListener('transitionend', onTransitionEnd);
+        }
+        
+        // All three shapes are animated
+        const shapeKeys = ['circle-shape', 'square-shape', 'triangle-shape'];
+        
+        // Stagger offsets - each shape animates over 0-60% range
+        const staggerOffsets = [
+            { start: 0, end: 60 },     // circle top: full range
+            { start: 5, end: 55 },     // square: slightly offset
+            { start: 10, end: 50 }     // triangle bottom: more offset
+        ];
+        
+        effectOrder.forEach(cat => {
+            cat.items.forEach(name => {
+                const item = document.createElement('div');
+                item.className = 'effect-item';
+                item.textContent = name;
+                effectListEl.appendChild(item);
+                allItems.push({ name, element: item });
+            });
+        });
+        
+        function generateConfig(effectName) {
+            const effectConfig = effects[effectName];
+            if (!effectConfig) return null;
+            
+            // Create separate interactions for each shape with staggered timing
+            const interactions = shapeKeys.map((key, index) => ({
+                key: key,
+                trigger: 'viewProgress',
+                params: { 
+                    scrollRoot: '#scrollRoot'
+                },
+                effects: [{
+                    namedEffect: effectConfig.namedEffect,
+                    rangeStart: { name: 'cover', offset: { type: 'percentage', value: staggerOffsets[index].start } },
+                    rangeEnd: { name: 'cover', offset: { type: 'percentage', value: staggerOffsets[index].end } },
+                    easing: 'linear',
+                    fill: 'both'
+                }]
+            }));
+            
+            return { effects: {}, interactions: interactions };
+        }
+        
+        function resetShapes() {
+            shapeKeys.forEach(key => {
+                const element = document.querySelector(`[data-interact-key="${key}"]`);
+                if (element) {
+                    const shape = element.querySelector('.animated-shape');
+                    if (shape) {
+                        shape.style.opacity = '';
+                        shape.style.filter = '';
+                        shape.style.clipPath = '';
+                        shape.style.transform = '';
+                        shape.style.transition = '';
+                        shape.style.scale = '';
+                        shape.style.translate = '';
+                    }
+                }
+            });
+        }
+        
+        function applyEffect(index, fromScroll = false) {
+            const item = allItems[index];
+            if (!item) return;
+            
+            allItems.forEach(i => i.element.classList.remove('active'));
+            item.element.classList.add('active');
+            
+            if (!fromScroll) {
+                isProgrammaticScroll = true;
+                item.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(() => { isProgrammaticScroll = false; }, 400);
+            }
+            
+            updateCodeSnippet(item.name);
+            
+            if (currentInstance) {
+                currentInstance.destroy();
+                currentInstance = null;
+            }
+            
+            resetShapes();
+            
+            // Reset scroll position to top (0%)
+            scrollRootEl.scrollTop = 0;
+            
+            const config = generateConfig(item.name);
+            if (config) {
+                requestAnimationFrame(() => {
+                    currentInstance = Interact.create(config);
+                });
+            }
+        }
+        
+        let scrollTimer;
+        effectListEl.addEventListener('scroll', () => {
+            if (isProgrammaticScroll) return;
+            
+            clearTimeout(scrollTimer);
+            scrollTimer = setTimeout(() => {
+                const rect = effectListEl.getBoundingClientRect();
+                const centerY = rect.top + rect.height / 2;
+                let closest = 0, minDist = Infinity;
+                
+                allItems.forEach((item, i) => {
+                    const r = item.element.getBoundingClientRect();
+                    const dist = Math.abs(r.top + r.height / 2 - centerY);
+                    if (dist < minDist) { minDist = dist; closest = i; }
+                });
+                
+                if (closest !== currentIndex) {
+                    currentIndex = closest;
+                    applyEffect(currentIndex, true);
+                }
+            }, 120);
+        });
+        
+        allItems.forEach((item, i) => {
+            item.element.addEventListener('click', () => {
+                currentIndex = i;
+                applyEffect(i);
+            });
+        });
+        
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowDown' || e.key === 'j') {
+                e.preventDefault();
+                currentIndex = Math.min(currentIndex + 1, allItems.length - 1);
+                applyEffect(currentIndex);
+            } else if (e.key === 'ArrowUp' || e.key === 'k') {
+                e.preventDefault();
+                currentIndex = Math.max(currentIndex - 1, 0);
+                applyEffect(currentIndex);
+            }
+        });
+        
+        document.getElementById('replayBtn').addEventListener('click', () => {
+            scrollRootEl.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        
+        Interact.forceReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        
+        setTimeout(() => applyEffect(0), 300);
+    </script>
+</body>
+</html>

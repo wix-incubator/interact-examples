@@ -28,6 +28,7 @@ interact-examples/
 ### Explorer Coverage
 
 The explorer currently contains **63 animations** across 3 directories:
+
 - **Gallery-and-Carousel**: 37 of 41 on disk (missing: 3DSmallCarousel, CardSpread_7, Looping_Sphere_Gallery, SpecimenCardGallery)
 - **text_Image**: 3 of 8 on disk (missing: pointer-scale-scroll-blur, pointer-track-scroll-fade, shape-mask-parallax, scroll-blur-split-layout, scroll-tilt-reveal)
 - **Typographic_interactions**: 23 of 32 on disk (missing: 3D-Rolodex-Flip, Accelerated3DSpin, Mindshift Transition, The Iris Gate, Waterfall_Text, cards-peel-off-scroll, stacked-text-cards-scroll, text-cards-slide-in, text-fade-3d-perspective)
@@ -68,20 +69,22 @@ The explorer is a single-file SPA (~2600 lines) with:
 1. The animation HTML is fetched via `fetch()` and cached in `cachedHtml`
 2. A `<base href>` tag is injected so relative URLs (images, CDN scripts) resolve correctly
 3. A **bridge script** (`BRIDGE_SCRIPT`) is injected before `</body>` — it:
-   - Monkey-patches `Element.prototype.animate` to track all Web Animations
-   - Listens for `postMessage` commands from the parent explorer
-   - Handles: `setSpeed`, `setCss`, `setCssVar`, `setScrollSpeed`, `reset`
+  - Monkey-patches `Element.prototype.animate` to track all Web Animations
+  - Listens for `postMessage` commands from the parent explorer
+  - Handles: `setSpeed`, `setCss`, `setCssVar`, `setScrollSpeed`, `reset`
 4. The modified HTML is loaded via `iframe.srcdoc` (same-origin, enabling postMessage)
 
 ### Slider Types
 
 Each slider in the `animations` array has a `type`:
 
-| Type | What it does | When it applies |
-|------|-------------|-----------------|
-| `speed` | For **non-scroll** animations: sends `setSpeed` to bridge, which calls `updatePlaybackRate()` on all tracked Web Animations. For **scroll-driven** animations (`viewProgress` trigger): reloads the iframe with **height-scaled HTML** so the scroll range changes while the animation stays 0–100%. | `applySlider` auto-detects based on `triggers` array |
-| `css` | Injects a CSS rule with `!important` via the bridge's `setCss` handler | Any animation |
-| `cssVar` | Sets a CSS custom property on `:root` via the bridge's `setCssVar` handler | Animations using CSS variables |
+
+| Type     | What it does                                                                                                                                                                                                                                                                                         | When it applies                                      |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `speed`  | For **non-scroll** animations: sends `setSpeed` to bridge, which calls `updatePlaybackRate()` on all tracked Web Animations. For **scroll-driven** animations (`viewProgress` trigger): reloads the iframe with **height-scaled HTML** so the scroll range changes while the animation stays 0–100%. | `applySlider` auto-detects based on `triggers` array |
+| `css`    | Injects a CSS rule with `!important` via the bridge's `setCss` handler                                                                                                                                                                                                                               | Any animation                                        |
+| `cssVar` | Sets a CSS custom property on `:root` via the bridge's `setCssVar` handler                                                                                                                                                                                                                           | Animations using CSS variables                       |
+
 
 ### Scroll Speed (for scroll-driven animations)
 
@@ -124,16 +127,18 @@ Scroll-driven animations use `viewProgress` as their trigger. The "Scroll Speed"
 
 ### Trigger Types and Their Meaning
 
-| Trigger | Description | Speed behavior |
-|---------|-------------|---------------|
-| `viewProgress` | Scroll-driven (ViewTimeline) | Scroll height scaling (iframe reload) |
-| `viewEnter` | Fires once when element enters viewport | `updatePlaybackRate` |
-| `hover` | Mouse enter/leave | `updatePlaybackRate` |
-| `pointerMove` | Continuous mouse tracking | `updatePlaybackRate` |
-| `click` | Click interaction | `updatePlaybackRate` |
-| `pageVisible` | Fires on page load | `updatePlaybackRate` |
-| `customEffect` | JS-driven custom logic | `updatePlaybackRate` |
-| `toggleEffect` | Toggle state | `updatePlaybackRate` |
+
+| Trigger        | Description                             | Speed behavior                        |
+| -------------- | --------------------------------------- | ------------------------------------- |
+| `viewProgress` | Scroll-driven (ViewTimeline)            | Scroll height scaling (iframe reload) |
+| `viewEnter`    | Fires once when element enters viewport | `updatePlaybackRate`                  |
+| `hover`        | Mouse enter/leave                       | `updatePlaybackRate`                  |
+| `pointerMove`  | Continuous mouse tracking               | `updatePlaybackRate`                  |
+| `click`        | Click interaction                       | `updatePlaybackRate`                  |
+| `pageVisible`  | Fires on page load                      | `updatePlaybackRate`                  |
+| `customEffect` | JS-driven custom logic                  | `updatePlaybackRate`                  |
+| `toggleEffect` | Toggle state                            | `updatePlaybackRate`                  |
+
 
 ---
 
@@ -172,6 +177,7 @@ The `analysis/` folder contains prior slider analysis work:
 4. **Update analysis CSVs** to reflect the final slider configurations
 
 For each animation:
+
 - Visually inspect the animation
 - Test existing sliders — do they work? Are ranges sensible?
 - Add useful sliders that are missing
@@ -202,3 +208,4 @@ Then open `http://localhost:3000/explorer.html` (or whatever port).
 - **The bridge's `setSpeed`** (playbackRate) compresses scroll-driven animation ranges instead of extending them — that's why scroll-driven animations use the HTML-source-scaling approach instead.
 - **CSS slider overrides** use `!important` which can conflict with existing `!important` rules in the animation source.
 - **UI element animations** (UI-elements-reyan, interact-UI-elements) are a different category from the gallery/typographic animations — they demonstrate form controls, toggles, dropdowns, etc. and may need different slider patterns.
+

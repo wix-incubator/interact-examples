@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hover Effect Demo - @wix/interact</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+        
+        interact-element {
+            display: block;
+        }
+        
+        .demo-container {
+            display: flex;
+            align-items: center;
+            gap: 48px;
+            max-width: 1200px;
+        }
+        
+        /* Preview Area */
+        .preview-area {
+            width: 400px;
+            height: 400px;
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        /* Circle Styles */
+        .circle {
+            width: 16rem;
+            height: 16rem;
+            background-color: transparent;
+            border: 1px solid white;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            will-change: transform;
+            cursor: pointer;
+        }
+        
+        .fill-circle {
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            border-radius: 50%;
+            transform: scale(0);
+            will-change: transform;
+        }
+        
+        /* Code Panel */
+        .code-panel {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 24px 32px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            overflow-x: auto;
+            flex: 1;
+            min-width: 400px;
+        }
+        
+        .code-panel pre {
+            margin: 0;
+            white-space: pre;
+        }
+        
+        /* Syntax highlighting */
+        .keyword { color: #c792ea; }
+        .string { color: #c3e88d; }
+        .property { color: #82aaff; }
+        .number { color: #f78c6c; }
+        .punctuation { color: #89ddff; }
+        .comment { color: #546e7a; font-style: italic; }
+        
+        /* Section Label */
+        .section-label {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Hint */
+        .hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        @media (max-width: 900px) {
+            .demo-container {
+                flex-direction: column;
+            }
+            
+            .preview-area {
+                width: 100%;
+                max-width: 400px;
+            }
+            
+            .code-panel {
+                min-width: unset;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Preview Area with Circles -->
+        <div class="preview-area">
+            <span class="section-label">Hover</span>
+            
+            <!-- Circle 1 - Bottom Left -->
+            <interact-element data-interact-key="hover-circle-1" style="position: absolute; bottom: -96px; left: -96px;">
+                <div class="circle"><div class="fill-circle"></div></div>
+            </interact-element>
+            
+            <!-- Circle 2 - Center -->
+            <interact-element data-interact-key="hover-circle-2" style="position: absolute; top: calc(50% - 8rem); left: calc(50% - 8rem);">
+                <div class="circle"><div class="fill-circle"></div></div>
+            </interact-element>
+            
+            <!-- Circle 3 - Top Right -->
+            <interact-element data-interact-key="hover-circle-3" style="position: absolute; top: -96px; right: -96px;">
+                <div class="circle"><div class="fill-circle"></div></div>
+            </interact-element>
+            
+            <span class="hint">Hover over circles</span>
+        </div>
+        
+        <!-- Code Panel -->
+        <div class="code-panel">
+            <pre><span class="property">trigger</span><span class="punctuation">:</span> <span class="string">'hover'</span><span class="punctuation">,</span>
+<span class="property">params</span><span class="punctuation">:</span> <span class="punctuation">{</span> <span class="property">type</span><span class="punctuation">:</span> <span class="string">'alternate'</span> <span class="punctuation">}</span><span class="punctuation">,</span>
+<span class="property">effects</span><span class="punctuation">:</span> <span class="punctuation">[{</span>
+  <span class="property">keyframeEffect</span><span class="punctuation">:</span> <span class="punctuation">{</span>
+    <span class="property">keyframes</span><span class="punctuation">:</span> <span class="punctuation">[</span>
+      <span class="punctuation">{</span> <span class="property">transform</span><span class="punctuation">:</span> <span class="string">'scale(1)'</span><span class="punctuation">,</span> <span class="property">offset</span><span class="punctuation">:</span> <span class="number">0</span> <span class="punctuation">}</span><span class="punctuation">,</span>
+      <span class="punctuation">{</span> <span class="property">transform</span><span class="punctuation">:</span> <span class="string">'scale(1.02)'</span><span class="punctuation">,</span> <span class="property">offset</span><span class="punctuation">:</span> <span class="number">1</span> <span class="punctuation">}</span>
+    <span class="punctuation">]</span>
+  <span class="punctuation">}</span><span class="punctuation">,</span>
+  <span class="property">duration</span><span class="punctuation">:</span> <span class="number">400</span><span class="punctuation">,</span>
+  <span class="property">easing</span><span class="punctuation">:</span> <span class="string">'ease-out'</span><span class="punctuation">,</span>
+  <span class="property">fill</span><span class="punctuation">:</span> <span class="string">'both'</span>
+<span class="punctuation">}]</span></pre>
+        </div>
+    </div>
+    
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@2.0.0-rc.6/dist/es/web.js';
+        
+        // Generate hover interactions for circles
+        function generateCircleInteractions(prefix) {
+            return [
+                {
+                    key: `${prefix}-circle-1`,
+                    trigger: 'hover',
+                    effects: [
+                        {
+                            transition: {
+                                duration: 400,
+                                easing: 'ease-out',
+                                styleProperties: [{ name: 'transform', value: 'scale(1.1)' }],
+                            },
+                        },
+                        {
+                            selector: '.fill-circle',
+                            transition: {
+                                duration: 400,
+                                easing: 'ease-out',
+                                styleProperties: [{ name: 'transform', value: 'scale(1)' }],
+                            },
+                        },
+                        {
+                            key: `${prefix}-circle-2`,
+                            transition: {
+                                duration: 400,
+                                easing: 'ease-out',
+                                styleProperties: [{ name: 'transform', value: 'translate(20px, -20px)' }],
+                            },
+                        },
+                        {
+                            key: `${prefix}-circle-3`,
+                            transition: {
+                                duration: 400,
+                                easing: 'ease-out',
+                                styleProperties: [{ name: 'transform', value: 'translate(20px, -20px)' }],
+                            },
+                        },
+                    ],
+                },
+                {
+                    key: `${prefix}-circle-2`,
+                    trigger: 'hover',
+                    effects: [
+                        {
+                            transition: {
+                                duration: 400,
+                                easing: 'ease-out',
+                                styleProperties: [{ name: 'transform', value: 'scale(1.1)' }],
+                            },
+                        },
+                        {
+                            selector: '.fill-circle',
+                            transition: {
+                                duration: 400,
+                                easing: 'ease-out',
+                                styleProperties: [{ name: 'transform', value: 'scale(1)' }],
+                            },
+                        },
+                        {
+                            key: `${prefix}-circle-1`,
+                            transition: {
+                                duration: 400,
+                                easing: 'ease-out',
+                                styleProperties: [{ name: 'transform', value: 'translate(-20px, 20px)' }],
+                            },
+                        },
+                        {
+                            key: `${prefix}-circle-3`,
+                            transition: {
+                                duration: 400,
+                                easing: 'ease-out',
+                                styleProperties: [{ name: 'transform', value: 'translate(20px, -20px)' }],
+                            },
+                        },
+                    ],
+                },
+                {
+                    key: `${prefix}-circle-3`,
+                    trigger: 'hover',
+                    effects: [
+                        {
+                            transition: {
+                                duration: 400,
+                                easing: 'ease-out',
+                                styleProperties: [{ name: 'transform', value: 'scale(1.1)' }],
+                            },
+                        },
+                        {
+                            selector: '.fill-circle',
+                            transition: {
+                                duration: 400,
+                                easing: 'ease-out',
+                                styleProperties: [{ name: 'transform', value: 'scale(1)' }],
+                            },
+                        },
+                        {
+                            key: `${prefix}-circle-1`,
+                            transition: {
+                                duration: 400,
+                                easing: 'ease-out',
+                                styleProperties: [{ name: 'transform', value: 'translate(-20px, 20px)' }],
+                            },
+                        },
+                        {
+                            key: `${prefix}-circle-2`,
+                            transition: {
+                                duration: 400,
+                                easing: 'ease-out',
+                                styleProperties: [{ name: 'transform', value: 'translate(-20px, 20px)' }],
+                            },
+                        },
+                    ],
+                },
+            ];
+        }
+        
+        // Configuration
+        const config = {
+            interactions: generateCircleInteractions('hover'),
+        };
+        
+        // Respect reduced motion settings
+        Interact.forceReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        
+        // Initialize Interact
+        Interact.create(config);
+    </script>
+</body>
+</html>

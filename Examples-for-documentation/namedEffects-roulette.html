@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Named Effect Roulette - @wix/interact</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: #111;
+            min-height: 100vh;
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .demo-container {
+            background: #111;
+            border-radius: 16px;
+            padding: 32px 48px;
+            display: flex;
+            align-items: center;
+            gap: 48px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            border: 1px solid #333;
+        }
+        
+        .preview-area {
+            width: 180px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .shapes-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+        }
+        
+        .shape {
+            position: absolute;
+            border: 1.5px solid currentColor;
+            background: transparent;
+        }
+        
+        .circle {
+            border-radius: 50%;
+        }
+        
+        /* Outer square frame */
+        .square-outer {
+            width: 140px;
+            height: 140px;
+            top: calc(50% - 70px);
+            left: calc(50% - 70px);
+            color: #a88fb8; /* desaturated purple */
+            z-index: 10;
+        }
+        
+        /* Large circle inscribed in square */
+        .circle-large {
+            width: 140px;
+            height: 140px;
+            top: calc(50% - 70px);
+            left: calc(50% - 70px);
+            color: #8ba8d4; /* desaturated blue */
+            z-index: 20;
+        }
+        
+        /* Top overlapping circle */
+        .circle-top {
+            width: 80px;
+            height: 80px;
+            top: calc(50% - 70px);
+            left: calc(50% - 40px);
+            color: #a8c9a0; /* desaturated green */
+            z-index: 30;
+        }
+        
+        /* Bottom overlapping circle */
+        .circle-bottom {
+            width: 80px;
+            height: 80px;
+            top: calc(50% - 10px);
+            left: calc(50% - 40px);
+            color: #d4a08a; /* desaturated orange */
+            z-index: 40;
+        }
+        
+        /* Left horizontal circle */
+        .circle-left {
+            width: 80px;
+            height: 80px;
+            top: calc(50% - 40px);
+            left: calc(50% - 70px);
+            color: #8ec4d4; /* desaturated cyan */
+            z-index: 50;
+        }
+        
+        /* Right horizontal circle */
+        .circle-right {
+            width: 80px;
+            height: 80px;
+            top: calc(50% - 40px);
+            left: calc(50% - 10px);
+            color: #c9b896; /* desaturated yellow */
+            z-index: 60;
+        }
+        
+        .effect-roulette {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .arrow {
+            font-size: 11px;
+            font-weight: 300;
+            color: white;
+            opacity: 0.4;
+        }
+        
+        .effect-list-wrapper {
+            position: relative;
+            height: 220px;
+            width: 100px;
+        }
+        
+        .effect-list-wrapper::before,
+        .effect-list-wrapper::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 60px;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .effect-list-wrapper::before {
+            top: 0;
+            background: linear-gradient(to bottom, #111, transparent);
+        }
+        
+        .effect-list-wrapper::after {
+            bottom: 0;
+            background: linear-gradient(to top, #111, transparent);
+        }
+        
+        .effect-list {
+            height: 100%;
+            overflow-y: auto;
+            scroll-snap-type: y mandatory;
+            scrollbar-width: none;
+            padding: 90px 0;
+        }
+        
+        .effect-list::-webkit-scrollbar { display: none; }
+        
+        .effect-item {
+            scroll-snap-align: center;
+            padding: 6px 0;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-weight: 300;
+            font-size: 13px;
+            color: #ffd882;
+            opacity: 0.5;
+            text-align: left;
+        }
+        
+        .effect-item:hover { opacity: 0.8; }
+        
+        .effect-item.active {
+            font-weight: 700;
+            font-size: 18px;
+            color: white;
+            opacity: 1;
+        }
+        
+        .category-label {
+            padding: 12px 0 4px 0;
+            font-size: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #444;
+        }
+        
+        .replay-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #111;
+            border: 1px solid #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        
+        .replay-btn:hover { background: #222; }
+        
+        .current-effect {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        
+        .current-effect span { color: #111; font-weight: 700; }
+        
+        .hint {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            font-size: 10px;
+            color: #aaa;
+        }
+        
+        .hint kbd {
+            background: #eee;
+            padding: 2px 5px;
+            border-radius: 3px;
+            border: 1px solid #ddd;
+            color: #666;
+        }
+
+        .powered-by {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            color: #bbb;
+            letter-spacing: 0.5px;
+        }
+
+        .powered-by a {
+            color: #666;
+            text-decoration: none;
+        }
+
+        .powered-by a:hover {
+            color: #111;
+        }
+
+        .main-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .code-panel {
+            background: #0d0d0d;
+            border-radius: 12px;
+            padding: 24px 28px;
+            width: 340px;
+            font-size: 12px;
+            line-height: 1.6;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            border: 1px solid #333;
+            overflow: hidden;
+            transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .code-content {
+            font-family: 'JetBrains Mono', monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .code-content .keyword { color: #c792ea; }
+        .code-content .string { color: #c3e88d; }
+        .code-content .property { color: #82aaff; }
+        .code-content .number { color: #f78c6c; }
+        .code-content .punctuation { color: #89ddff; }
+        .code-content .comment { color: #546e7a; font-style: italic; }
+        .code-content .type { color: #ffcb6b; }
+    </style>
+</head>
+<body>
+    <div class="current-effect">Effect: <span id="effectName">FadeIn</span></div>
+    
+    <div class="main-wrapper">
+        <div class="demo-container">
+            <div class="preview-area">
+                <div class="shapes-container">
+                    <interact-element data-interact-key="square-outer">
+                        <div class="shape square-outer"></div>
+                    </interact-element>
+                    <interact-element data-interact-key="circle-large">
+                        <div class="shape circle circle-large"></div>
+                    </interact-element>
+                    <interact-element data-interact-key="circle-top">
+                        <div class="shape circle circle-top"></div>
+                    </interact-element>
+                    <interact-element data-interact-key="circle-bottom">
+                        <div class="shape circle circle-bottom"></div>
+                    </interact-element>
+                    <interact-element data-interact-key="circle-left">
+                        <div class="shape circle circle-left"></div>
+                    </interact-element>
+                    <interact-element data-interact-key="circle-right">
+                        <div class="shape circle circle-right"></div>
+                    </interact-element>
+                </div>
+            </div>
+            
+            <div class="effect-roulette">
+                <div class="arrow">→</div>
+                <div class="effect-list-wrapper">
+                    <div class="effect-list" id="effectList"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="code-panel">
+            <div class="code-content" id="codeSnippet"></div>
+        </div>
+    </div>
+    
+    <button class="replay-btn" id="replayBtn">↻ Replay</button>
+    <div class="hint"><kbd>↑</kbd><kbd>↓</kbd> scroll</div>
+    <div class="powered-by">Powered by <a href="https://github.com/wix-incubator/interact" target="_blank">@wix/interact</a></div>
+    
+    <script type="module">
+        import { Interact } from 'https://esm.sh/@wix/interact@2.0.0-rc.6/dist/es/web.js';
+
+        // Named effects configuration for @wix/interact
+        // Each effect uses namedEffect from @wix/motion library
+        const effects = {
+            // Entrance Effects
+            FadeIn: { 
+                namedEffect: { type: 'FadeIn' }, 
+                duration: 600 
+            },
+            SlideIn: { 
+                namedEffect: { type: 'SlideIn', direction: 'bottom', power: 'medium' }, 
+                duration: 600 
+            },
+            BounceIn: { 
+                namedEffect: { type: 'BounceIn', direction: 'center', power: 'medium' }, 
+                duration: 700 
+            },
+            BlurIn: { 
+                namedEffect: { type: 'BlurIn', power: 'hard' }, 
+                duration: 600 
+            },
+            SpinIn: { 
+                namedEffect: { type: 'SpinIn', direction: 'clockwise', power: 'medium' }, 
+                duration: 700 
+            },
+            ExpandIn: { 
+                namedEffect: { type: 'ExpandIn', direction: 'center', power: 'medium' }, 
+                duration: 600 
+            },
+            FlipIn: { 
+                namedEffect: { type: 'FlipIn', direction: 'left', power: 'medium' }, 
+                duration: 600 
+            },
+            FoldIn: { 
+                namedEffect: { type: 'FoldIn', direction: 'top', power: 'medium' }, 
+                duration: 600 
+            },
+            DropIn: { 
+                namedEffect: { type: 'DropIn', power: 'medium' }, 
+                duration: 650 
+            },
+            GlideIn: { 
+                namedEffect: { type: 'GlideIn', direction: 315, power: 'medium' }, 
+                duration: 600 
+            },
+            TurnIn: { 
+                namedEffect: { type: 'TurnIn', direction: 'top-left', power: 'medium' }, 
+                duration: 600 
+            },
+            ArcIn: { 
+                namedEffect: { type: 'ArcIn', direction: 'bottom', power: 'medium' }, 
+                duration: 700 
+            },
+            FloatIn: { 
+                namedEffect: { type: 'FloatIn', direction: 'bottom' }, 
+                duration: 800 
+            },
+            RevealIn: { 
+                namedEffect: { type: 'RevealIn', direction: 'bottom' }, 
+                duration: 600 
+            },
+            GrowIn: { 
+                namedEffect: { type: 'GrowIn', direction: 45, power: 'medium' }, 
+                duration: 600 
+            },
+            ShuttersIn: { 
+                namedEffect: { type: 'ShuttersIn', direction: 'right', power: 'medium' }, 
+                duration: 700 
+            },
+            // Ongoing Effects
+            Pulse: { 
+                namedEffect: { type: 'Pulse', power: 'medium' }, 
+                duration: 600, 
+                iterations: 2,
+                alternate: true
+            },
+            Bounce: { 
+                namedEffect: { type: 'Bounce', power: 'medium' }, 
+                duration: 700, 
+                iterations: 2,
+                alternate: true
+            },
+            Spin: { 
+                namedEffect: { type: 'Spin', direction: 'clockwise', power: 'medium' }, 
+                duration: 800, 
+                iterations: 2 
+            },
+            Jello: { 
+                namedEffect: { type: 'Jello', power: 'medium' }, 
+                duration: 800, 
+                iterations: 2,
+                alternate: true
+            },
+            Swing: { 
+                namedEffect: { type: 'Swing', power: 'medium', direction: 'top' }, 
+                duration: 700, 
+                iterations: 2,
+                alternate: true
+            },
+            Rubber: { 
+                namedEffect: { type: 'Rubber', power: 'medium' }, 
+                duration: 700, 
+                iterations: 2,
+                alternate: true
+            },
+            Flash: { 
+                namedEffect: { type: 'Flash' }, 
+                duration: 600, 
+                iterations: 2 
+            },
+            Wiggle: { 
+                namedEffect: { type: 'Wiggle', power: 'medium' }, 
+                duration: 500, 
+                iterations: 2,
+                alternate: true
+            },
+            Flip: { 
+                namedEffect: { type: 'Flip', direction: 'horizontal', power: 'medium' }, 
+                duration: 800, 
+                iterations: 2 
+            },
+        };
+        
+        const effectOrder = [
+            { category: 'Entrance', items: ['FadeIn', 'SlideIn', 'BounceIn', 'BlurIn', 'SpinIn', 'ExpandIn', 'FlipIn', 'FoldIn', 'DropIn', 'GlideIn', 'TurnIn', 'ArcIn', 'FloatIn', 'RevealIn', 'GrowIn', 'ShuttersIn'] },
+            { category: 'Ongoing', items: ['Pulse', 'Bounce', 'Spin', 'Jello', 'Swing', 'Rubber', 'Flash', 'Wiggle', 'Flip'] }
+        ];
+        
+        const effectListEl = document.getElementById('effectList');
+        const effectNameEl = document.getElementById('effectName');
+        const codeSnippetEl = document.getElementById('codeSnippet');
+        const allItems = [];
+        let currentIndex = 0;
+        let currentInstance = null;
+        
+        // Generate syntax-highlighted code snippet
+        const codePanelEl = document.querySelector('.code-panel');
+        
+        function updateCodeSnippet(effectName) {
+            const effectConfig = effects[effectName];
+            if (!effectConfig) return;
+            
+            const ne = effectConfig.namedEffect;
+            const dur = effectConfig.duration;
+            const iter = effectConfig.iterations || 1;
+            const alt = effectConfig.alternate || false;
+            
+            // Build namedEffect properties
+            let neProps = `<span class="property">type</span><span class="punctuation">:</span> <span class="string">'${ne.type}'</span>`;
+            
+            if (ne.direction !== undefined) {
+                const dirVal = typeof ne.direction === 'number' ? ne.direction : `'${ne.direction}'`;
+                neProps += `<span class="punctuation">,</span>\n    <span class="property">direction</span><span class="punctuation">:</span> <span class="${typeof ne.direction === 'number' ? 'number' : 'string'}">${dirVal}</span>`;
+            }
+            if (ne.power !== undefined) {
+                neProps += `<span class="punctuation">,</span>\n    <span class="property">power</span><span class="punctuation">:</span> <span class="string">'${ne.power}'</span>`;
+            }
+            
+            // Build effect options
+            let effectOpts = `<span class="property">duration</span><span class="punctuation">:</span> <span class="number">${dur}</span>`;
+            if (iter !== 1) {
+                effectOpts += `<span class="punctuation">,</span>\n    <span class="property">iterations</span><span class="punctuation">:</span> <span class="number">${iter}</span>`;
+            }
+            if (alt) {
+                effectOpts += `<span class="punctuation">,</span>\n    <span class="property">alternate</span><span class="punctuation">:</span> <span class="keyword">true</span>`;
+            }
+            
+            const code = `<span class="punctuation">{</span>
+  <span class="property">namedEffect</span><span class="punctuation">:</span> <span class="punctuation">{</span>
+    ${neProps}
+  <span class="punctuation">}</span><span class="punctuation">,</span>
+  ${effectOpts}
+<span class="punctuation">}</span>`;
+            
+            // Animate height transition
+            const currentHeight = codePanelEl.offsetHeight;
+            codePanelEl.style.height = currentHeight + 'px';
+            
+            // Update content
+            codeSnippetEl.innerHTML = code;
+            
+            // Get new height
+            codePanelEl.style.height = 'auto';
+            const newHeight = codePanelEl.offsetHeight;
+            
+            // Animate from current to new
+            codePanelEl.style.height = currentHeight + 'px';
+            requestAnimationFrame(() => {
+                codePanelEl.style.height = newHeight + 'px';
+            });
+            
+            // Clean up after transition
+            const onTransitionEnd = () => {
+                codePanelEl.style.height = 'auto';
+                codePanelEl.removeEventListener('transitionend', onTransitionEnd);
+            };
+            codePanelEl.addEventListener('transitionend', onTransitionEnd);
+        }
+        
+        // Stagger delays in ms for each shape
+        const staggerDelays = [0, 50, 100, 150, 200, 250];
+        const shapeKeys = ['square-outer', 'circle-large', 'circle-top', 'circle-bottom', 'circle-left', 'circle-right'];
+        
+        // Build effect list UI
+        effectOrder.forEach(cat => {
+            cat.items.forEach(name => {
+                const item = document.createElement('div');
+                item.className = 'effect-item';
+                item.textContent = name;
+                effectListEl.appendChild(item);
+                allItems.push({ name, element: item });
+            });
+        });
+        
+        // Generate interactions config for a specific effect
+        function generateConfig(effectName) {
+            const effectConfig = effects[effectName];
+            if (!effectConfig) return null;
+            
+            const interactions = shapeKeys.map((key, index) => ({
+                key: key,
+                trigger: 'pageVisible',
+                params: { type: 'once' },
+                effects: [{
+                    namedEffect: effectConfig.namedEffect,
+                    duration: effectConfig.duration,
+                    delay: staggerDelays[index],
+                    iterations: effectConfig.iterations || 1,
+                    alternate: effectConfig.alternate || false,
+                    fill: 'both',
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+                }]
+            }));
+            
+            return {
+                effects: {},
+                interactions: interactions
+            };
+        }
+        
+        function playEffect(index) {
+            const item = allItems[index];
+            if (!item) return;
+            
+            // Update UI
+            allItems.forEach(i => i.element.classList.remove('active'));
+            item.element.classList.add('active');
+            effectNameEl.textContent = item.name;
+            item.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Update code snippet
+            updateCodeSnippet(item.name);
+            
+            // Destroy previous instance
+            if (currentInstance) {
+                currentInstance.destroy();
+                currentInstance = null;
+            }
+            
+            // Reset shapes to initial state
+            shapeKeys.forEach(key => {
+                const element = document.querySelector(`[data-interact-key="${key}"]`);
+                if (element) {
+                    const shape = element.querySelector('.shape');
+                    if (shape) {
+                        shape.style.opacity = '1';
+                        shape.style.filter = '';
+                        shape.style.clipPath = '';
+                        shape.style.transform = '';
+                    }
+                }
+            });
+            
+            // Generate and create new config
+            const config = generateConfig(item.name);
+            if (config) {
+                // Small delay to ensure DOM is ready after reset
+                requestAnimationFrame(() => {
+                    currentInstance = Interact.create(config);
+                });
+            }
+        }
+        
+        // Scroll detection
+        let scrollTimer;
+        effectListEl.addEventListener('scroll', () => {
+            clearTimeout(scrollTimer);
+            scrollTimer = setTimeout(() => {
+                const rect = effectListEl.getBoundingClientRect();
+                const centerY = rect.top + rect.height / 2;
+                let closest = 0, minDist = Infinity;
+                
+                allItems.forEach((item, i) => {
+                    const r = item.element.getBoundingClientRect();
+                    const dist = Math.abs(r.top + r.height / 2 - centerY);
+                    if (dist < minDist) { minDist = dist; closest = i; }
+                });
+                
+                if (closest !== currentIndex) {
+                    currentIndex = closest;
+                    playEffect(currentIndex);
+                }
+            }, 120);
+        });
+        
+        // Click handler
+        allItems.forEach((item, i) => {
+            item.element.addEventListener('click', () => {
+                currentIndex = i;
+                playEffect(i);
+            });
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowDown' || e.key === 'j') {
+                e.preventDefault();
+                currentIndex = Math.min(currentIndex + 1, allItems.length - 1);
+                playEffect(currentIndex);
+            } else if (e.key === 'ArrowUp' || e.key === 'k') {
+                e.preventDefault();
+                currentIndex = Math.max(currentIndex - 1, 0);
+                playEffect(currentIndex);
+            }
+        });
+        
+        // Replay button
+        document.getElementById('replayBtn').addEventListener('click', () => playEffect(currentIndex));
+        
+        // Respect reduced motion
+        Interact.forceReducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        
+        // Initialize with first effect
+        setTimeout(() => playEffect(0), 200);
+    </script>
+</body>
+</html>

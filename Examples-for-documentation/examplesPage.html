@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@wix/interact - Examples</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@100;200;300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-primary: #111;
+            --bg-secondary: #0a0a0a;
+            --bg-tertiary: #1a1a1a;
+            --border-color: #333;
+            --text-primary: #e5e5e5;
+            --text-secondary: #999;
+            --text-muted: #666;
+            --accent-gold: #ffd882;
+            --accent-purple: #a88fb8;
+            --accent-blue: #82aaff;
+            --accent-green: #c3e88d;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* ============================================
+           HEADER
+        ============================================ */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 24px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(to bottom, var(--bg-primary), transparent);
+        }
+        
+        .logo {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 16px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logo::before {
+            content: '●';
+            font-size: 10px;
+        }
+        
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 58px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 58px;
+            font-size: 16px;
+            color: white;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+        
+        .nav-links a:hover {
+            opacity: 0.7;
+        }
+        
+        .nav-links a.active {
+            opacity: 0.8;
+        }
+        
+        .repo-btn {
+            background: white;
+            color: black;
+            padding: 10px 24px;
+            border-radius: 21px;
+            font-size: 16px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .repo-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+        }
+        
+        /* ============================================
+           MAIN LAYOUT
+        ============================================ */
+        .main-layout {
+            display: flex;
+            align-items: flex-start;
+            padding-top: 88px;
+            min-height: 100vh;
+        }
+        
+        /* ============================================
+           SIDEBAR (Category Navigation)
+        ============================================ */
+        .sidebar-wrapper {
+            position: fixed;
+            left: 30px;
+            top: 120px;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+        
+        .sidebar {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 21px;
+            width: 148px;
+            height: 183px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Arrow indicator */
+        .sidebar-arrow {
+            font-size: 11px;
+            color: white;
+            opacity: 0.4;
+            flex-shrink: 0;
+            margin-left: 12px;
+            margin-right: 10px;
+        }
+        
+        .category-list-wrapper {
+            position: relative;
+            height: 100%;
+            width: 120px;
+        }
+        
+        .category-list-wrapper::before,
+        .category-list-wrapper::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 50px;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .category-list-wrapper::before {
+            top: 0;
+            background: linear-gradient(to bottom, var(--bg-primary), transparent);
+        }
+        
+        .category-list-wrapper::after {
+            bottom: 0;
+            background: linear-gradient(to top, var(--bg-primary), transparent);
+        }
+        
+        .category-list {
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-snap-type: y mandatory;
+            scrollbar-width: none;
+            padding: 75px 0;
+        }
+        
+        .category-list::-webkit-scrollbar { display: none; }
+        
+        .category-item {
+            scroll-snap-align: center;
+            padding: 6px 0;
+            cursor: pointer;
+            transition: transform 0.25s ease, opacity 0.2s ease, color 0.2s ease;
+            font-weight: 100;
+            font-size: 13px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-gold);
+            opacity: 0.5;
+            text-align: left;
+            transform-origin: left center;
+            white-space: nowrap;
+        }
+        
+        .category-item:hover { opacity: 0.8; }
+        
+        .category-item.active {
+            font-weight: 100;
+            transform: scale(1.25);
+            color: white;
+            opacity: 1;
+        }
+        
+        /* ============================================
+           CONNECTOR
+        ============================================ */
+        .connector {
+            width: 30px;
+            height: 1px;
+            background: var(--border-color);
+            position: fixed;
+            left: 178px;
+            top: 206px;
+            z-index: 50;
+        }
+        
+        .connector::before,
+        .connector::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .connector::before {
+            left: 0;
+        }
+        
+        .connector::after {
+            left: 100%;
+        }
+        
+        /* ============================================
+           MAIN CONTENT
+        ============================================ */
+        .content-container {
+            position: fixed;
+            left: 208px;
+            top: 88px;
+            right: 40px;
+            bottom: -50px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            border-radius: 36px 36px 0 0;
+            overflow: hidden;
+        }
+        
+        .content-container::before,
+        .content-container::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 60px;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .content-container::before {
+            top: 0;
+            background: linear-gradient(to bottom, var(--bg-primary), transparent);
+            border-radius: 36px 36px 0 0;
+        }
+        
+        .content-container::after {
+            bottom: 50px;
+            background: linear-gradient(to top, var(--bg-primary), transparent);
+        }
+        
+        .content-scroll {
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) transparent;
+            padding-bottom: 50px;
+        }
+        
+        .content-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .content-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .content-scroll::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+        
+        /* ============================================
+           CATEGORY SECTIONS
+        ============================================ */
+        .category-section {
+            padding: 48px 33px 80px;
+            min-height: 100vh;
+            scroll-margin-top: 0;
+        }
+        
+        .category-section:last-child {
+            min-height: auto;
+            padding-bottom: 120px;
+        }
+        
+        .category-header {
+            margin-bottom: 48px;
+        }
+        
+        .category-title {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 32px;
+            color: white;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+        }
+        
+        .docs-link {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 100;
+            font-size: 14px;
+            color: var(--accent-gold);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: opacity 0.2s ease;
+        }
+        
+        .docs-link:hover {
+            opacity: 0.7;
+        }
+        
+        .docs-link::before {
+            content: '↗';
+        }
+        
+        .category-description {
+            font-family: 'Inter', sans-serif;
+            font-weight: 200;
+            font-size: 16px;
+            color: white;
+            opacity: 0.8;
+            max-width: 400px;
+            line-height: 1.6;
+        }
+        
+        /* ============================================
+           EXAMPLE CARDS GRID
+        ============================================ */
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+        
+        .example-card {
+            background: white;
+            border-radius: 15px;
+            aspect-ratio: 16 / 10;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .example-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(255, 255, 255, 0.1);
+        }
+        
+        .example-card-inner {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .example-card-inner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(168, 143, 184, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(130, 170, 255, 0.1) 0%, transparent 50%);
+        }
+        
+        .example-preview {
+            width: 60%;
+            height: 60%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        /* Preview shapes for different categories */
+        .preview-carousel .preview-shapes {
+            display: flex;
+            gap: 8px;
+            perspective: 500px;
+        }
+        
+        .preview-carousel .preview-shape {
+            width: 40px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .preview-carousel .preview-shape:nth-child(2) {
+            transform: translateY(-8px) scale(1.1);
+            z-index: 2;
+        }
+        
+        .preview-basic .preview-shapes {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .preview-basic .preview-shape {
+            width: 80px;
+            height: 24px;
+            background: linear-gradient(90deg, var(--bg-primary), transparent);
+            border-radius: 4px;
+        }
+        
+        .preview-layouts .preview-shapes {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+        }
+        
+        .preview-layouts .preview-shape {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            opacity: 0.8;
+        }
+        
+        .preview-layouts .preview-shape:first-child {
+            grid-column: span 2;
+            width: 100%;
+            height: 24px;
+        }
+        
+        .preview-ui .preview-shapes {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 80px;
+        }
+        
+        .preview-ui .preview-shape {
+            height: 8px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            opacity: 0.6;
+        }
+        
+        .preview-ui .preview-shape:first-child {
+            width: 60%;
+            height: 12px;
+            opacity: 0.9;
+        }
+        
+        .preview-ui .preview-shape:last-child {
+            width: 40%;
+        }
+        
+        .preview-featured .preview-shapes {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+        
+        .preview-featured .preview-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+        }
+        
+        .preview-featured .preview-shape:nth-child(1) {
+            width: 50px;
+            height: 50px;
+            top: 0;
+            left: 0;
+        }
+        
+        .preview-featured .preview-shape:nth-child(2) {
+            width: 35px;
+            height: 35px;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+        }
+        
+        .preview-featured .preview-shape:nth-child(3) {
+            width: 25px;
+            height: 25px;
+            top: 50%;
+            right: 10px;
+            background: linear-gradient(135deg, var(--accent-gold), #f78c6c);
+        }
+        
+        .example-label {
+            font-family: 'Inter', sans-serif;
+            font-weight: 200;
+            font-size: 16px;
+            color: white;
+            margin-top: 16px;
+            padding-left: 4px;
+        }
+        
+        /* ============================================
+           RESPONSIVE
+        ============================================ */
+        @media (max-width: 1200px) {
+            .sidebar-wrapper {
+                display: none;
+            }
+            
+            .connector {
+                display: none;
+            }
+            
+            .content-container {
+                left: 40px;
+                right: 40px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px 20px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .content-container {
+                left: 15px;
+                right: 15px;
+                top: 70px;
+                border-radius: 24px 24px 0 0;
+            }
+            
+            .category-section {
+                padding: 32px 20px 60px;
+            }
+            
+            .category-title {
+                font-size: 24px;
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .examples-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">INTERACT</div>
+        <nav class="nav">
+            <div class="nav-links">
+                <a href="#">Docs</a>
+                <a href="#" class="active">Examples</a>
+                <a href="#">Playground</a>
+            </div>
+            <a href="https://github.com/wix-incubator/interact" class="repo-btn">Go to Repository ↗</a>
+        </nav>
+    </header>
+    
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <div class="sidebar-wrapper">
+            <div class="sidebar">
+                <div class="sidebar-arrow">→</div>
+                <div class="category-list-wrapper">
+                    <div class="category-list" id="categoryList">
+                        <div class="category-item active" data-target="featured">Featured</div>
+                        <div class="category-item" data-target="basic">Basic</div>
+                        <div class="category-item" data-target="carousel">Carousel</div>
+                        <div class="category-item" data-target="layouts">Layouts</div>
+                        <div class="category-item" data-target="ui-elements">UI Elements</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Connector -->
+        <div class="connector"></div>
+        
+        <!-- Main Content -->
+        <div class="content-container">
+            <div class="content-scroll" id="contentScroll">
+                
+                <!-- Featured Section -->
+                <section class="category-section" id="featured">
+                    <div class="category-header">
+                        <h2 class="category-title">
+                            Featured
+                            <a href="#" class="docs-link">[docs/featured]</a>
+                        </h2>
+                        <p class="category-description">
+                            Curated collection of our most impressive and popular interaction examples.
+                        </p>
+                    </div>
+                    <div class="examples-grid">
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-featured">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">Parallax Hero</div>
+                        </div>
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-featured">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">3D Card Tilt</div>
+                        </div>
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-featured">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">Magnetic Buttons</div>
+                        </div>
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-featured">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">Staggered Reveal</div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Basic Section -->
+                <section class="category-section" id="basic">
+                    <div class="category-header">
+                        <h2 class="category-title">
+                            Basic
+                            <a href="#" class="docs-link">[docs/viewEnter]</a>
+                        </h2>
+                        <p class="category-description">
+                            Simple, elegant animations perfect for getting started with @wix/interact.
+                        </p>
+                    </div>
+                    <div class="examples-grid">
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-basic">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">Fade In</div>
+                        </div>
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-basic">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">Slide Up</div>
+                        </div>
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-basic">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">Scale In</div>
+                        </div>
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-basic">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">Blur Reveal</div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Carousel Section -->
+                <section class="category-section" id="carousel">
+                    <div class="category-header">
+                        <h2 class="category-title">
+                            Carousel
+                            <a href="#" class="docs-link">[docs/viewProgress]</a>
+                        </h2>
+                        <p class="category-description">
+                            Beautiful scrolling image gallery layouts that enhance visual storytelling.
+                        </p>
+                    </div>
+                    <div class="examples-grid">
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-carousel">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">Horizontal Scroll</div>
+                        </div>
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-carousel">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">Digital Jukebox</div>
+                        </div>
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-carousel">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">3D Coverflow</div>
+                        </div>
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-carousel">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">Infinite Loop</div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Layouts Section -->
+                <section class="category-section" id="layouts">
+                    <div class="category-header">
+                        <h2 class="category-title">
+                            Layouts
+                            <a href="#" class="docs-link">[docs/lists]</a>
+                        </h2>
+                        <p class="category-description">
+                            Dynamic grid and list animations for complex content arrangements.
+                        </p>
+                    </div>
+                    <div class="examples-grid">
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-layouts">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">Staggered Grid</div>
+                        </div>
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-layouts">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">Masonry Reveal</div>
+                        </div>
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-layouts">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">Bento Box</div>
+                        </div>
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-layouts">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">Card Stack</div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- UI Elements Section -->
+                <section class="category-section" id="ui-elements">
+                    <div class="category-header">
+                        <h2 class="category-title">
+                            UI Elements
+                            <a href="#" class="docs-link">[docs/pointerMove]</a>
+                        </h2>
+                        <p class="category-description">
+                            Interactive micro-animations for buttons, forms, and interface components.
+                        </p>
+                    </div>
+                    <div class="examples-grid">
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-ui">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">Button Hover</div>
+                        </div>
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-ui">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">Input Focus</div>
+                        </div>
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-ui">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">Toggle Switch</div>
+                        </div>
+                        <div class="example-card-wrapper">
+                            <div class="example-card">
+                                <div class="example-card-inner">
+                                    <div class="example-preview preview-ui">
+                                        <div class="preview-shapes">
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                            <div class="preview-shape"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="example-label">Menu Transition</div>
+                        </div>
+                    </div>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Category navigation functionality
+        const categoryList = document.getElementById('categoryList');
+        const contentScroll = document.getElementById('contentScroll');
+        const categoryItems = document.querySelectorAll('.category-item');
+        const sections = document.querySelectorAll('.category-section');
+        const allItems = Array.from(categoryItems);
+        
+        let isProgrammaticScroll = false;
+        let currentIndex = 0;
+        let contentScrollTimeout;
+        let sidebarScrollTimeout;
+        
+        // Navigate to a specific category by index
+        function navigateToCategory(index, fromSidebarScroll = false) {
+            if (index < 0 || index >= allItems.length) return;
+            
+            const item = allItems[index];
+            const targetId = item.dataset.target;
+            const targetSection = document.getElementById(targetId);
+            
+            if (!targetSection) return;
+            
+            isProgrammaticScroll = true;
+            currentIndex = index;
+            
+            // Update active state
+            allItems.forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            
+            // Scroll sidebar item into view
+            if (!fromSidebarScroll) {
+                item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            
+            // Scroll content to section
+            targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            setTimeout(() => { isProgrammaticScroll = false; }, 1000);
+        }
+        
+        // Click on category item to scroll to section
+        categoryItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                navigateToCategory(index);
+            });
+        });
+        
+        // Update active category based on content scroll position
+        contentScroll.addEventListener('scroll', () => {
+            if (isProgrammaticScroll) return;
+            
+            clearTimeout(contentScrollTimeout);
+            contentScrollTimeout = setTimeout(() => {
+                if (isProgrammaticScroll) return;
+                
+                let activeSection = null;
+                let minDistance = Infinity;
+                
+                sections.forEach(section => {
+                    const rect = section.getBoundingClientRect();
+                    const contentRect = contentScroll.getBoundingClientRect();
+                    const sectionTop = rect.top - contentRect.top;
+                    const distance = Math.abs(sectionTop);
+                    
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        activeSection = section;
+                    }
+                });
+                
+                if (activeSection) {
+                    const targetId = activeSection.id;
+                    const newIndex = allItems.findIndex(item => item.dataset.target === targetId);
+                    
+                    if (newIndex !== -1 && newIndex !== currentIndex) {
+                        currentIndex = newIndex;
+                        allItems.forEach(i => i.classList.remove('active'));
+                        allItems[currentIndex].classList.add('active');
+                        
+                        isProgrammaticScroll = true;
+                        allItems[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        setTimeout(() => { isProgrammaticScroll = false; }, 500);
+                    }
+                }
+            }, 150);
+        });
+        
+        // Sidebar scroll to change category
+        categoryList.addEventListener('scroll', () => {
+            if (isProgrammaticScroll) return;
+            
+            clearTimeout(sidebarScrollTimeout);
+            sidebarScrollTimeout = setTimeout(() => {
+                if (isProgrammaticScroll) return;
+                
+                const rect = categoryList.getBoundingClientRect();
+                const centerY = rect.top + rect.height / 2;
+                let closestIndex = 0;
+                let minDist = Infinity;
+                
+                allItems.forEach((item, index) => {
+                    const r = item.getBoundingClientRect();
+                    const dist = Math.abs(r.top + r.height / 2 - centerY);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        closestIndex = index;
+                    }
+                });
+                
+                if (closestIndex !== currentIndex) {
+                    navigateToCategory(closestIndex, true);
+                }
+            }, 200);
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'j') {
+                e.preventDefault();
+                navigateToCategory(currentIndex + 1);
+            } else if (e.key === 'ArrowUp' || e.key === 'k') {
+                e.preventDefault();
+                navigateToCategory(currentIndex - 1);
+            }
+        });
+    </script>
+</body>
+</html>
