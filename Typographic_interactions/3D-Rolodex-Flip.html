@@ -211,7 +211,7 @@
 
     <!-- Wix Interact Logic -->
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         // Helper to generate config for each item
         const createScrollInteraction = (id) => ({
@@ -223,8 +223,8 @@
                     // Range covers the entire time the element is traversing the viewport.
                     // Start: Top of element enters bottom of screen.
                     // End: Bottom of element leaves top of screen.
-                    rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
-                    rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                    rangeStart: { name: 'cover', offset: { value: 0, unit: 'percentage' } },
+                    rangeEnd: { name: 'cover', offset: { value: 100, unit: 'percentage' } },
                     
                     keyframeEffect: {
                         name: '3D-Rolodex-Flip',

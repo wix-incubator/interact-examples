@@ -221,7 +221,7 @@
   </div>
 
   <script type="module">
-    import { Interact } from 'https://esm.sh/@wix/interact@2.1.2/web?bundle';
+    import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
     const input = document.getElementById('search-input');
     const inputWrap = document.getElementById('input-wrap');
@@ -328,18 +328,17 @@
         {
           key: 'search-icon',
           trigger: 'click',
-          params: { type: 'alternate' },
           effects: [
-            { key: 'search-pill', effectId: 'pill-expand' },
-            { key: 'search-pill', selector: '.input-wrap', effectId: 'input-reveal' },
-            { key: 'search-pill', effectId: 'border-glow' }
+            { key: 'search-pill', effectId: 'pill-expand', triggerType: 'alternate' },
+            { key: 'search-pill', selector: '.input-wrap', effectId: 'input-reveal', triggerType: 'alternate' },
+            { key: 'search-pill', effectId: 'border-glow', triggerType: 'alternate' }
           ]
         },
         {
           key: 'search-pill',
           trigger: 'hover',
-          params: { method: 'toggle' },
           effects: [{
+            stateAction: 'toggle',
             transition: {
               duration: 300,
               easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
@@ -352,8 +351,8 @@
         {
           key: 'search-icon',
           trigger: 'hover',
-          params: { method: 'toggle' },
           effects: [{
+            stateAction: 'toggle',
             transition: {
               duration: 300,
               easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
@@ -366,8 +365,8 @@
         ...Array.from({ length: 8 }, (_, i) => ({
           key: `sug-${i}`,
           trigger: 'hover',
-          params: { method: 'toggle' },
           effects: [{
+            stateAction: 'toggle',
             transition: {
               duration: 200,
               easing: 'ease-out',

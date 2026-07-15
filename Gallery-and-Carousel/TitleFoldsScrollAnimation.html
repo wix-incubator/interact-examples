@@ -6,7 +6,7 @@
     <title>Title Folds Scroll Animation</title>
     
     <!-- The @wix/interact library for scroll animations -->
-    <script type="module" src="https://esm.sh/@wix/interact@1.78.0"></script>
+    <script type="module" src="https://esm.sh/@wix/interact@2.5.1/web"></script>
     
     <style>
         :root {
@@ -31,12 +31,12 @@
         }
 
         /* --- CHANGE START --- */
-        /* * Set the custom <wix-interact-element> to be a block-level element.
+        /* * Set the custom <interact-element> to be a block-level element.
          * By default, custom elements can behave like inline elements, which prevents
          * `position: sticky` from working correctly on their children.
          * Making it a block ensures it establishes a proper layout context.
         */
-        wix-interact-element {
+        interact-element {
             display: block;
             position: sticky;
             top: 0;
@@ -53,7 +53,7 @@
         .card {
             /* --- CHANGE START --- */
             /* * The position sticky properties were moved from here
-             * to the wix-interact-element parent above.
+             * to the interact-element parent above.
             */
             /* position: sticky; */
             /* top: 0; */
@@ -170,7 +170,7 @@
     <main class="scroll-section">
         <div class="cards-repeater">
             <!-- Card 1 -->
-            <wix-interact-element data-wix-path="#card-1">
+            <interact-element data-interact-key="#card-1">
                 <div class="card" id="card-1">
                     <div class="card-content">
                         <div class="horizontal-line"></div>
@@ -189,10 +189,10 @@
                         </div>
                     </div>
                 </div>
-            </wix-interact-element>
+            </interact-element>
 
             <!-- Card 2 -->
-             <wix-interact-element data-wix-path="#card-2">
+             <interact-element data-interact-key="#card-2">
                 <div class="card" id="card-2">
                     <div class="card-content">
                         <div class="horizontal-line"></div>
@@ -211,10 +211,10 @@
                         </div>
                     </div>
                 </div>
-            </wix-interact-element>
+            </interact-element>
             
             <!-- Card 3 -->
-             <wix-interact-element data-wix-path="#card-3">
+             <interact-element data-interact-key="#card-3">
                 <div class="card" id="card-3">
                     <div class="card-content">
                         <div class="horizontal-line"></div>
@@ -233,10 +233,10 @@
                         </div>
                     </div>
                 </div>
-            </wix-interact-element>
+            </interact-element>
 
             <!-- Card 4 -->
-             <wix-interact-element data-wix-path="#card-4">
+             <interact-element data-interact-key="#card-4">
                 <div class="card" id="card-4">
                     <div class="card-content">
                         <div class="horizontal-line"></div>
@@ -255,10 +255,10 @@
                         </div>
                     </div>
                 </div>
-            </wix-interact-element>
+            </interact-element>
 
             <!-- Card 5 -->
-             <wix-interact-element data-wix-path="#card-5">
+             <interact-element data-interact-key="#card-5">
                 <div class="card" id="card-5">
                     <div class="card-content">
                         <div class="horizontal-line"></div>
@@ -277,7 +277,7 @@
                         </div>
                     </div>
                 </div>
-            </wix-interact-element>
+            </interact-element>
         </div>
     </main>
     <section class="next-section">
@@ -285,13 +285,13 @@
     </section>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         const CARD_SCALE_START = 0.75;
 
         const commonRange = {
-            rangeStart: { name: 'entry', offset: { type: 'percentage', value: 0 } },
-            rangeEnd: { name: 'entry', offset: { type: 'percentage', value: 100 } },
+            rangeStart: { name: 'entry', offset: { unit: 'percentage', value: 0 } },
+            rangeEnd: { name: 'entry', offset: { unit: 'percentage', value: 100 } },
             easing: 'linear',
             fill: 'both'
         };

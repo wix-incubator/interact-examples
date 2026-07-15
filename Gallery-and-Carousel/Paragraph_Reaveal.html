@@ -233,7 +233,7 @@
     </interact-element>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         const REVEAL_WIDTH = 125;
         const IMAGE_COUNT = 8;
@@ -278,8 +278,8 @@
             effects.push({
                 key: 'mask-' + (idx + 1),
                 fill: 'both',
-                rangeStart: { name: 'cover', offset: { type: 'percentage', value: s } },
-                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: e } },
+                rangeStart: { name: 'cover', offset: { unit: 'percentage', value: s } },
+                rangeEnd: { name: 'cover', offset: { unit: 'percentage', value: e } },
                 keyframeEffect: {
                     name: 'reveal-mask-' + (idx + 1),
                     keyframes: leftRevealKeyframes

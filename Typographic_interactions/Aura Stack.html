@@ -201,7 +201,7 @@
 
     <!-- Interaction Engine -->
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.93.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         const BLUR_INTENSITY = 1;
         const b = (px) => `blur(${px * BLUR_INTENSITY}px)`;
@@ -215,8 +215,8 @@
                         /* --- SECTION 1: EXIT SEQUENCE --- */
                         {
                             key: 'slide-1',
-                            rangeStart: { name: 'entry', offset: { value: 100, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            rangeStart: { name: 'entry', offset: { value: 100, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
                             fill: 'both',
                             keyframeEffect: {
                                 name: 's1-exit-blur',
@@ -230,8 +230,8 @@
                         },
                         {
                             key: 's1-content',
-                            rangeStart: { name: 'entry', offset: { value: 100, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            rangeStart: { name: 'entry', offset: { value: 100, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
                             fill: 'both',
                             keyframeEffect: {
                                 name: 's1-parallax',
@@ -246,8 +246,8 @@
                         /* --- SECTION 2: LIFECYCLE --- */
                         {
                             key: 'slide-2',
-                            rangeStart: { name: 'entry', offset: { value: 100, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            rangeStart: { name: 'entry', offset: { value: 100, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
                             fill: 'both',
                             keyframeEffect: {
                                 name: 's2-lifecycle',
@@ -265,8 +265,8 @@
                         // Staggered Content for Section 2
                         ...['s2-header', 's2-body-left', 's2-body-right'].map((id, i) => ({
                             key: id,
-                            rangeStart: { name: 'entry', offset: { value: 100, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            rangeStart: { name: 'entry', offset: { value: 100, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
                             fill: 'both',
                             keyframeEffect: {
                                 name: `${id}-reveal`,
@@ -279,8 +279,8 @@
                         })),
                         {
                             key: 's2-bg-num',
-                            rangeStart: { name: 'entry', offset: { value: 100, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            rangeStart: { name: 'entry', offset: { value: 100, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
                             fill: 'both',
                             keyframeEffect: {
                                 name: 's2-parallax-num',
@@ -294,8 +294,8 @@
                         /* --- SECTION 3: LIFECYCLE --- */
                         {
                             key: 'slide-3',
-                            rangeStart: { name: 'entry', offset: { value: 100, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            rangeStart: { name: 'entry', offset: { value: 100, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
                             fill: 'both',
                             keyframeEffect: {
                                 name: 's3-lifecycle',
@@ -310,8 +310,8 @@
                         // Staggered Columns for Section 3
                         ...['s3-col-1', 's3-col-2', 's3-col-3'].map((id, i) => ({
                             key: id,
-                            rangeStart: { name: 'entry', offset: { value: 100, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            rangeStart: { name: 'entry', offset: { value: 100, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
                             fill: 'both',
                             keyframeEffect: {
                                 name: `${id}-stagger`,

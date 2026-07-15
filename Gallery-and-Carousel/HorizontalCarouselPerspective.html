@@ -6,7 +6,7 @@
     <title>Responsive 3D Card Deck Scroll</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Import @wix/interact library -->
-    <script type="module" src="https://esm.sh/@wix/interact@1.79.0"></script>
+    <script type="module" src="https://esm.sh/@wix/interact@2.5.1/web"></script>
     <style>
         body {
             background-color: #ffffff;
@@ -161,7 +161,7 @@
 
     <div class="scroll-section">
         <!-- The sticky wrapper is the trigger for the viewProgress animation -->
-        <wix-interact-element data-wix-path=".sticky-wrapper">
+        <interact-element data-interact-key=".sticky-wrapper">
             <div class="sticky-wrapper">
                 
                 <!-- NEW: Layout container -->
@@ -170,75 +170,75 @@
                     <!-- NEW: Viewport for cards -->
                     <div class="animation-viewport">
                         <!-- Card 1 -->
-                        <wix-interact-element data-wix-path="#card-1">
+                        <interact-element data-interact-key="#card-1">
                             <div id="card-1" class="card">
                                 <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2414" class="card-image" alt="Cosmic Landscape">
                             </div>
-                        </wix-interact-element>
+                        </interact-element>
 
                         <!-- Card 2 -->
-                        <wix-interact-element data-wix-path="#card-2">
+                        <interact-element data-interact-key="#card-2">
                             <div id="card-2" class="card">
                                 <img src="https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=2670" class="card-image" alt="Galaxy View">
                             </div>
-                        </wix-interact-element>
+                        </interact-element>
                         
                         <!-- Card 3 -->
-                        <wix-interact-element data-wix-path="#card-3">
+                        <interact-element data-interact-key="#card-3">
                             <div id="card-3" class="card">
                                 <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=2672" class="card-image" alt="Earth from Space">
                             </div>
-                        </wix-interact-element>
+                        </interact-element>
 
                         <!-- Card 4 -->
-                        <wix-interact-element data-wix-path="#card-4">
+                        <interact-element data-interact-key="#card-4">
                             <div id="card-4" class="card">
                                 <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2414" class="card-image" alt="Nebula">
                             </div>
-                        </wix-interact-element>
+                        </interact-element>
 
                         <!-- Card 5 -->
-                        <wix-interact-element data-wix-path="#card-5">
+                        <interact-element data-interact-key="#card-5">
                             <div id="card-5" class="card">
                                 <img src="https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=2670" class="card-image" alt="Lunar Surface">
                             </div>
-                        </wix-interact-element>
+                        </interact-element>
 
                         <!-- Card 6 -->
-                        <wix-interact-element data-wix-path="#card-6">
+                        <interact-element data-interact-key="#card-6">
                             <div id="card-6" class="card">
                                 <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2414" class="card-image" alt="Aurora Borealis">
                             </div>
-                        </wix-interact-element>
+                        </interact-element>
 
                         <!-- Card 7 -->
-                        <wix-interact-element data-wix-path="#card-7">
+                        <interact-element data-interact-key="#card-7">
                             <div id="card-7" class="card">
                                 <img src="https://images.unsplash.com/photo-1454789548928-9efd52dc4031?q=80&w=2680" class="card-image" alt="Astronaut">
                             </div>
-                        </wix-interact-element>
+                        </interact-element>
                     </div> <!-- End .animation-viewport -->
 
                     <!-- NEW: Viewport for text -->
                     <div class="text-viewport">
                         <!-- Dynamic Title Element -->
-                        <wix-interact-element data-wix-path="#dynamic-title-container">
+                        <interact-element data-interact-key="#dynamic-title-container">
                             <div id="dynamic-title-container">
                                 <span id="dynamic-title-text">
                                     <!-- Content is set by JS -->
                                 </span>
                             </div>
-                        </wix-interact-element>
+                        </interact-element>
                     </div> <!-- End .text-viewport -->
 
                 </div> <!-- End .animation-layout-container -->
 
             </div>
-        </wix-interact-element>
+        </interact-element>
     </div>
 
         <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
         
         // --- NEW: Check for mobile viewport ---
         const isMobile = window.matchMedia("(max-width: 768px)").matches;
@@ -294,8 +294,8 @@
                     // Use the responsively-selected keyframes
                     keyframes: animationKeyframes 
                 },
-                rangeStart: { name: 'cover', offset: { type: 'percentage', value: start * 100 } },
-                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: end * 100 } },
+                rangeStart: { name: 'cover', offset: { unit: 'percentage', value: start * 100 } },
+                rangeEnd: { name: 'cover', offset: { unit: 'percentage', value: end * 100 } },
                 easing: 'linear',
                 fill: 'both'
             });
@@ -369,8 +369,8 @@
                 }
             },
             // This effect runs for the entire scroll duration
-            rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 } },
-            rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 } },
+            rangeStart: { name: 'cover', offset: { unit: 'percentage', value: 0 } },
+            rangeEnd: { name: 'cover', offset: { unit: 'percentage', value: 100 } },
             fill: 'both'
        });
 

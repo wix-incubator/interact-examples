@@ -183,15 +183,15 @@ interact-element {
 
 
 <script type="module">
-  import { Interact } from 'https://esm.sh/@wix/interact/web';
+  import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
   const config = {
     interactions: [
     {
       key: 'text-title',
       trigger: 'viewEnter',
-      params: { type: 'once' },
       effects: [{
+        triggerType: 'once',
         keyframeEffect: {
           name: 'float-in-title',
           keyframes: [
@@ -208,8 +208,8 @@ interact-element {
     {
       key: 'text-desc',
       trigger: 'viewEnter',
-      params: { type: 'once' },
       effects: [{
+        triggerType: 'once',
         keyframeEffect: {
           name: 'float-in-desc',
           keyframes: [
@@ -226,8 +226,8 @@ interact-element {
     {
       key: 'text-btn',
       trigger: 'viewEnter',
-      params: { type: 'once' },
       effects: [{
+        triggerType: 'once',
         keyframeEffect: {
           name: 'float-in-btn',
           keyframes: [
@@ -269,4 +269,3 @@ interact-element {
 
 </body>
 </html>
-

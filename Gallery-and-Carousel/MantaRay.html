@@ -11,7 +11,7 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         /* Hide elements before they are initialized to prevent flash */
-        wix-interact-element:not(:defined) { opacity: 0; }
+        interact-element:not(:defined) { opacity: 0; }
         
         :root {
             --base-size: 12;
@@ -24,7 +24,7 @@
             perspective: 1000px;
         }
 
-        wix-interact-element[data-wix-path^="img-wrapper-"] {
+        interact-element[data-interact-key^="img-wrapper-"] {
             width: max(
                 calc(var(--base-size) * 0.3 * 1vw),
                 calc((var(--base-size) + var(--rnd-off, 0) * var(--size-variation) * var(--base-size) * 1.5) * 1vw)
@@ -32,7 +32,7 @@
             flex-shrink: 0;
         }
 
-        #gallery-container > wix-interact-element + wix-interact-element {
+        #gallery-container > interact-element + interact-element {
             margin-left: calc(var(--base-size) * var(--overlap-ratio) * -1vw);
         }
 
@@ -40,12 +40,12 @@
            We use CSS !important to ensure the hovered element ALWAYS sits on top 
            of its siblings, overriding any inline styles or default stacking order.
         */
-        wix-interact-element {
+        interact-element {
             position: relative;
             z-index: 1; /* Default base layer */
             transition: z-index 0s; /* Instant switch */
         }
-        wix-interact-element:hover {
+        interact-element:hover {
             z-index: 9999 !important; /* Force to front */
         }
 
@@ -61,15 +61,15 @@
             <!-- Items will be injected here by JS --></div>
     </section>
 
-    <!-- Tooltip Element --><wix-interact-element data-wix-path="tooltip-wrapper" class="fixed bottom-4 left-4 pointer-events-none z-[99999]">
+    <!-- Tooltip Element --><interact-element data-interact-key="tooltip-wrapper" class="fixed bottom-4 left-4 pointer-events-none z-[99999]">
         <div id="image-tooltip" class="text-black opacity-0 transform translate-y-4 transition-all duration-300 ease-out">
             <h3 id="tooltip-title" class="font-extrabold text-2xl text-gray-900"></h3>
             <p id="tooltip-subtitle" class="text-lg text-gray-600"></p>
         </div>
-    </wix-interact-element>
+    </interact-element>
 
     <!-- Import Wix Interact --><script type="module">
-        import { Interact, add } from 'https://esm.sh/@wix/interact@1.79.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         const HOVER_SCALE = 2.5;
 
@@ -153,8 +153,8 @@
             const wrapperId = `img-wrapper-${index}`;
             const randomOffset = (seededRandom(index + 1) - 0.5) * 2;
 
-            const wrapper = document.createElement('wix-interact-element');
-            wrapper.setAttribute('data-wix-path', wrapperId);
+            const wrapper = document.createElement('interact-element');
+            wrapper.setAttribute('data-interact-key', wrapperId);
             wrapper.className = 'pointer-events-auto cursor-pointer';
             wrapper.style.setProperty('--rnd-off', randomOffset.toFixed(4));
             
@@ -187,11 +187,12 @@
             interactConfig.interactions.push({
                 key: wrapperId,
                 trigger: 'viewEnter',
-                params: { type: 'once', threshold: 0 },
+                params: { threshold: 0 },
                 effects: [
                     {
                         key: wrapperId,
                         effectId: 'breathe-vertical',
+                        triggerType: 'once',
                         delay: index * 150,
                         composite: 'add'
                     }
@@ -202,12 +203,12 @@
             interactConfig.interactions.push({
                 key: wrapperId,
                 trigger: 'hover',
-                params: { type: 'alternate' },
                 effects: [
                     {
                         key: wrapperId,
                         selector: 'img',
                         effectId: 'scale-up-image',
+                        triggerType: 'alternate',
                         composite: 'add'
                     }
                 ]
@@ -216,13 +217,6 @@
 
         // --- 4. Initialize Interact ---
         Interact.create(interactConfig);
-
-        // --- 5. Register Elements ---
-        imageData.forEach((_, index) => {
-            const wrapperId = `img-wrapper-${index}`;
-            const el = document.querySelector(`[data-wix-path="${wrapperId}"]`);
-            if(el) add(el, wrapperId);
-        });
 
     </script>
 </body>

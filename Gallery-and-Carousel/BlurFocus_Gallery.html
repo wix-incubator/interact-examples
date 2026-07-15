@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wild Nature Gallery Hover Blur with @wix/interact</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-<script type="module" src="https://esm.sh/@wix/interact@1.79.0"></script>
 <style>
 :root {
   --blur-intensity: 12px;
@@ -29,7 +28,7 @@ body {
 }
 
 /* CARD BASE */
-wix-interact-element {
+interact-element {
   display:block;
   position:relative;
   overflow:hidden;
@@ -62,10 +61,10 @@ wix-interact-element {
 }
 
 /* Blur non-hovered cards when any card is hovered (driven by --blur-intensity CSS var) */
-.grid-container:has(wix-interact-element:hover) .card-bg {
+.grid-container:has(interact-element:hover) .card-bg {
   filter: blur(var(--blur-intensity));
 }
-wix-interact-element:hover .card-bg {
+interact-element:hover .card-bg {
   filter: none !important;
 }
 
@@ -105,7 +104,7 @@ wix-interact-element:hover .card-bg {
 </section>
 
 <script type="module">
-  import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
+  import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
   const container = document.querySelector('.grid-container');
   const ROWS = 4;
@@ -121,8 +120,8 @@ wix-interact-element:hover .card-bg {
   // Create cards dynamically
   for(let i=0;i<CARD_COUNT;i++){
     const cardId = i + 1;
-    const card=document.createElement('wix-interact-element');
-    card.setAttribute('data-wix-path','card-'+cardId);
+    const card=document.createElement('interact-element');
+    card.setAttribute('data-interact-key','card-'+cardId);
 
     const inner=document.createElement('div');
     inner.classList.add('card-inner');
@@ -175,7 +174,7 @@ wix-interact-element:hover .card-bg {
         styleProperties: [{ name: 'background', value: 'rgba(0,0,0,0.35)' }]
       }
     });
-    
+
     // 3. Reveal the content
     effects.push({
       key: `card-${i}`,
@@ -202,7 +201,6 @@ wix-interact-element:hover .card-bg {
     interactions.push({
       key: `card-${i}`,
       trigger: 'hover',
-      params: { type: 'alternate' },
       effects: effects
     });
   }

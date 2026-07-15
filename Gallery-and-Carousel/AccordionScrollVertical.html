@@ -161,7 +161,7 @@
 
    <script type="module">
        // Import the Interact library
-       import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+       import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
 
        document.addEventListener("DOMContentLoaded", () => {
@@ -172,10 +172,10 @@
            const textGroups = document.querySelectorAll('.feature-text-group');
 
 
-           // Programmatically wrap each column with the required wix-interact-element
+           // Programmatically wrap each column with the required interact-element
            columns.forEach(column => {
-               const wrapper = document.createElement('wix-interact-element');
-               wrapper.dataset.wixPath = `#${column.id}`;
+               const wrapper = document.createElement('interact-element');
+               wrapper.dataset.interactKey = `#${column.id}`;
                column.parentNode.insertBefore(wrapper, column);
                wrapper.appendChild(column);
            });
@@ -183,8 +183,8 @@
            // Programmatically wrap each text group
            textGroups.forEach(textGroup => {
                if (textGroup.id) {
-                   const wrapper = document.createElement('wix-interact-element');
-                   wrapper.dataset.wixPath = `#${textGroup.id}`;
+                   const wrapper = document.createElement('interact-element');
+                   wrapper.dataset.interactKey = `#${textGroup.id}`;
                    // Insert wrapper before the text group, inside the column
                    textGroup.parentNode.insertBefore(wrapper, textGroup);
                    wrapper.appendChild(textGroup);
@@ -254,8 +254,8 @@
                let openColumnWrapper = null;
 
                columns.forEach(column => {
-                   const columnWrapper = column.parentElement; // The <wix-interact-element> for the column
-                   const textWrapper = column.querySelector('wix-interact-element'); // The <wix-interact-element> for the text
+                   const columnWrapper = column.parentElement; // The <interact-element> for the column
+                   const textWrapper = column.querySelector('interact-element'); // The <interact-element> for the text
 
                    if (!columnWrapper || !textWrapper) return;
 
@@ -269,7 +269,7 @@
                            // Case 2: Clicked a *new* item while another is open.
                            // 1. Collapse the old one.
                            openColumnWrapper.toggleEffect('expand-column', 'remove');
-                           openColumnWrapper.querySelector('wix-interact-element').toggleEffect('show-text', 'remove');
+                           openColumnWrapper.querySelector('interact-element').toggleEffect('show-text', 'remove');
                            
                            // 2. Expand the new one.
                            columnWrapper.toggleEffect('expand-column', 'add');
@@ -292,20 +292,18 @@
                    key: currentId,
                    trigger: 'hover', // Use hover for desktop
                    params: {
-                       type: 'alternate' // This is the correct way to handle enter/leave
+                       type: 'alternate' // Play on enter, reverse on leave
                    },
                    effects: [
                        // Effect to expand/collapse the column height
                        {
                            key: currentId,
                            effectId: 'expand-column' // Reference the reusable effect
-                           // 'reversed: false' was removed
                        },
                        // Effect to show/hide the text content
                        {
                            key: currentId.replace('column', 'text'), // e.g., converts #column-1 to #text-1
                            effectId: 'show-text' // Reference the reusable effect
-                           // 'reversed: false' was removed
                        }
                    ]
                }));

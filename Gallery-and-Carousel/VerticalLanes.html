@@ -220,7 +220,7 @@
 <body>
    <div class="gallery-container" id="gallery-container">
        <div class="gallery-column">
-           <wix-interact-element data-wix-path="#wrapper-1">
+           <interact-element data-interact-key="#wrapper-1">
                <div class="animation-wrapper" id="wrapper-1">
                    <div>
                        <div class="image-container" onclick="openLightbox(this)">
@@ -259,12 +259,12 @@
                        </div>
                    </div>
                </div>
-           </wix-interact-element>
+           </interact-element>
        </div>
 
 
        <div class="gallery-column">
-           <wix-interact-element data-wix-path="#wrapper-2">
+           <interact-element data-interact-key="#wrapper-2">
                <div class="animation-wrapper" id="wrapper-2">
                    <div>
                        <div class="image-container" onclick="openLightbox(this)">
@@ -303,12 +303,12 @@
                        </div>
                    </div>
                </div>
-           </wix-interact-element>
+           </interact-element>
        </div>
 
 
        <div class="gallery-column">
-            <wix-interact-element data-wix-path="#wrapper-3">
+            <interact-element data-interact-key="#wrapper-3">
                <div class="animation-wrapper" id="wrapper-3">
                    <div>
                        <div class="image-container" onclick="openLightbox(this)">
@@ -347,11 +347,11 @@
                        </div>
                    </div>
                </div>
-           </wix-interact-element>
+           </interact-element>
        </div>
       
        <div class="gallery-column">
-           <wix-interact-element data-wix-path="#wrapper-4">
+           <interact-element data-interact-key="#wrapper-4">
                <div class="animation-wrapper" id="wrapper-4">
                    <div>
                        <div class="image-container" onclick="openLightbox(this)">
@@ -390,7 +390,7 @@
                        </div>
                    </div>
                </div>
-           </wix-interact-element>
+           </interact-element>
        </div>
    </div>
   
@@ -408,9 +408,7 @@
 
 
    <script type="module">
-       import {
-           Interact
-       } from 'https://esm.sh/@wix/interact@1.78.0';
+       import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
 
        document.addEventListener('DOMContentLoaded', () => {
@@ -420,10 +418,11 @@
                    {
                        key: '#wrapper-1',
                        trigger: 'viewEnter',
-                       params: { type: 'state' },
                        effects: [{
                            key: '#wrapper-1',
+                           triggerType: 'state',
                            keyframeEffect: {
+                               name: 'scroll-down',
                                keyframes: [{ transform: 'translateY(-50%)' }, { transform: 'translateY(0)' }]
                            },
                            duration: 40000,
@@ -434,9 +433,9 @@
                    {
                        key: '#wrapper-2',
                        trigger: 'viewEnter',
-                       params: { type: 'state' },
                        effects: [{
                            key: '#wrapper-2',
+                           triggerType: 'state',
                            keyframeEffect: {
                                name: 'scroll-up',
                                keyframes: [{ transform: 'translateY(0)' }, { transform: 'translateY(-50%)' }],
@@ -449,9 +448,9 @@
                    {
                        key: '#wrapper-3',
                        trigger: 'viewEnter',
-                       params: { type: 'state' },
                        effects: [{
                            key: '#wrapper-3',
+                           triggerType: 'state',
                            keyframeEffect: {
                                name: 'scroll-down-fast',
                                keyframes: [{ transform: 'translateY(-50%)' }, { transform: 'translateY(0)' }],
@@ -464,9 +463,9 @@
                    {
                        key: '#wrapper-4',
                        trigger: 'viewEnter',
-                       params: { type: 'state' },
                        effects: [{
                            key: '#wrapper-4',
+                           triggerType: 'state',
                            keyframeEffect: {
                                name: 'scroll-up-fast',
                                keyframes: [{ transform: 'translateY(0)' }, { transform: 'translateY(-50%)' }],

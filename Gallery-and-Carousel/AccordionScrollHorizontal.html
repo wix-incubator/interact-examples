@@ -226,7 +226,7 @@
 
     <script type="module">
         // Import web package from Wix Interact v2
-        import { Interact } from 'https://esm.sh/@wix/interact@2.0.0-rc.6/web';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         document.addEventListener("DOMContentLoaded", () => {
 
@@ -292,11 +292,10 @@
                 config.interactions.push({
                     key: colKey,
                     trigger: 'hover',
-                    params: { type: 'alternate' },
                     conditions: ['mobile'],
                     effects: [
-                        { key: colKey, effectId: 'v-expand' },
-                        { key: txtKey, effectId: 'reveal' }
+                        { key: colKey, effectId: 'v-expand', triggerType: 'alternate' },
+                        { key: txtKey, effectId: 'reveal', triggerType: 'alternate' }
                     ]
                 });
 
@@ -304,11 +303,10 @@
                 config.interactions.push({
                     key: colKey,
                     trigger: 'hover',
-                    params: { type: 'alternate' },
                     conditions: ['desktop'],
                     effects: [
-                        { key: colKey, effectId: 'h-expand' },
-                        { key: txtKey, effectId: 'reveal' }
+                        { key: colKey, effectId: 'h-expand', triggerType: 'alternate' },
+                        { key: txtKey, effectId: 'reveal', triggerType: 'alternate' }
                     ]
                 });
             }

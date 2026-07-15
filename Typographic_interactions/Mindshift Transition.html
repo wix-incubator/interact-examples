@@ -137,7 +137,7 @@
     </interact-element>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         const config = {
             interactions: [
@@ -149,8 +149,8 @@
                             // LEFT MASK: Sliding in from the left
                             key: 'mask-l',
                             fill: 'both',
-                            rangeStart: { name: 'entry', offset: { value: 0, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
                             keyframeEffect: {
                                 name: 'mask-slide-left',
                                 keyframes: [
@@ -164,8 +164,8 @@
                             // RIGHT MASK: Sliding in from the right
                             key: 'mask-r',
                             fill: 'both',
-                            rangeStart: { name: 'entry', offset: { value: 0, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
                             keyframeEffect: {
                                 name: 'mask-slide-right',
                                 keyframes: [
@@ -179,8 +179,8 @@
                             // MAIN TEXT: Fades out as masks overlap
                             key: 'text-main',
                             fill: 'both',
-                            rangeStart: { name: 'entry', offset: { value: 0, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
                             keyframeEffect: {
                                 name: 'fade-out-main',
                                 keyframes: [
@@ -195,8 +195,8 @@
                             // SUB TEXT: Revealed by the white circular masks
                             key: 'text-sub',
                             fill: 'both',
-                            rangeStart: { name: 'entry', offset: { value: 0, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
                             keyframeEffect: {
                                 name: 'fade-in-sub',
                                 keyframes: [

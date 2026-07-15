@@ -165,16 +165,16 @@
   </interact-element>
 
   <script type="module">
-    import { Interact } from 'https://esm.sh/@wix/interact/web';
+    import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
     Interact.create({
       interactions: [
         {
           key: 'title',
           trigger: 'viewEnter',
-          params: { type: 'once' },
           effects: [
             {
+              triggerType: 'once',
               keyframeEffect: {
                 name: 'title-in',
                 keyframes: [
@@ -191,9 +191,9 @@
         {
           key: 'text-cols',
           trigger: 'viewEnter',
-          params: { type: 'once' },
           effects: [
             {
+              triggerType: 'once',
               keyframeEffect: {
                 name: 'text-in',
                 keyframes: [
@@ -211,9 +211,9 @@
         {
           key: 'image-box',
           trigger: 'viewEnter',
-          params: { type: 'once' },
           effects: [
             {
+              triggerType: 'once',
               keyframeEffect: {
                 name: 'image-in',
                 keyframes: [

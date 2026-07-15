@@ -270,7 +270,7 @@
 
   <!-- ── @wix/interact ── -->
   <script type="module">
-    import { Interact } from 'https://esm.sh/@wix/interact/web';
+    import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
     const entryRange = {
       rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
@@ -321,7 +321,6 @@
         {
           key: 'hero-title',
           trigger: 'viewEnter',
-          params: { type: 'once' },
           effects: [{
             keyframeEffect: {
               name: 'hero-title-fade',
@@ -333,12 +332,12 @@
             duration: 1200,
             easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
             fill: 'forwards',
+            triggerType: 'once',
           }],
         },
         {
           key: 'hero-subtitle',
           trigger: 'viewEnter',
-          params: { type: 'once' },
           effects: [{
             keyframeEffect: {
               name: 'hero-sub-fade',
@@ -351,6 +350,7 @@
             delay: 300,
             easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
             fill: 'forwards',
+            triggerType: 'once',
           }],
         },
 

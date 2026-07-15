@@ -270,7 +270,7 @@
 
     <!-- INTERACT LOGIC -->
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.93.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         const config = {
             interactions: [
@@ -283,8 +283,8 @@
                         // Slide 1 Exit
                         {
                             key: 'slide-1',
-                            rangeStart: { name: 'entry', offset: { value: 100, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            rangeStart: { name: 'entry', offset: { value: 100, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
                             fill: 'both',
                             keyframeEffect: {
                                 name: 's1-exit',
@@ -299,8 +299,8 @@
                         // Slide 2 Enter (Parallax Reveal)
                         {
                             key: 'slide-2', 
-                            rangeStart: { name: 'entry', offset: { value: 100, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            rangeStart: { name: 'entry', offset: { value: 100, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
                             fill: 'both', 
                             keyframeEffect: {
                                 name: 's2-enter',
@@ -316,8 +316,8 @@
                         // Content Fades Up gently
                         {
                             key: 's2-content',
-                            rangeStart: { name: 'entry', offset: { value: 100, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            rangeStart: { name: 'entry', offset: { value: 100, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
                             fill: 'both',
                             keyframeEffect: {
                                 name: 's2-fade',
@@ -334,8 +334,8 @@
                         // Slide 3 Enter
                         {
                             key: 'slide-3',
-                            rangeStart: { name: 'entry', offset: { value: 100, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            rangeStart: { name: 'entry', offset: { value: 100, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
                             fill: 'both',
                             keyframeEffect: {
                                 name: 's3-enter',
@@ -350,8 +350,8 @@
                         // Slide 3 Internal: Columns
                         {
                             key: 'col-1',
-                            rangeStart: { name: 'entry', offset: { value: 100, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            rangeStart: { name: 'entry', offset: { value: 100, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
                             fill: 'both',
                             keyframeEffect: {
                                 name: 'col-1-rise',
@@ -364,8 +364,8 @@
                         },
                         {
                             key: 'col-2',
-                            rangeStart: { name: 'entry', offset: { value: 100, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            rangeStart: { name: 'entry', offset: { value: 100, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
                             fill: 'both',
                             keyframeEffect: {
                                 name: 'col-2-rise',
@@ -378,8 +378,8 @@
                         },
                         {
                             key: 'col-3',
-                            rangeStart: { name: 'entry', offset: { value: 100, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            rangeStart: { name: 'entry', offset: { value: 100, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
                             fill: 'both',
                             keyframeEffect: {
                                 name: 'col-3-rise',

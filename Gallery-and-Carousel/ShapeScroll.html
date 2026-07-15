@@ -92,24 +92,24 @@
     <main class="animation-section">
         
         <!-- Invisible trigger elements for @wix/interact -->
-        <wix-interact-element data-wix-path="#trigger-2">
+        <interact-element data-interact-key="#trigger-2">
             <div id="trigger-2" class="trigger-area" style="top: 25%; height: 6.25%;"></div>
-        </wix-interact-element>
-        <wix-interact-element data-wix-path="#trigger-3">
+        </interact-element>
+        <interact-element data-interact-key="#trigger-3">
              <div id="trigger-3" class="trigger-area" style="top: 37.5%; height: 6.25%;"></div>
-        </wix-interact-element>
-        <wix-interact-element data-wix-path="#trigger-4">
+        </interact-element>
+        <interact-element data-interact-key="#trigger-4">
              <div id="trigger-4" class="trigger-area" style="top: 50%; height: 6.25%;"></div>
-        </wix-interact-element>
-        <wix-interact-element data-wix-path="#trigger-5">
+        </interact-element>
+        <interact-element data-interact-key="#trigger-5">
             <div id="trigger-5" class="trigger-area" style="top: 62.5%; height: 6.25%;"></div>
-        </wix-interact-element>
-        <wix-interact-element data-wix-path="#trigger-6">
+        </interact-element>
+        <interact-element data-interact-key="#trigger-6">
             <div id="trigger-6" class="trigger-area" style="top: 75%; height: 6.25%;"></div>
-        </wix-interact-element>
+        </interact-element>
 
         <!-- The six content containers, wrapped for @wix/interact -->
-        <wix-interact-element data-wix-path="#container-1">
+        <interact-element data-interact-key="#container-1">
             <!-- MODIFIED: Removed gradient classes, added background-image style -->
             <div id="container-1" class="content-panel" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2070&auto=format&fit=crop');">
                 <!-- MODIFIED: Added gradient overlay and padding to this wrapper -->
@@ -118,9 +118,9 @@
                     <p class="mt-2 text-lg md:text-xl text-gray-200">This is the starting point.</p>
                 </div>
             </div>
-        </wix-interact-element>
+        </interact-element>
 
-        <wix-interact-element data-wix-path="#container-2">
+        <interact-element data-interact-key="#container-2">
             <!-- MODIFIED: Removed gradient classes, added background-image style -->
             <div id="container-2" class="content-panel" style="background-image: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2070&auto=format&fit=crop');">
                  <!-- MODIFIED: Added gradient overlay and padding to this wrapper -->
@@ -129,9 +129,9 @@
                     <p class="mt-2 text-lg md:text-xl text-gray-200">Revealed by scrolling.</p>
                 </div>
             </div>
-        </wix-interact-element>
+        </interact-element>
 
-        <wix-interact-element data-wix-path="#container-3">
+        <interact-element data-interact-key="#container-3">
             <!-- MODIFIED: Removed gradient classes, added background-image style -->
             <div id="container-3" class="content-panel" style="background-image: url('https://images.unsplash.com/photo-1470770841072-f978cf4d019e?q=80&w=2070&auto=format&fit=crop');">
                  <!-- MODIFIED: Added gradient overlay and padding to this wrapper -->
@@ -140,9 +140,9 @@
                     <p class="mt-2 text-lg md:text-xl text-gray-200">And another one.</p>
                 </div>
             </div>
-        </wix-interact-element>
+        </interact-element>
 
-        <wix-interact-element data-wix-path="#container-4">
+        <interact-element data-interact-key="#container-4">
             <!-- MODIFIED: Removed gradient classes, added background-image style -->
             <div id="container-4" class="content-panel" style="background-image: url('https://images.unsplash.com/photo-1418065460487-3e41a6c84dc5?q=80&w=2070&auto=format&fit=crop');">
                  <!-- MODIFIED: Added gradient overlay and padding to this wrapper -->
@@ -151,9 +151,9 @@
                     <p class="mt-2 text-lg md:text-xl text-gray-200">Keep scrolling...</p>
                 </div>
             </div>
-        </wix-interact-element>
+        </interact-element>
 
-        <wix-interact-element data-wix-path="#container-5">
+        <interact-element data-interact-key="#container-5">
             <!-- MODIFIED: Removed gradient classes, added background-image style -->
             <div id="container-5" class="content-panel" style="background-image: url('https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?q=80&w=2070&auto=format&fit=crop');">
                  <!-- MODIFIED: Added gradient overlay and padding to this wrapper -->
@@ -162,9 +162,9 @@
                     <p class="mt-2 text-lg md:text-xl text-gray-200">Almost there.</p>
                 </div>
             </div>
-        </wix-interact-element>
+        </interact-element>
             
-        <wix-interact-element data-wix-path="#container-6">
+        <interact-element data-interact-key="#container-6">
             <!-- MODIFIED: Removed gradient classes, added background-image style -->
             <div id="container-6" class="content-panel" style="background-image: url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=2073&auto=format&fit=crop');">
                  <!-- MODIFIED: Added gradient overlay and padding to this wrapper -->
@@ -173,13 +173,13 @@
                     <p class="mt-2 text-lg md:text-xl text-gray-200">The final reveal.</p>
                 </div>
             </div>
-        </wix-interact-element>
+        </interact-element>
     </main>
 
     <!-- Import and configure @wix/interact -->
     <!-- NO CHANGES WERE MADE TO THIS SCRIPT BLOCK -->
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         const interactConfig = {
             interactions: [
@@ -196,8 +196,8 @@
                                 { clipPath: 'circle(80% at center)' }
                             ]
                         },
-                        rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 } },
-                        rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 } },
+                        rangeStart: { name: 'cover', offset: { unit: 'percentage', value: 0 } },
+                        rangeEnd: { name: 'cover', offset: { unit: 'percentage', value: 100 } },
                         easing: 'linear',
                         fill: 'both'
                     }]
@@ -215,8 +215,8 @@
                                 { clipPath: 'circle(80% at center)' }
                             ]
                         },
-                        rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 } },
-                        rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 } },
+                        rangeStart: { name: 'cover', offset: { unit: 'percentage', value: 0 } },
+                        rangeEnd: { name: 'cover', offset: { unit: 'percentage', value: 100 } },
                         easing: 'linear',
                         fill: 'both'
                     }]
@@ -234,8 +234,8 @@
                                 { clipPath: 'circle(80% at center)' }
                             ]
                         },
-                        rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 } },
-                        rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 } },
+                        rangeStart: { name: 'cover', offset: { unit: 'percentage', value: 0 } },
+                        rangeEnd: { name: 'cover', offset: { unit: 'percentage', value: 100 } },
                         easing: 'linear',
                         fill: 'both'
                     }]
@@ -253,8 +253,8 @@
                                 { clipPath: 'circle(80% at center)' }
                             ]
                         },
-                        rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 } },
-                        rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 } },
+                        rangeStart: { name: 'cover', offset: { unit: 'percentage', value: 0 } },
+                        rangeEnd: { name: 'cover', offset: { unit: 'percentage', value: 100 } },
                         easing: 'linear',
                         fill: 'both'
                     }]
@@ -272,8 +272,8 @@
                                 { clipPath: 'circle(80% at center)' }
                             ]
                         },
-                        rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 } },
-                        rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 } },
+                        rangeStart: { name: 'cover', offset: { unit: 'percentage', value: 0 } },
+                        rangeEnd: { name: 'cover', offset: { unit: 'percentage', value: 100 } },
                         easing: 'linear',
                         fill: 'both'
                     }]

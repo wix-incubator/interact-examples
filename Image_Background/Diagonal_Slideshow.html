@@ -264,7 +264,7 @@
     // ─── Load @wix/interact ───
     let Interact;
     try {
-      const mod = await import('https://esm.sh/@wix/interact/web');
+      const mod = await import('https://esm.sh/@wix/interact@2.5.1/web');
       Interact = mod.Interact;
     } catch (e) {
       console.warn('Wix Interact failed to load:', e);
@@ -647,8 +647,8 @@
           trigger: 'viewProgress',
           effects: [{
             key: `title-${i}`,
-            rangeStart: { name: 'exit', offset: { value: 0, type: 'percentage' } },
-            rangeEnd:   { name: 'exit', offset: { value: 100, type: 'percentage' } },
+            rangeStart: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
+            rangeEnd:   { name: 'exit', offset: { value: 100, unit: 'percentage' } },
             fill: 'forwards',
             keyframeEffect: {
               name: `titleDiag${i}`,

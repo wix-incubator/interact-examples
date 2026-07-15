@@ -170,7 +170,7 @@
     </interact-element>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         const config = {
             effects: {
@@ -178,8 +178,8 @@
                     key: 'mask-L',
                     fill: 'both',
                     composite: 'replace',
-                    rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
-                    rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                    rangeStart: { name: 'cover', offset: { value: 0, unit: 'percentage' } },
+                    rangeEnd: { name: 'cover', offset: { value: 100, unit: 'percentage' } },
                     keyframeEffect: {
                         name: 'close-L',
                         keyframes: [
@@ -193,8 +193,8 @@
                     key: 'mask-R',
                     fill: 'both',
                     composite: 'replace',
-                    rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
-                    rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                    rangeStart: { name: 'cover', offset: { value: 0, unit: 'percentage' } },
+                    rangeEnd: { name: 'cover', offset: { value: 100, unit: 'percentage' } },
                     keyframeEffect: {
                         name: 'close-R',
                         keyframes: [
@@ -208,8 +208,8 @@
                     key: 'mask-T',
                     fill: 'both',
                     composite: 'replace',
-                    rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
-                    rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                    rangeStart: { name: 'cover', offset: { value: 0, unit: 'percentage' } },
+                    rangeEnd: { name: 'cover', offset: { value: 100, unit: 'percentage' } },
                     keyframeEffect: {
                         name: 'close-T',
                         keyframes: [
@@ -223,8 +223,8 @@
                     key: 'mask-B',
                     fill: 'both',
                     composite: 'replace',
-                    rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
-                    rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                    rangeStart: { name: 'cover', offset: { value: 0, unit: 'percentage' } },
+                    rangeEnd: { name: 'cover', offset: { value: 100, unit: 'percentage' } },
                     keyframeEffect: {
                         name: 'close-B',
                         keyframes: [
@@ -237,8 +237,8 @@
                 'fade-text-1': {
                     key: 'primary-text',
                     fill: 'both',
-                    rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
-                    rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                    rangeStart: { name: 'cover', offset: { value: 0, unit: 'percentage' } },
+                    rangeEnd: { name: 'cover', offset: { value: 100, unit: 'percentage' } },
                     keyframeEffect: {
                         name: 'out-1',
                         keyframes: [
@@ -252,8 +252,8 @@
                 'fade-text-2': {
                     key: 'secondary-text',
                     fill: 'both',
-                    rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
-                    rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                    rangeStart: { name: 'cover', offset: { value: 0, unit: 'percentage' } },
+                    rangeEnd: { name: 'cover', offset: { value: 100, unit: 'percentage' } },
                     keyframeEffect: {
                         name: 'in-2',
                         keyframes: [
@@ -267,8 +267,8 @@
                 'center-dot-reveal': {
                     key: 'center-dot',
                     fill: 'both',
-                    rangeStart: { name: 'cover', offset: { value: 0, type: 'percentage' } },
-                    rangeEnd: { name: 'cover', offset: { value: 100, type: 'percentage' } },
+                    rangeStart: { name: 'cover', offset: { value: 0, unit: 'percentage' } },
+                    rangeEnd: { name: 'cover', offset: { value: 100, unit: 'percentage' } },
                     keyframeEffect: {
                         name: 'dot-in',
                         keyframes: [

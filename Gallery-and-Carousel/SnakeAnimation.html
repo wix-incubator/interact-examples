@@ -6,7 +6,7 @@
   <title>Interactive Image Gallery with @wix/interact</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap" rel="stylesheet" />
-  <script type="module" src="https://esm.sh/@wix/interact@1.79.0"></script>
+  <script type="module" src="https://esm.sh/@wix/interact@2.5.1/web"></script>
   
   <style>
     /* CSS block */
@@ -56,7 +56,7 @@
     }
 
     /* Helper to make wrappers not interfere with layout */
-    wix-interact-element {
+    interact-element {
       display: contents;
     }
     #main-image-wrapper, #backdrop-wrapper {
@@ -71,27 +71,27 @@
 
   <div id="image-snake" class="absolute inset-0 w-full h-full"></div>
 
-  <wix-interact-element data-wix-path="#backdrop" id="backdrop-wrapper">
+  <interact-element data-interact-key="#backdrop" id="backdrop-wrapper">
     <div id="backdrop"></div>
-  </wix-interact-element>
+  </interact-element>
 
-  <wix-interact-element data-wix-path="#main-image-container" id="main-image-wrapper">
+  <interact-element data-interact-key="#main-image-container" id="main-image-wrapper">
     <div id="main-image-container">
       </div>
-  </wix-interact-element>
+  </interact-element>
 
   <div class="absolute inset-0 flex items-center justify-start pointer-events-none">
-    <wix-interact-element data-wix-path="#text-container">
+    <interact-element data-interact-key="#text-container">
       <div id="text-container" class="w-full max-w-2xl px-8 md:px-16 text-left flex flex-col justify-center" style="height: 20rem; z-index: 110;">
         <h1 id="main-title" class="text-3xl md:text-5xl font-bold text-white mb-2" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.7);"></h1>
         <h2 id="main-subtitle" class="text-lg md:text-xl font-light text-white" style="text-shadow: 1px 1px 4px rgba(0,0,0,0.7);"></h2>
       </div>
-    </wix-interact-element>
+    </interact-element>
   </div>
 
 <script type="module">
   // Import Interact
-  import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
+  import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
   document.addEventListener('DOMContentLoaded', () => {
 
@@ -325,8 +325,8 @@
         
         // --- CONVERTED TO @wix/interact ---
         // Get the wrapped elements and trigger effects
-        const textWrapper = document.querySelector('[data-wix-path="#text-container"]');
-        const backdropWrapper = document.querySelector('[data-wix-path="#backdrop"]');
+        const textWrapper = document.querySelector('[data-interact-key="#text-container"]');
+        const backdropWrapper = document.querySelector('[data-interact-key="#backdrop"]');
         
         if (textWrapper) textWrapper.toggleEffect('text-fade-in', 'add');
         if (backdropWrapper) backdropWrapper.toggleEffect('backdrop-fade-in', 'add');
@@ -352,8 +352,8 @@
       const img = mainImageContainer.querySelector('img');
 
       // --- CONVERTED TO @wix/interact ---
-      const imageWrapper = document.querySelector('[data-wix-path="#main-image-container"]');
-      const textWrapper = document.querySelector('[data-wix-path="#text-container"]');
+      const imageWrapper = document.querySelector('[data-interact-key="#main-image-container"]');
+      const textWrapper = document.querySelector('[data-interact-key="#text-container"]');
 
       if (imageWrapper) imageWrapper.toggleEffect('image-cycle-out', 'add');
       if (textWrapper) textWrapper.toggleEffect('text-fade-out', 'add');
@@ -392,9 +392,9 @@
       isEnlarged = false; // We are no longer in the main view
       
       // --- CONVERTED TO @wix/interact ---
-      const imageWrapper = document.querySelector('[data-wix-path="#main-image-container"]');
-      const textWrapper = document.querySelector('[data-wix-path="#text-container"]');
-      const backdropWrapper = document.querySelector('[data-wix-path="#backdrop"]');
+      const imageWrapper = document.querySelector('[data-interact-key="#main-image-container"]');
+      const textWrapper = document.querySelector('[data-interact-key="#text-container"]');
+      const backdropWrapper = document.querySelector('[data-interact-key="#backdrop"]');
 
       if (imageWrapper) imageWrapper.toggleEffect('image-dismiss', 'add');
       if (textWrapper) textWrapper.toggleEffect('text-fade-out', 'add');
@@ -434,9 +434,9 @@
         mainImageContainer.removeEventListener('click', cycleImage);
         
         // Force-hide @wix/interact elements
-        const imageWrapper = document.querySelector('[data-wix-path="#main-image-container"]');
-        const textWrapper = document.querySelector('[data-wix-path="#text-container"]');
-        const backdropWrapper = document.querySelector('[data-wix-path="#backdrop"]');
+        const imageWrapper = document.querySelector('[data-interact-key="#main-image-container"]');
+        const textWrapper = document.querySelector('[data-interact-key="#text-container"]');
+        const backdropWrapper = document.querySelector('[data-interact-key="#backdrop"]');
         if (imageWrapper) imageWrapper.toggleEffect('image-dismiss', 'add');
         if (textWrapper) textWrapper.toggleEffect('text-fade-out', 'add');
         if (backdropWrapper) backdropWrapper.toggleEffect('backdrop-fade-out', 'add');

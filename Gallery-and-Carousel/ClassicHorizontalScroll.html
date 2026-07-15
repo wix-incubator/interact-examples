@@ -138,7 +138,7 @@
         The scroll-container is the source of our viewProgress trigger.
         Its large height creates the scrollable area needed to drive the animation.
     -->
-    <wix-interact-element data-wix-path="#scroll-container">
+    <interact-element data-interact-key="#scroll-container">
         <section id="scroll-container">
             <!-- 
                 This wrapper will be set to `position: sticky`, creating a fixed viewport
@@ -149,7 +149,7 @@
                     The horizontal-track is the target of our animation. It contains all the panels
                     and will be transformed on the X-axis based on scroll progress.
                 -->
-                <wix-interact-element data-wix-path="#horizontal-track">
+                <interact-element data-interact-key="#horizontal-track">
                     <div id="horizontal-track">
                         
                         <div class="panel panel-one">
@@ -233,13 +233,13 @@
                         </div>
 
                     </div>
-                </wix-interact-element>
+                </interact-element>
             </div>
         </section>
-    </wix-interact-element>
+    </interact-element>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         // Define the interaction configuration
         // This is unchanged, as requested.
@@ -267,9 +267,9 @@
                             },
                             // The animation starts when the scroll container begins to be "contained"
                             // (i.e., when the sticky wrapper sticks to the top).
-                            rangeStart: { name: 'contain', offset: { type: 'percentage', value: 0 } },
+                            rangeStart: { name: 'contain', offset: { unit: 'percentage', value: 0 } },
                             // The animation ends when the scroll container is fully scrolled through.
-                            rangeEnd: { name: 'contain', offset: { type: 'percentage', value: 100 } },
+                            rangeEnd: { name: 'contain', offset: { unit: 'percentage', value: 100 } },
                             // Linear easing creates a direct 1-to-1 mapping between scroll and animation progress.
                             easing: 'linear',
                             // `fill: 'both'` ensures the animation state is applied before it starts and after it ends.

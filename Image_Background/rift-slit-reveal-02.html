@@ -161,15 +161,15 @@
   </interact-element>
 
   <script type="module">
-    import { Interact } from 'https://esm.sh/@wix/interact/web';
+    import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
     Interact.create({
       interactions: [
         {
           key: 'subtitle',
           trigger: 'viewEnter',
-          params: { type: 'once' },
           effects: [{
+            triggerType: 'once',
             keyframeEffect: {
               name: 'sub-in',
               keyframes: [
@@ -186,8 +186,8 @@
         {
           key: 'rift',
           trigger: 'viewEnter',
-          params: { type: 'once' },
           effects: [{
+            triggerType: 'once',
             keyframeEffect: {
               name: 'rift-in',
               keyframes: [

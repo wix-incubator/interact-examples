@@ -146,7 +146,7 @@
     </section>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         const STACK_GAP = 250;
         const SCROLL_SPEED = 1;
@@ -185,8 +185,8 @@
                     name: 'card-' + (i + 1) + '-scale',
                     keyframes: [{ transform: 'scale(1)' }, { transform: 'scale(0.8)' }]
                 },
-                rangeStart: { name: 'cover', offset: { type: 'percentage', value: Math.round(startPct) } },
-                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: Math.round(endPct) } },
+                rangeStart: { name: 'cover', offset: { unit: 'percentage', value: Math.round(startPct) } },
+                rangeEnd: { name: 'cover', offset: { unit: 'percentage', value: Math.round(endPct) } },
                 fill: 'both',
                 composite: 'add',
                 easing: 'linear'

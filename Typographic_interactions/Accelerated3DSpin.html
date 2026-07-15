@@ -189,7 +189,7 @@
     <interact-element data-interact-key="scroll-observer" style="position: absolute; top: 0; left: 0; width: 100%; height: 500vh; pointer-events: none; z-index: -1;"></interact-element>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         /**
          * MomentumSpin3D Preset Configuration
@@ -201,9 +201,9 @@
                     // MomentumSpin3D: Idle Component
                     key: 'main-title',
                     trigger: 'viewEnter',
-                    params: { type: 'once' },
                     effects: [
                         {
+                            triggerType: 'once',
                             duration: 12000, 
                             iterations: Infinity,
                             easing: 'linear',
@@ -226,8 +226,8 @@
                     effects: [
                         {
                             key: 'main-title',
-                            rangeStart: { name: 'entry', offset: { value: 0, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } },
+                            rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
                             fill: 'both',
                             composite: 'add', 
                             keyframeEffect: {

@@ -386,7 +386,7 @@
     window.addEventListener('unhandledrejection', e => document.title = 'REJ: ' + e.reason);
     let Interact;
     try {
-      ({ Interact } = await import('https://esm.sh/@wix/interact@2.2.1/web'));
+      ({ Interact } = await import('https://esm.sh/@wix/interact@2.5.1/web'));
       console.log('[interact] loaded', Interact, 'ViewTimeline?', typeof ViewTimeline);
     } catch (err) {
       document.title = 'IMPORT FAIL: ' + err.message;

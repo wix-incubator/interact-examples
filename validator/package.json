@@ -1,0 +1,21 @@
+{
+  "name": "interact-validator",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test",
+    "build:vendor": "node scripts/build-vendor.mjs"
+  },
+  "dependencies": {
+    "diff": "^7.0.0",
+    "express": "^4.21.0",
+    "fast-png": "^8.0.0",
+    "gifenc": "^1.0.3",
+    "playwright": "^1.61.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1"
+  }
+}

@@ -111,9 +111,9 @@
         }
         
         /* * We must wrap each element we reference in the config
-         * in a wix-interact-element.
+         * in a interact-element.
         */
-        wix-interact-element {
+        interact-element {
             /* These wrappers need to respect the layout of their children */
             display: contents;
         }
@@ -129,54 +129,54 @@
 
     <!-- 
       Section 2: The 3D Scroll Experience 
-      The wix-interact-element wraps the scroll-wrapper.
+      The interact-element wraps the scroll-wrapper.
       The scroll-wrapper is the *source* of the 'viewProgress' trigger.
     -->
-    <wix-interact-element data-wix-path="#scroll-wrapper">
+    <interact-element data-interact-key="#scroll-wrapper">
         <div id="scroll-wrapper">
             <div class="sticky-container">
                 <!-- 
                   Each panel is also wrapped.
                   These are the *targets* of the animation effects.
                 -->
-                <wix-interact-element data-wix-path="#panel-1">
+                <interact-element data-interact-key="#panel-1">
                     <div class="panel" id="panel-1">
                         Panel One
                     </div>
-                </wix-interact-element>
+                </interact-element>
 
-                <wix-interact-element data-wix-path="#panel-2">
+                <interact-element data-interact-key="#panel-2">
                     <div class="panel" id="panel-2">
                         Panel Two
                     </div>
-                </wix-interact-element>
+                </interact-element>
                 
-                <wix-interact-element data-wix-path="#panel-3">
+                <interact-element data-interact-key="#panel-3">
                     <div class="panel" id="panel-3">
                         Panel Three
                     </div>
-                </wix-interact-element>
+                </interact-element>
 
-                <wix-interact-element data-wix-path="#panel-4">
+                <interact-element data-interact-key="#panel-4">
                     <div class="panel" id="panel-4">
                         Panel Four
                     </div>
-                </wix-interact-element>
+                </interact-element>
 
-                <wix-interact-element data-wix-path="#panel-5">
+                <interact-element data-interact-key="#panel-5">
                     <div class="panel" id="panel-5">
                         Panel Five
                     </div>
-                </wix-interact-element>
+                </interact-element>
 
-                <wix-interact-element data-wix-path="#panel-6">
+                <interact-element data-interact-key="#panel-6">
                     <div class="panel" id="panel-6">
                         Panel Six
                     </div>
-                </wix-interact-element>
+                </interact-element>
             </div>
         </div>
-    </wix-interact-element>
+    </interact-element>
 
     <!-- Section 3: Final spacer -->
     <section class="spacer">
@@ -187,12 +187,12 @@
       Import @wix/interact as a module.
       The configuration script MUST also be type="module".
     -->
-    <script type="module" src="https://esm.sh/@wix/interact@1.78.0"></script>
+    <script type="module" src="https://esm.sh/@wix/interact@2.5.1/web"></script>
     
     <!-- Configuration Script -->
     <script type="module">
         // Import the Interact class
-        import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         // This is the 3D keyframe animation all panels will use.
         // It's a keyframeEffect as required by the docs for 3D perspective.
@@ -235,8 +235,8 @@
                                 keyframes: panel3DKeyframes,
                                 offset: [0, 0.33, 0.66, 1.0]
                             },
-                            rangeStart: { name: 'contain', offset: { type: 'percentage', value: 0 } },
-                            rangeEnd: { name: 'contain', offset: { type: 'percentage', value: 16.67 } },
+                            rangeStart: { name: 'contain', offset: { unit: 'percentage', value: 0 } },
+                            rangeEnd: { name: 'contain', offset: { unit: 'percentage', value: 16.67 } },
                             easing: 'linear',
                             fill: 'both'
                         },
@@ -247,8 +247,8 @@
                                 keyframes: panel3DKeyframes,
                                 offset: [0, 0.33, 0.66, 1.0]
                             },
-                            rangeStart: { name: 'contain', offset: { type: 'percentage', value: 16.67 } },
-                            rangeEnd: { name: 'contain', offset: { type: 'percentage', value: 33.33 } },
+                            rangeStart: { name: 'contain', offset: { unit: 'percentage', value: 16.67 } },
+                            rangeEnd: { name: 'contain', offset: { unit: 'percentage', value: 33.33 } },
                             easing: 'linear',
                             fill: 'both'
                         },
@@ -259,8 +259,8 @@
                                 keyframes: panel3DKeyframes,
                                 offset: [0, 0.33, 0.66, 1.0]
                             },
-                            rangeStart: { name: 'contain', offset: { type: 'percentage', value: 33.33 } },
-                            rangeEnd: { name: 'contain', offset: { type: 'percentage', value: 50 } },
+                            rangeStart: { name: 'contain', offset: { unit: 'percentage', value: 33.33 } },
+                            rangeEnd: { name: 'contain', offset: { unit: 'percentage', value: 50 } },
                             easing: 'linear',
                             fill: 'both'
                         },
@@ -271,8 +271,8 @@
                                 keyframes: panel3DKeyframes,
                                 offset: [0, 0.33, 0.66, 1.0]
                             },
-                            rangeStart: { name: 'contain', offset: { type: 'percentage', value: 50 } },
-                            rangeEnd: { name: 'contain', offset: { type: 'percentage', value: 66.67 } },
+                            rangeStart: { name: 'contain', offset: { unit: 'percentage', value: 50 } },
+                            rangeEnd: { name: 'contain', offset: { unit: 'percentage', value: 66.67 } },
                             easing: 'linear',
                             fill: 'both'
                         },
@@ -283,8 +283,8 @@
                                 keyframes: panel3DKeyframes,
                                 offset: [0, 0.33, 0.66, 1.0]
                             },
-                            rangeStart: { name: 'contain', offset: { type: 'percentage', value: 66.67 } },
-                            rangeEnd: { name: 'contain', offset: { type: 'percentage', value: 83.33 } },
+                            rangeStart: { name: 'contain', offset: { unit: 'percentage', value: 66.67 } },
+                            rangeEnd: { name: 'contain', offset: { unit: 'percentage', value: 83.33 } },
                             easing: 'linear',
                             fill: 'both'
                         },
@@ -295,8 +295,8 @@
                                 keyframes: panel3DKeyframes,
                                 offset: [0, 0.33, 0.66, 1.0]
                             },
-                            rangeStart: { name: 'contain', offset: { type: 'percentage', value: 83.33 } },
-                            rangeEnd: { name: 'contain', offset: { type: 'percentage', value: 100 } },
+                            rangeStart: { name: 'contain', offset: { unit: 'percentage', value: 83.33 } },
+                            rangeEnd: { name: 'contain', offset: { unit: 'percentage', value: 100 } },
                             easing: 'linear',
                             fill: 'both'
                         }
