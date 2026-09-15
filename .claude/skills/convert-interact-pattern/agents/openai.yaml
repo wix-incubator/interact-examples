@@ -1,0 +1,4 @@
+interface:
+  display_name: "Convert Interact Pattern"
+  short_description: "Convert HTML demos to reusable animation pattern guidelines."
+  default_prompt: "Convert this full HTML @wix/interact animation demo into a prose pattern guideline with selector roles, adaptation rules, required styles, suggested controls, and an interact template. Ask whether the target is a Wix composition to apply Wix DOM mapping. Return it inline or as a markdown file."
