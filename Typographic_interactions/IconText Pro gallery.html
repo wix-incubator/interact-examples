@@ -290,7 +290,7 @@
     </main>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@2.0.0-rc.6/web';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         document.addEventListener("DOMContentLoaded", () => {
             const container = document.getElementById('feature-container');
@@ -333,6 +333,7 @@
                                 { width: v.ow, zIndex: 10 }
                             ]
                         },
+                        triggerType: 'alternate',
                         duration: Math.round(800 / v.spd),
                         easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
                         fill: 'both'
@@ -345,6 +346,7 @@
                                 { opacity: 1, transform: 'translateY(0)' }
                             ]
                         },
+                        triggerType: 'alternate',
                         duration: Math.round(400 / v.spd),
                         delay: Math.round(250 / v.spd),
                         easing: 'ease-out',
@@ -358,6 +360,7 @@
                                 { transform: 'translate(' + v.iTx + 'px, ' + v.iTy + 'px) scale(0.9)', opacity: 1 }
                             ]
                         },
+                        triggerType: 'alternate',
                         duration: Math.round(800 / v.spd),
                         easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
                         fill: 'both'
@@ -373,7 +376,6 @@
                     key,
                     trigger: 'hover',
                     conditions: ['desktop'],
-                    params: { type: 'alternate' },
                     effects: [
                         { key, selector: cardSelector, effectId: 'h-expand' },
                         { key, selector: `${cardSelector} .feature-text-group`, effectId: 'reveal' },

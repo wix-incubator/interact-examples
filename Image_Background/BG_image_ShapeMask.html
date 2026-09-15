@@ -189,7 +189,7 @@
   <script type="module">
     let Interact;
     try {
-      const mod = await import('https://esm.sh/@wix/interact@2.0.0-rc.4/web');
+      const mod = await import('https://esm.sh/@wix/interact@2.5.1/web');
       Interact = mod.Interact;
     } catch (e) {
       console.warn('Wix Interact failed to load:', e);
@@ -225,7 +225,8 @@
                 rangeEnd:   { name: 'exit',  offset: { value: 0, unit: 'percentage' } },
               },
 
-              /* ── Black: circle reveal over the image ── */
+              /* ── Black: circle grows from 0% (image fully shown) to full cover,
+                    mapped to the pinned "contain" phase so it starts at zero ── */
               {
                 key: 'bg-black',
                 fill: 'both',
@@ -236,13 +237,11 @@
                   name: 'reveal-black',
                   keyframes: [
                     { clipPath: 'circle(0% at 50% 50%)',   offset: 0 },
-                    { clipPath: 'circle(0% at 50% 50%)',   offset: 0.25 },
-                    { clipPath: 'circle(150% at 50% 50%)', offset: 0.75 },
                     { clipPath: 'circle(150% at 50% 50%)', offset: 1 },
                   ],
                 },
-                rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
-                rangeEnd:   { name: 'exit',  offset: { value: 0, unit: 'percentage' } },
+                rangeStart: { name: 'contain', offset: { value: 0,   unit: 'percentage' } },
+                rangeEnd:   { name: 'contain', offset: { value: 100, unit: 'percentage' } },
               },
             ],
           },

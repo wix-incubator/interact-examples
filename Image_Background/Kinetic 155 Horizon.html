@@ -93,7 +93,7 @@
     <div class="h-[20vh] bg-transparent"></div>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact/web';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         /**
          * Preset: Kinetic 155 Horizon
@@ -141,9 +141,9 @@
                 {
                     key: 'hover-layer',
                     trigger: 'hover',
-                    params: { method: 'toggle' },
                     effects: [
                         {
+                            stateAction: 'toggle',
                             transition: {
                                 duration: 400,
                                 easing: 'cubic-bezier(0.33, 1, 0.68, 1)',

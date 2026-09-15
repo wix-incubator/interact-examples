@@ -1,0 +1,5 @@
+# Validator sidecar drafts — written under the repo root (server runs with
+# root = repo root), so ignore both the root and validator-local locations.
+/.drafts/
+validator/.drafts/
+validator/node_modules/

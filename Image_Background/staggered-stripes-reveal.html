@@ -350,7 +350,7 @@
   </section>
 
   <script type="module">
-    import { Interact } from 'https://esm.sh/@wix/interact/web';
+    import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
     const EASE_OUT = 'cubic-bezier(0.33, 1, 0.68, 1)';
 
@@ -461,9 +461,9 @@
         {
           key: 'hero-scroll',
           trigger: 'viewEnter',
-          params: { type: 'state' },
           effects: [
             {
+              triggerType: 'state',
               selector: '.hero__scroll-arrow',
               keyframeEffect: {
                 name: 'arrow-bounce',
@@ -485,9 +485,10 @@
         {
           key: 'hero-content',
           trigger: 'viewEnter',
-          params: { type: 'once', threshold: 0.1 },
+          params: { threshold: 0.1 },
           effects: [
             {
+              triggerType: 'once',
               keyframeEffect: {
                 name: 'hero-title-in',
                 keyframes: [

@@ -1,0 +1,1367 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "interact-experience/1.0"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "elements": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/ElementEntry"
+      }
+    },
+    "styles": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/StyleRule"
+      }
+    },
+    "interact": {
+      "$ref": "#/$defs/ExperienceInteractConfig"
+    },
+    "controls": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Control"
+      }
+    },
+    "disableWhen": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "mediaQuery": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "mediaQuery"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "previewUrl": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "$schema",
+    "id",
+    "name",
+    "elements",
+    "interact",
+    "controls"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "ElementEntry": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string",
+          "minLength": 1
+        },
+        "styles": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "selector"
+      ],
+      "additionalProperties": false
+    },
+    "StyleRule": {
+      "type": "object",
+      "properties": {
+        "selector": {
+          "type": "string",
+          "minLength": 1
+        },
+        "properties": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "mediaQuery": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "selector",
+        "properties"
+      ],
+      "additionalProperties": false
+    },
+    "ExperienceInteractConfig": {
+      "type": "object",
+      "properties": {
+        "effects": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/Effect"
+          }
+        },
+        "sequences": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/Sequence"
+          }
+        },
+        "conditions": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/InteractCondition"
+          }
+        },
+        "interactions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExperienceInteraction"
+          }
+        }
+      },
+      "required": [
+        "effects",
+        "interactions"
+      ],
+      "additionalProperties": false
+    },
+    "Effect": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "effectId": {
+          "type": "string"
+        },
+        "selector": {
+          "type": "string"
+        },
+        "listContainer": {
+          "type": "string"
+        },
+        "listItemSelector": {
+          "type": "string"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "namedEffect": {
+          "$ref": "#/$defs/NamedEffect"
+        },
+        "keyframeEffect": {
+          "$ref": "#/$defs/KeyframeEffect"
+        },
+        "duration": {
+          "type": "number"
+        },
+        "easing": {
+          "type": "string"
+        },
+        "iterations": {
+          "type": "number"
+        },
+        "alternate": {
+          "type": "boolean"
+        },
+        "reversed": {
+          "type": "boolean"
+        },
+        "delay": {
+          "type": "number"
+        },
+        "fill": {
+          "type": "string",
+          "enum": [
+            "none",
+            "forwards",
+            "backwards",
+            "both"
+          ]
+        },
+        "composite": {
+          "type": "string",
+          "enum": [
+            "replace",
+            "add",
+            "accumulate"
+          ]
+        },
+        "triggerType": {
+          "$ref": "#/$defs/EffectTriggerType"
+        },
+        "rangeStart": {
+          "$ref": "#/$defs/RangeOffset"
+        },
+        "rangeEnd": {
+          "$ref": "#/$defs/RangeOffset"
+        },
+        "centeredToTarget": {
+          "type": "boolean"
+        },
+        "transitionDuration": {
+          "type": "number"
+        },
+        "transitionDelay": {
+          "type": "number"
+        },
+        "transitionEasing": {
+          "type": "string",
+          "enum": [
+            "linear",
+            "hardBackOut",
+            "easeOut",
+            "elastic",
+            "bounce"
+          ]
+        },
+        "stateAction": {
+          "type": "string",
+          "enum": [
+            "add",
+            "remove",
+            "toggle",
+            "clear"
+          ]
+        },
+        "transition": {
+          "type": "object",
+          "properties": {
+            "duration": {
+              "type": "number"
+            },
+            "delay": {
+              "type": "number"
+            },
+            "easing": {
+              "type": "string"
+            },
+            "styleProperties": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "value"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "styleProperties"
+          ],
+          "additionalProperties": false
+        },
+        "transitionProperties": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              },
+              "duration": {
+                "type": "number"
+              },
+              "delay": {
+                "type": "number"
+              },
+              "easing": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "value"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "NamedEffect": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": {}
+    },
+    "KeyframeEffect": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "keyframes": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Keyframe"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "keyframes"
+      ],
+      "additionalProperties": false
+    },
+    "Keyframe": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          }
+        ]
+      }
+    },
+    "EffectTriggerType": {
+      "type": "string",
+      "enum": [
+        "once",
+        "repeat",
+        "alternate",
+        "state"
+      ]
+    },
+    "RangeOffset": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "enum": [
+            "entry",
+            "exit",
+            "contain",
+            "cover",
+            "entry-crossing",
+            "exit-crossing"
+          ]
+        },
+        "offset": {
+          "$ref": "#/$defs/LengthPercentage"
+        }
+      },
+      "additionalProperties": false
+    },
+    "LengthPercentage": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "type": "string",
+              "enum": [
+                "px",
+                "em",
+                "rem",
+                "vh",
+                "vw",
+                "vmin",
+                "vmax"
+              ]
+            }
+          },
+          "required": [
+            "value",
+            "unit"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "type": "string",
+              "const": "percentage"
+            }
+          },
+          "required": [
+            "value",
+            "unit"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "Sequence": {
+      "type": "object",
+      "properties": {
+        "effects": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/TimeEffect"
+              },
+              {
+                "$ref": "#/$defs/EffectRef"
+              }
+            ]
+          }
+        },
+        "delay": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "offsetEasing": {
+          "type": "string"
+        },
+        "triggerType": {
+          "$ref": "#/$defs/SequenceTriggerType"
+        },
+        "sequenceId": {
+          "type": "string"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "effects"
+      ],
+      "additionalProperties": false
+    },
+    "TimeEffect": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "effectId": {
+          "type": "string"
+        },
+        "selector": {
+          "type": "string"
+        },
+        "listContainer": {
+          "type": "string"
+        },
+        "listItemSelector": {
+          "type": "string"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "namedEffect": {
+          "$ref": "#/$defs/NamedEffect"
+        },
+        "keyframeEffect": {
+          "$ref": "#/$defs/KeyframeEffect"
+        },
+        "duration": {
+          "type": "number"
+        },
+        "easing": {
+          "type": "string"
+        },
+        "iterations": {
+          "type": "number"
+        },
+        "alternate": {
+          "type": "boolean"
+        },
+        "reversed": {
+          "type": "boolean"
+        },
+        "delay": {
+          "type": "number"
+        },
+        "fill": {
+          "type": "string",
+          "enum": [
+            "none",
+            "forwards",
+            "backwards",
+            "both"
+          ]
+        },
+        "composite": {
+          "type": "string",
+          "enum": [
+            "replace",
+            "add",
+            "accumulate"
+          ]
+        },
+        "triggerType": {
+          "$ref": "#/$defs/EffectTriggerType"
+        },
+        "rangeStart": {
+          "$ref": "#/$defs/RangeOffset"
+        },
+        "rangeEnd": {
+          "$ref": "#/$defs/RangeOffset"
+        },
+        "centeredToTarget": {
+          "type": "boolean"
+        },
+        "transitionDuration": {
+          "type": "number"
+        },
+        "transitionDelay": {
+          "type": "number"
+        },
+        "transitionEasing": {
+          "type": "string",
+          "enum": [
+            "linear",
+            "hardBackOut",
+            "easeOut",
+            "elastic",
+            "bounce"
+          ]
+        },
+        "stateAction": {
+          "type": "string",
+          "enum": [
+            "add",
+            "remove",
+            "toggle",
+            "clear"
+          ]
+        },
+        "transition": {
+          "type": "object",
+          "properties": {
+            "duration": {
+              "type": "number"
+            },
+            "delay": {
+              "type": "number"
+            },
+            "easing": {
+              "type": "string"
+            },
+            "styleProperties": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "value"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "styleProperties"
+          ],
+          "additionalProperties": false
+        },
+        "transitionProperties": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              },
+              "duration": {
+                "type": "number"
+              },
+              "delay": {
+                "type": "number"
+              },
+              "easing": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "value"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false,
+      "$ref": "#/$defs/Effect"
+    },
+    "EffectRef": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "effectId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "selector": {
+          "type": "string"
+        },
+        "listContainer": {
+          "type": "string"
+        },
+        "listItemSelector": {
+          "type": "string"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "effectId"
+      ],
+      "additionalProperties": false
+    },
+    "SequenceTriggerType": {
+      "type": "string",
+      "enum": [
+        "once",
+        "repeat",
+        "alternate",
+        "state"
+      ]
+    },
+    "InteractCondition": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "media",
+            "selector"
+          ]
+        },
+        "predicate": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "ExperienceInteraction": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "selector": {
+              "type": "string"
+            },
+            "listContainer": {
+              "type": "string"
+            },
+            "listItemSelector": {
+              "type": "string"
+            },
+            "conditions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Effect"
+                  },
+                  {
+                    "$ref": "#/$defs/EffectRef"
+                  }
+                ]
+              }
+            },
+            "sequences": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Sequence"
+                  },
+                  {
+                    "$ref": "#/$defs/SequenceRef"
+                  }
+                ]
+              }
+            },
+            "trigger": {
+              "type": "string",
+              "enum": [
+                "viewEnter",
+                "pageVisible"
+              ]
+            },
+            "params": {
+              "$ref": "#/$defs/ViewEnterParams"
+            }
+          },
+          "required": [
+            "key",
+            "trigger"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "selector": {
+              "type": "string"
+            },
+            "listContainer": {
+              "type": "string"
+            },
+            "listItemSelector": {
+              "type": "string"
+            },
+            "conditions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Effect"
+                  },
+                  {
+                    "$ref": "#/$defs/EffectRef"
+                  }
+                ]
+              }
+            },
+            "sequences": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Sequence"
+                  },
+                  {
+                    "$ref": "#/$defs/SequenceRef"
+                  }
+                ]
+              }
+            },
+            "trigger": {
+              "type": "string",
+              "const": "pointerMove"
+            },
+            "params": {
+              "$ref": "#/$defs/PointerMoveParams"
+            }
+          },
+          "required": [
+            "key",
+            "trigger"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "selector": {
+              "type": "string"
+            },
+            "listContainer": {
+              "type": "string"
+            },
+            "listItemSelector": {
+              "type": "string"
+            },
+            "conditions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Effect"
+                  },
+                  {
+                    "$ref": "#/$defs/EffectRef"
+                  }
+                ]
+              }
+            },
+            "sequences": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Sequence"
+                  },
+                  {
+                    "$ref": "#/$defs/SequenceRef"
+                  }
+                ]
+              }
+            },
+            "trigger": {
+              "type": "string",
+              "const": "animationEnd"
+            },
+            "params": {
+              "$ref": "#/$defs/AnimationEndParams"
+            }
+          },
+          "required": [
+            "key",
+            "trigger",
+            "params"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "selector": {
+              "type": "string"
+            },
+            "listContainer": {
+              "type": "string"
+            },
+            "listItemSelector": {
+              "type": "string"
+            },
+            "conditions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "effects": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Effect"
+                  },
+                  {
+                    "$ref": "#/$defs/EffectRef"
+                  }
+                ]
+              }
+            },
+            "sequences": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/Sequence"
+                  },
+                  {
+                    "$ref": "#/$defs/SequenceRef"
+                  }
+                ]
+              }
+            },
+            "trigger": {
+              "type": "string",
+              "enum": [
+                "hover",
+                "click",
+                "interest",
+                "activate",
+                "viewProgress"
+              ]
+            }
+          },
+          "required": [
+            "key",
+            "trigger"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "SequenceRef": {
+      "type": "object",
+      "properties": {
+        "sequenceId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "delay": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        },
+        "offsetEasing": {
+          "type": "string"
+        },
+        "triggerType": {
+          "$ref": "#/$defs/SequenceTriggerType"
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "sequenceId"
+      ],
+      "additionalProperties": false
+    },
+    "ViewEnterParams": {
+      "type": "object",
+      "properties": {
+        "threshold": {
+          "type": "number"
+        },
+        "inset": {
+          "type": "string"
+        },
+        "useSafeViewEnter": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PointerMoveParams": {
+      "type": "object",
+      "properties": {
+        "hitArea": {
+          "type": "string",
+          "enum": [
+            "root",
+            "self"
+          ]
+        },
+        "axis": {
+          "type": "string",
+          "enum": [
+            "x",
+            "y"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "AnimationEndParams": {
+      "type": "object",
+      "properties": {
+        "effectId": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "effectId"
+      ],
+      "additionalProperties": false
+    },
+    "Control": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
+        "group": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/$defs/ControlType"
+        },
+        "defaultValue": {
+          "$ref": "#/$defs/ControlValue"
+        },
+        "constraints": {
+          "$ref": "#/$defs/ControlConstraints"
+        },
+        "bindings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ControlBinding"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "type",
+        "defaultValue",
+        "bindings"
+      ],
+      "additionalProperties": false
+    },
+    "ControlType": {
+      "type": "string",
+      "enum": [
+        "range",
+        "select",
+        "color",
+        "toggle",
+        "text"
+      ]
+    },
+    "ControlValue": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "boolean"
+        }
+      ]
+    },
+    "ControlConstraints": {
+      "type": "object",
+      "properties": {
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        },
+        "step": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ControlOption"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "ControlOption": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            }
+          ]
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "label"
+      ],
+      "additionalProperties": false
+    },
+    "ControlBinding": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "$ref": "#/$defs/BindingTarget"
+        },
+        "targetId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "property": {
+          "type": "string"
+        },
+        "transform": {
+          "$ref": "#/$defs/ValueTransform"
+        }
+      },
+      "required": [
+        "target",
+        "targetId"
+      ],
+      "additionalProperties": false
+    },
+    "BindingTarget": {
+      "type": "string",
+      "enum": [
+        "effect",
+        "sequence",
+        "style",
+        "element",
+        "interaction",
+        "variable"
+      ]
+    },
+    "ValueTransform": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DirectTransform"
+        },
+        {
+          "$ref": "#/$defs/LinearTransform"
+        },
+        {
+          "$ref": "#/$defs/InverseTransform"
+        },
+        {
+          "$ref": "#/$defs/MapTransform"
+        },
+        {
+          "$ref": "#/$defs/TemplateTransform"
+        }
+      ]
+    },
+    "DirectTransform": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "direct"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "LinearTransform": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "linear"
+        },
+        "factor": {
+          "type": "number"
+        },
+        "offset": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "type",
+        "factor"
+      ],
+      "additionalProperties": false
+    },
+    "InverseTransform": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "inverse"
+        },
+        "numerator": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "type",
+        "numerator"
+      ],
+      "additionalProperties": false
+    },
+    "MapTransform": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "map"
+        },
+        "entries": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/ControlValue"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "entries"
+      ],
+      "additionalProperties": false
+    },
+    "TemplateTransform": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "template"
+        },
+        "template": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "template"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

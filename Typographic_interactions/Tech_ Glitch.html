@@ -96,7 +96,7 @@
 
     <!-- Wix Interact Logic -->
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -219,9 +219,10 @@
                     interactions.push({
                         key: wordKey,
                         trigger: 'viewEnter',
-                        params: { type: 'once', threshold: 0, inset: '20%' },
+                        params: { threshold: 0, inset: '20%' },
                         effects: [
                             {
+                                triggerType: 'once',
                                 keyframeEffect: {
                                     name: `glitch-${wordKey}`,
                                     keyframes: getGlitchKeyframes(dir)

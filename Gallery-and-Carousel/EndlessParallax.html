@@ -147,7 +147,7 @@
 </head>
 <body>
  <!-- @wix/interact wrapper -->
- <wix-interact-element data-wix-path="#page-container">
+ <interact-element data-interact-key="#page-container">
    <div id="page-container">
      <div id="gallery-container"></div>
 
@@ -168,11 +168,11 @@
      <button id="openModalTrigger" style="display:none;"></button>
      <button id="closeModalTrigger" style="display:none;"></button>
    </div>
- </wix-interact-element>
+ </interact-element>
 
 
  <script type="module">
-   import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+   import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
 
    function main(){

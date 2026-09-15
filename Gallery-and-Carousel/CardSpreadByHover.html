@@ -167,12 +167,12 @@
 <body>
 
     <!--  
-      The wix-interact-element is now on the collection itself.
+      The interact-element is now on the collection itself.
       This element will be the hover trigger.
     -->
-    <wix-interact-element data-wix-path="#cards-collection">
+    <interact-element data-interact-key="#cards-collection">
         <div id="cards-collection">
-            <wix-interact-element data-wix-path="#card-1">
+            <interact-element data-interact-key="#card-1">
                 <div id="card-1" class="card">
                     <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2070&auto=format&fit=crop" alt="Misty mountains" onerror="this.style.display='none'">
                     <div class="card-content">
@@ -180,8 +180,8 @@
                         <p>Find your calm</p>
                     </div>
                 </div>
-            </wix-interact-element>
-            <wix-interact-element data-wix-path="#card-2">
+            </interact-element>
+            <interact-element data-interact-key="#card-2">
                 <div id="card-2" class="card">
                     <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?q=80&w=2475&auto=format&fit=crop" alt="Green hills" onerror="this.style.display='none'">
                     <div class="card-content">
@@ -189,8 +189,8 @@
                         <p>Explore the landscape</p>
                     </div>
                 </div>
-            </wix-interact-element>
-            <wix-interact-element data-wix-path="#card-3">
+            </interact-element>
+            <interact-element data-interact-key="#card-3">
                 <div id="card-3" class="card">
                     <img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?q=80&w=2070&auto=format&fit=crop" alt="Mountain lake" onerror="this.style.display='none'">
                     <div class="card-content">
@@ -198,8 +198,8 @@
                         <p>Reflect and relax</p>
                     </div>
                 </div>
-            </wix-interact-element>
-            <wix-interact-element data-wix-path="#card-4">
+            </interact-element>
+            <interact-element data-interact-key="#card-4">
                 <div id="card-4" class="card">
                     <img src="https://images.unsplash.com/photo-1433086966358-54859d0ed716?q=80&w=1974&auto=format&fit=crop" alt="Waterfall" onerror="this.style.display='none'">
                     <div class="card-content">
@@ -207,8 +207,8 @@
                         <p>Discover nature's power</p>
                     </div>
                 </div>
-            </wix-interact-element>
-            <wix-interact-element data-wix-path="#card-5">
+            </interact-element>
+            <interact-element data-interact-key="#card-5">
                 <div id="card-5" class="card">
                     <img src="https://images.unsplash.com/photo-1511884642898-4c92249e20b6?q=80&w=2070&auto=format&fit=crop" alt="Forest from above" onerror="this.style.display='none'">
                     <div class="card-content">
@@ -216,27 +216,21 @@
                         <p>Breathe the fresh air</p>
                     </div>
                 </div>
-            </wix-interact-element>
+            </interact-element>
         </div>
-    </wix-interact-element>
+    </interact-element>
 
     <script type="module">
-        // Import from the new URL specified in the prompt
-        import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         // Keep track of initialized instances
         window.InteractInstances = window.InteractInstances || [];
 
         function destroyInstances() {
             if (window.InteractInstances) {
-                // This is a mock destroy function. In a real app, you'd use the library's
-                // specific cleanup/destroy method if it provides one.
-                // For this library, re-running Interact.create() with the same keys
-                // might just override, but we'll clear our array.
                 window.InteractInstances = [];
             }
         }
-
 
         function setupAnimations() {
             // Destroy any previous instances before creating new ones
@@ -248,56 +242,49 @@
                     {
                         key: '#cards-collection', // The collection is the hover trigger
                         trigger: 'hover',
-                        params: { 
-                            type: 'alternate' // Play forward on enter, reverse on leave
-                        },
                         effects: [
                             {
                                 key: '#card-1',
-                                // UPDATED: Keyframes no longer animate height,
-                                // and use calc() for 10px gaps based on 25vw.
                                 keyframeEffect: { 
                                     name: 'card-1-move', 
                                     keyframes: [
-                                        { transform: 'translateX(0)' }, // Start
-                                        // Card 1: (Card 2) + (Card 1 width) + (10px gap)
-                                        // = (-25vw - 10px) - 25vw - 10px = -50vw - 20px
-                                        { transform: 'translateX(calc(-50vw - 20px))' } // End
+                                        { transform: 'translateX(0)' },
+                                        { transform: 'translateX(calc(-50vw - 20px))' }
                                     ] 
                                 },
-                                duration: 600, // Duration for the hover animation
-                                easing: 'cubic-bezier(0.16, 1, 0.3, 1)', // "Ease out" for a snappy feel
-                                fill: 'both' // Hold the start and end states
+                                triggerType: 'alternate',
+                                duration: 600,
+                                easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                                fill: 'both'
                             },
                             {
                                 key: '#card-2',
-                                // Card 2: -(Card 3 width) - (10px gap)
                                 keyframeEffect: { name: 'card-2-move', keyframes: [{ transform: 'translateX(0)' }, { transform: 'translateX(calc(-25vw - 10px))' }] },
+                                triggerType: 'alternate',
                                 duration: 600,
                                 easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                                 fill: 'both'
                             },
                             {
                                 key: '#card-3',
-                                // Card 3: Stays centered
                                 keyframeEffect: { name: 'card-3-move', keyframes: [{ transform: 'translateX(0)' }, { transform: 'translateX(0)' }] },
+                                triggerType: 'alternate',
                                 duration: 600,
                                 easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                                 fill: 'both'
                             },
                             {
                                 key: '#card-4',
-                                // Card 4: (Card 3 width) + (10px gap)
                                 keyframeEffect: { name: 'card-4-move', keyframes: [{ transform: 'translateX(0)' }, { transform: 'translateX(calc(25vw + 10px))' }] },
+                                triggerType: 'alternate',
                                 duration: 600,
                                 easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                                 fill: 'both'
                             },
                             {
                                 key: '#card-5',
-                                // Card 5: (Card 4) + (Card 5 width) + (10px gap)
-                                // = (25vw + 10px) + 25vw + 10px = 50vw + 20px
                                 keyframeEffect: { name: 'card-5-move', keyframes: [{ transform: 'translateX(0)' }, { transform: 'translateX(calc(50vw + 20px))' }] },
+                                triggerType: 'alternate',
                                 duration: 600,
                                 easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                                 fill: 'both'
@@ -313,14 +300,12 @@
                     {
                         key: '#cards-collection',
                         trigger: 'hover', // On mobile, this often acts as a "tap"
-                        params: { 
-                            type: 'alternate' 
-                        },
                         effects: [
                             // UPDATED: Proportional fanning based on 25vw card width (5vw steps)
                             {
                                 key: '#card-1',
                                 keyframeEffect: { name: 'card-1-move-mob', keyframes: [{ transform: 'translateX(0)' }, { transform: 'translateX(-10vw)' }] },
+                                triggerType: 'alternate',
                                 duration: 500,
                                 easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                                 fill: 'both'
@@ -328,6 +313,7 @@
                             {
                                 key: '#card-2',
                                 keyframeEffect: { name: 'card-2-move-mob', keyframes: [{ transform: 'translateX(0)' }, { transform: 'translateX(-5vw)' }] },
+                                triggerType: 'alternate',
                                 duration: 500,
                                 easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                                 fill: 'both'
@@ -335,6 +321,7 @@
                             {
                                 key: '#card-3',
                                 keyframeEffect: { name: 'card-3-move-mob', keyframes: [{ transform: 'translateX(0)' }, { transform: 'translateX(0)' }] },
+                                triggerType: 'alternate',
                                 duration: 500,
                                 easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                                 fill: 'both'
@@ -342,6 +329,7 @@
                             {
                                 key: '#card-4',
                                 keyframeEffect: { name: 'card-4-move-mob', keyframes: [{ transform: 'translateX(0)' }, { transform: 'translateX(5vw)' }] },
+                                triggerType: 'alternate',
                                 duration: 500,
                                 easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                                 fill: 'both'
@@ -349,6 +337,7 @@
                             {
                                 key: '#card-5',
                                 keyframeEffect: { name: 'card-5-move-mob', keyframes: [{ transform: 'translateX(0)' }, { transform: 'translateX(10vw)' }] },
+                                triggerType: 'alternate',
                                 duration: 500,
                                 easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
                                 fill: 'both'

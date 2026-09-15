@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wild Nature Gallery with @wix/interact</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-<script type="module" src="https://esm.sh/@wix/interact@1.79.0"></script>
 <style>
 :root {
   --stagger-delay: 0;
@@ -29,7 +28,7 @@ body {
 }
 
 /* CARD BASE */
-wix-interact-element {
+interact-element {
   display:block;
   position:relative;
   overflow:hidden;
@@ -100,7 +99,7 @@ wix-interact-element {
 <section class="grid-container"></section>
 
 <script type="module">
-import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
+import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
 const container = document.querySelector('.grid-container');
 const ROWS = 4;
@@ -116,8 +115,8 @@ const natureSeeds = [
 
 // Create cards
 for(let i=1;i<=CARD_COUNT;i++){
-  const card=document.createElement('wix-interact-element');
-  card.dataset.wixPath='card-'+i;
+  const card=document.createElement('interact-element');
+  card.dataset.interactKey='card-'+i;
   card.innerHTML = `
     <div class="card-inner" id="card-inner-${i}">
       <div class="card-bg" id="card-bg-${i}"></div>
@@ -146,48 +145,46 @@ for (let i = 1; i <= CARD_COUNT; i++) {
   interactions.push({
     key: `card-${i}`,
     trigger: 'hover',
-    params: { type: 'alternate' },
     effects: [
       // 1. Card inner content zoom effect
       {
-        key: `#card-inner-${i}`,
+        selector: '.card-inner',
         keyframeEffect: {
             name: `card-zoom-${i}`,
             keyframes: [{ transform: 'scale(1.05)' }]
         },
         duration: 300,
         easing: 'ease-out',
-        fill: 'both'
+        fill: 'both',
+        triggerType: 'alternate'
       },
       // 2. Card overlay darken effect
       {
-        key: `#card-overlay-${i}`,
+        selector: '.card-overlay',
         transition: {
             duration: 300,
             easing: 'ease-out',
             styleProperties: [{ name: 'background', value: 'rgba(0,0,0,0.45)' }]
-        },
-        fill: 'both'
+        }
       },
       // 3. Text content reveal animation (replaces CSS :hover)
       {
-        key: `#card-content-${i}`,
+        selector: '.card-content',
         keyframeEffect: {
             name: `text-reveal-${i}`,
             keyframes: [{ opacity: 1, transform: 'translateY(0)' }]
         },
         duration: 300,
         easing: 'ease-out',
-        fill: 'both'
+        fill: 'both',
+        triggerType: 'alternate'
       },
       // 4. z-index change to bring card to front
       {
-        key: `card-${i}`,
         transition: {
             duration: 0, // z-index is not animatable, so duration is 0
             styleProperties: [{ name: 'z-index', value: '10' }]
-        },
-        fill: 'both'
+        }
       }
     ]
   });
@@ -196,7 +193,7 @@ for (let i = 1; i <= CARD_COUNT; i++) {
 Interact.create({ interactions });
 
 // Global background effect with stagger support
-const allCards = document.querySelectorAll('wix-interact-element');
+const allCards = document.querySelectorAll('interact-element');
 const allBgs = document.querySelectorAll('.card-bg');
 let lastHoveredIndex = 0;
 

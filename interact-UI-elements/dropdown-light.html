@@ -238,16 +238,16 @@
   </div>
 
   <script type="module">
-    import { Interact } from 'https://esm.sh/@wix/interact@2.1.2/web?bundle';
+    import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
     Interact.create({
       interactions: [
         {
           key: 'btn-trigger',
           trigger: 'hover',
-          params: { method: 'toggle' },
           effects: [
             {
+              stateAction: 'toggle',
               transition: {
                 duration: 300,
                 easing: 'ease',
@@ -259,6 +259,7 @@
               }
             },
             {
+              stateAction: 'toggle',
               selector: '.chevron',
               transition: {
                 duration: 300,
@@ -273,9 +274,9 @@
         ...['opt-1', 'opt-2', 'opt-3', 'opt-4', 'opt-5'].map(id => ({
           key: `${id}-trigger`,
           trigger: 'hover',
-          params: { method: 'toggle' },
           effects: [
             {
+              stateAction: 'toggle',
               transition: {
                 duration: 200,
                 easing: 'ease-out',
@@ -286,6 +287,7 @@
               }
             },
             {
+              stateAction: 'toggle',
               selector: '.option-icon',
               transition: {
                 duration: 200,

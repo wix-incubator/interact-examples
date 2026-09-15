@@ -147,7 +147,7 @@
     <div class="backdrop" id="backdrop"></div>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         document.addEventListener('DOMContentLoaded', () => {
             const cardData = [
@@ -174,7 +174,7 @@
 
             function createCards() {
                 cardData.forEach((data, index) => {
-                    const wixWrapper = document.createElement('wix-interact-element');
+                    const wixWrapper = document.createElement('interact-element');
                     wixWrapper.dataset.wixPath = `#card-${index}`;
 
                     const card = document.createElement('div');
@@ -344,7 +344,7 @@
 
             document.body.addEventListener('click', (e) => {
                 if (isCardFlownOut || isAnimating) return;
-                if (e.target.closest('.card') || e.target.closest('wix-interact-element')) return;
+                if (e.target.closest('.card') || e.target.closest('interact-element')) return;
 
                 const clickZone = window.innerWidth * 0.4;
                 if (e.clientX < clickZone) {

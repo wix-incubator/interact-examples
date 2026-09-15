@@ -321,7 +321,7 @@
   </section>
 
   <script type="module">
-    import { Interact } from 'https://esm.sh/@wix/interact/web';
+    import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
     const EASE_OUT = 'cubic-bezier(0.33, 1, 0.68, 1)';
     const COUNT = 20;
@@ -466,7 +466,6 @@
         {
           key: 'hero-scroll',
           trigger: 'viewEnter',
-          params: { type: 'state' },
           effects: [
             {
               selector: '.hero__scroll-arrow',
@@ -482,6 +481,7 @@
               iterations: Infinity,
               easing: 'ease-in-out',
               fill: 'both',
+              triggerType: 'state',
             },
           ],
         },
@@ -490,7 +490,7 @@
         {
           key: 'hero-content',
           trigger: 'viewEnter',
-          params: { type: 'once', threshold: 0.1 },
+          params: { threshold: 0.1 },
           effects: [
             {
               keyframeEffect: {
@@ -503,6 +503,7 @@
               duration: 1000,
               easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
               fill: 'forwards',
+              triggerType: 'once',
             },
           ],
         },

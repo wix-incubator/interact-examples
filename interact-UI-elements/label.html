@@ -123,7 +123,7 @@
     <nav aria-label="Skill selection" class="pill-container" id="pill-container"></nav>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@2.1.2/web?bundle';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         const skills = [
             'Web Design', 'App Development', 'UI/UX', 'Branding & Logo',
@@ -178,8 +178,8 @@
                 {
                     key: `pill-${i}`,
                     trigger: 'hover',
-                    params: { method: 'toggle' },
                     effects: [{
+                        stateAction: 'toggle',
                         transition: {
                             duration: 250,
                             easing: 'ease-out',

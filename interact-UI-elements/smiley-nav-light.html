@@ -310,7 +310,7 @@
   </div>
 
   <script type="module">
-    import { Interact } from 'https://esm.sh/@wix/interact@2.1.2/web?bundle';
+    import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
     const dropdownPanel = document.getElementById('dropdown-panel');
     const tabs = document.querySelectorAll('.nav-tab');
@@ -322,8 +322,8 @@
     const linkHovers = Array.from({ length: TOTAL_LINKS }, (_, i) => ({
       key: `d-${i}`,
       trigger: 'hover',
-      params: { method: 'toggle' },
       effects: [{
+        stateAction: 'toggle',
         transition: {
           duration: 200,
           easing: 'ease-out',
@@ -340,8 +340,8 @@
         {
           key: 'nav-bar',
           trigger: 'hover',
-          params: { method: 'toggle' },
           effects: [{
+            stateAction: 'toggle',
             transition: {
               duration: 300,
               easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
@@ -354,8 +354,8 @@
         ...['features', 'services', 'learn', 'about'].map(name => ({
           key: `tab-${name}`,
           trigger: 'hover',
-          params: { method: 'toggle' },
           effects: [{
+            stateAction: 'toggle',
             transition: {
               duration: 250,
               easing: 'ease-out',

@@ -180,7 +180,7 @@
 </interact-element>
 
 <script type="module">
-    import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+    import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
     const STEP_DURATION = 0.8;
     const TOTAL_DURATION = STEP_DURATION * 6; // 4.8s
@@ -209,14 +209,14 @@
             {
                 key: 'header-scene',
                 trigger: 'viewEnter',
-                params: { type: 'once', threshold: 0 }, 
+                params: { threshold: 0 }, 
                 effects: [
-                    { key: 'mask-1', duration: TOTAL_DURATION * 1000, iterations: Infinity, keyframeEffect: { name: 'sequence-1', keyframes: createSequencedKeyframes(0, 6) } },
-                    { key: 'mask-2', duration: TOTAL_DURATION * 1000, iterations: Infinity, keyframeEffect: { name: 'sequence-2', keyframes: createSequencedKeyframes(1, 6) } },
-                    { key: 'mask-3', duration: TOTAL_DURATION * 1000, iterations: Infinity, keyframeEffect: { name: 'sequence-3', keyframes: createSequencedKeyframes(2, 6) } },
-                    { key: 'mask-4', duration: TOTAL_DURATION * 1000, iterations: Infinity, keyframeEffect: { name: 'sequence-4', keyframes: createSequencedKeyframes(3, 6) } },
-                    { key: 'mask-5', duration: TOTAL_DURATION * 1000, iterations: Infinity, keyframeEffect: { name: 'sequence-5', keyframes: createSequencedKeyframes(4, 6) } },
-                    { key: 'mask-6', duration: TOTAL_DURATION * 1000, iterations: Infinity, keyframeEffect: { name: 'sequence-6', keyframes: createSequencedKeyframes(5, 6) } }
+                    { key: 'mask-1', triggerType: 'once', duration: TOTAL_DURATION * 1000, iterations: Infinity, keyframeEffect: { name: 'sequence-1', keyframes: createSequencedKeyframes(0, 6) } },
+                    { key: 'mask-2', triggerType: 'once', duration: TOTAL_DURATION * 1000, iterations: Infinity, keyframeEffect: { name: 'sequence-2', keyframes: createSequencedKeyframes(1, 6) } },
+                    { key: 'mask-3', triggerType: 'once', duration: TOTAL_DURATION * 1000, iterations: Infinity, keyframeEffect: { name: 'sequence-3', keyframes: createSequencedKeyframes(2, 6) } },
+                    { key: 'mask-4', triggerType: 'once', duration: TOTAL_DURATION * 1000, iterations: Infinity, keyframeEffect: { name: 'sequence-4', keyframes: createSequencedKeyframes(3, 6) } },
+                    { key: 'mask-5', triggerType: 'once', duration: TOTAL_DURATION * 1000, iterations: Infinity, keyframeEffect: { name: 'sequence-5', keyframes: createSequencedKeyframes(4, 6) } },
+                    { key: 'mask-6', triggerType: 'once', duration: TOTAL_DURATION * 1000, iterations: Infinity, keyframeEffect: { name: 'sequence-6', keyframes: createSequencedKeyframes(5, 6) } }
                 ]
             }
         ]

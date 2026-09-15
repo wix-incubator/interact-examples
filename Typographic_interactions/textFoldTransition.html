@@ -140,7 +140,7 @@
     </interact-element>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         // Check scroll position to determine if we should run the pageVisible animation
         const scrollProgress = window.scrollY / Math.max(1, document.body.scrollHeight - window.innerHeight);
@@ -197,32 +197,32 @@
             trigger: 'viewProgress',
             effects: [
                 // === PAIR 1 EXIT ===
-                { key: 'p1-h1-l1', rangeStart: { name: 'cover', offset: { value: T1_START, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
-                { key: 'p1-h1-l2', rangeStart: { name: 'cover', offset: { value: T1_START + 1, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END + 1, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
-                { key: 'p1-l1', rangeStart: { name: 'cover', offset: { value: T1_START, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
-                { key: 'p1-l2', rangeStart: { name: 'cover', offset: { value: T1_START + 1, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END + 1, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
-                { key: 'p1-l3', rangeStart: { name: 'cover', offset: { value: T1_START + 2, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END + 2, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p1-h1-l1', rangeStart: { name: 'cover', offset: { value: T1_START, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END, unit: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p1-h1-l2', rangeStart: { name: 'cover', offset: { value: T1_START + 1, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END + 1, unit: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p1-l1', rangeStart: { name: 'cover', offset: { value: T1_START, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END, unit: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p1-l2', rangeStart: { name: 'cover', offset: { value: T1_START + 1, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END + 1, unit: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p1-l3', rangeStart: { name: 'cover', offset: { value: T1_START + 2, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END + 2, unit: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
 
                 // === PAIR 2 ENTER ===
-                { key: 'p2-h1-l1', rangeStart: { name: 'cover', offset: { value: T1_START, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
-                { key: 'p2-h1-l2', rangeStart: { name: 'cover', offset: { value: T1_START + 1, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END + 1, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
-                { key: 'p2-l1', rangeStart: { name: 'cover', offset: { value: T1_START, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
-                { key: 'p2-l2', rangeStart: { name: 'cover', offset: { value: T1_START + 1, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END + 1, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
-                { key: 'p2-l3', rangeStart: { name: 'cover', offset: { value: T1_START + 2, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END + 2, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p2-h1-l1', rangeStart: { name: 'cover', offset: { value: T1_START, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END, unit: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p2-h1-l2', rangeStart: { name: 'cover', offset: { value: T1_START + 1, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END + 1, unit: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p2-l1', rangeStart: { name: 'cover', offset: { value: T1_START, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END, unit: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p2-l2', rangeStart: { name: 'cover', offset: { value: T1_START + 1, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END + 1, unit: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p2-l3', rangeStart: { name: 'cover', offset: { value: T1_START + 2, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T1_END + 2, unit: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
 
                 // === PAIR 2 EXIT ===
-                { key: 'p2-h1-l1', rangeStart: { name: 'cover', offset: { value: T2_START, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
-                { key: 'p2-h1-l2', rangeStart: { name: 'cover', offset: { value: T2_START, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
-                { key: 'p2-l1', rangeStart: { name: 'cover', offset: { value: T2_START, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
-                { key: 'p2-l2', rangeStart: { name: 'cover', offset: { value: T2_START + 1, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END + 1, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
-                { key: 'p2-l3', rangeStart: { name: 'cover', offset: { value: T2_START + 2, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END + 2, type: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p2-h1-l1', rangeStart: { name: 'cover', offset: { value: T2_START, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END, unit: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p2-h1-l2', rangeStart: { name: 'cover', offset: { value: T2_START, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END, unit: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p2-l1', rangeStart: { name: 'cover', offset: { value: T2_START, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END, unit: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p2-l2', rangeStart: { name: 'cover', offset: { value: T2_START + 1, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END + 1, unit: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p2-l3', rangeStart: { name: 'cover', offset: { value: T2_START + 2, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END + 2, unit: 'percentage' } }, keyframeEffect: { name: 'exit', keyframes: EXIT_SCROLL }, fill: 'both', composite: 'add' },
 
                 // === PAIR 3 ENTER ===
-                { key: 'p3-h1-l1', rangeStart: { name: 'cover', offset: { value: T2_START, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
-                { key: 'p3-h1-l2', rangeStart: { name: 'cover', offset: { value: T2_START + 1, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END + 1, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
-                { key: 'p3-l1', rangeStart: { name: 'cover', offset: { value: T2_START, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
-                { key: 'p3-l2', rangeStart: { name: 'cover', offset: { value: T2_START + 1, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END + 1, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
-                { key: 'p3-l3', rangeStart: { name: 'cover', offset: { value: T2_START + 2, type: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END + 2, type: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p3-h1-l1', rangeStart: { name: 'cover', offset: { value: T2_START, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END, unit: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p3-h1-l2', rangeStart: { name: 'cover', offset: { value: T2_START + 1, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END + 1, unit: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p3-l1', rangeStart: { name: 'cover', offset: { value: T2_START, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END, unit: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p3-l2', rangeStart: { name: 'cover', offset: { value: T2_START + 1, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END + 1, unit: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
+                { key: 'p3-l3', rangeStart: { name: 'cover', offset: { value: T2_START + 2, unit: 'percentage' } }, rangeEnd: { name: 'cover', offset: { value: T2_END + 2, unit: 'percentage' } }, keyframeEffect: { name: 'enter', keyframes: ENTER_SCROLL }, fill: 'both', composite: 'add' },
             ]
         });
 

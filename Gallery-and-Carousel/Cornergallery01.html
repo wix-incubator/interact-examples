@@ -157,16 +157,16 @@
     </style>
 </head>
 <body>
-    <wix-interact-element data-wix-path="container">
+    <interact-element data-interact-key="container">
       <div id="collage-container">
           <div id="projector-overlay"></div>
       </div>
-    </wix-interact-element>
+    </interact-element>
     
     <div id="progress-indicator"></div>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         // --- Core State and DOM References ---
         const container = document.getElementById('collage-container');
@@ -306,8 +306,8 @@
                     // Replaces the original DOMContentLoaded listener for initial load
                     key: 'container',
                     trigger: 'pageVisible',
-                    params: { type: 'once' },
                     effects: [{
+                        triggerType: 'once',
                         customEffect: () => doInitialLoad()
                     }]
                 },
@@ -315,8 +315,8 @@
                     // Handles advancing to the next image on click
                     key: 'container',
                     trigger: 'click',
-                    params: { type: 'repeat' },
                     effects: [{
+                        triggerType: 'repeat',
                         customEffect: () => doNextImage()
                     }]
                 }

@@ -189,11 +189,12 @@
   </interact-element>
 
   <script type="module">
-    import { Interact } from 'https://esm.sh/@wix/interact@2.0.3/web?bundle';
+    import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
     Interact.create({
       effects: {
         'slider-move': {
+          triggerType: 'alternate',
           keyframeEffect: {
             name: 'slider-move-onoff',
             keyframes: [
@@ -208,6 +209,7 @@
           fill: 'both'
         },
         'slider-bg': {
+          triggerType: 'alternate',
           keyframeEffect: {
             name: 'slider-bg-onoff',
             keyframes: [
@@ -220,6 +222,7 @@
           fill: 'both'
         },
         'slider-color': {
+          triggerType: 'alternate',
           keyframeEffect: {
             name: 'slider-color-onoff',
             keyframes: [
@@ -232,6 +235,7 @@
           fill: 'both'
         },
         'track-bg': {
+          triggerType: 'alternate',
           keyframeEffect: {
             name: 'track-bg-onoff',
             keyframes: [
@@ -244,6 +248,7 @@
           fill: 'both'
         },
         'icon-sun': {
+          triggerType: 'alternate',
           keyframeEffect: {
             name: 'icon-sun-swap',
             keyframes: [
@@ -256,6 +261,7 @@
           fill: 'both'
         },
         'icon-moon': {
+          triggerType: 'alternate',
           keyframeEffect: {
             name: 'icon-moon-swap',
             keyframes: [
@@ -268,6 +274,7 @@
           fill: 'both'
         },
         'label-on-vis': {
+          triggerType: 'alternate',
           keyframeEffect: {
             name: 'label-on-visibility',
             keyframes: [
@@ -280,6 +287,7 @@
           fill: 'both'
         },
         'label-off-vis': {
+          triggerType: 'alternate',
           keyframeEffect: {
             name: 'label-off-visibility',
             keyframes: [
@@ -296,7 +304,6 @@
         {
           key: 'toggle-btn',
           trigger: 'click',
-          params: { type: 'alternate' },
           effects: [
             { key: 'slider', effectId: 'slider-move' },
             { key: 'slider', effectId: 'slider-bg' },

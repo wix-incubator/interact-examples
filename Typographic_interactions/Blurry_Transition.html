@@ -123,7 +123,7 @@
     </div>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         // --- KEYFRAME DEFINITIONS WITH ACCESSIBILITY TOGGLES ---
         // We use offset: 0.01 and 0.99 to ensure visibility is 'visible' 
@@ -163,9 +163,10 @@
                 {
                     key: 'pair-1',
                     trigger: 'viewEnter', 
-                    params: { type: 'once', threshold: 0.1 },
+                    params: { threshold: 0.1 },
                     effects: [
                         {
+                            triggerType: 'once',
                             keyframeEffect: { 
                                 name: 'pair1-auto-in', 
                                 keyframes: timeInFrames 
@@ -185,9 +186,9 @@
                         // Effect 1: Pair 1 Exit Only
                         {
                             key: 'pair-1',
-                            fill: 'forwards',
-                            rangeStart: { name: 'contain', offset: { value: 30, type: 'percentage' } },
-                            rangeEnd: { name: 'contain', offset: { value: 40, type: 'percentage' } },
+                            fill: 'both',
+                            rangeStart: { name: 'contain', offset: { value: 30, unit: 'percentage' } },
+                            rangeEnd: { name: 'contain', offset: { value: 40, unit: 'percentage' } },
                             keyframeEffect: { 
                                 name: 'pair1-exit', 
                                 keyframes: scrollOutFrames 
@@ -198,8 +199,8 @@
                         {
                             key: 'pair-2',
                             fill: 'both',
-                            rangeStart: { name: 'contain', offset: { value: 40, type: 'percentage' } },
-                            rangeEnd: { name: 'contain', offset: { value: 75, type: 'percentage' } },
+                            rangeStart: { name: 'contain', offset: { value: 40, unit: 'percentage' } },
+                            rangeEnd: { name: 'contain', offset: { value: 75, unit: 'percentage' } },
                             keyframeEffect: { 
                                 name: 'pair2-cycle', 
                                 keyframes: pair2Frames 
@@ -210,8 +211,8 @@
                         {
                             key: 'pair-3',
                             fill: 'both',
-                            rangeStart: { name: 'contain', offset: { value: 75, type: 'percentage' } },
-                            rangeEnd: { name: 'contain', offset: { value: 95, type: 'percentage' } },
+                            rangeStart: { name: 'contain', offset: { value: 75, unit: 'percentage' } },
+                            rangeEnd: { name: 'contain', offset: { value: 95, unit: 'percentage' } },
                             keyframeEffect: { 
                                 name: 'pair3-cycle', 
                                 keyframes: pair3Frames 

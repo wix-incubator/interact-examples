@@ -75,17 +75,17 @@
 <body class="bg-gray-50 text-gray-800">
 
     <!-- Main Scrolling Animation Section -->
-    <wix-interact-element data-wix-path="#scroll-section">
+    <interact-element data-interact-key="#scroll-section">
         <section id="scroll-section" class="relative" style="height: 900vh;">
             
             <!-- Sticky Container -->
             <div class="sticky-wrap">
 
                 <!-- The stack of cards -->
-                <wix-interact-element data-wix-path="#stack">
+                <interact-element data-interact-key="#stack">
                     <div id="stack" class="flex w-max">
                         
-                        <wix-interact-element data-wix-path="#card-1">
+                        <interact-element data-interact-key="#card-1">
                             <div id="card-1" class="card relative flex flex-col justify-end text-white overflow-hidden">
                                 <img src="https://images.unsplash.com/photo-1554941829-202a0b2403b8?q=80&w=2940&auto=format&fit=crop" alt="Abstract architectural design" onerror="this.onerror=null;this.src='https://placehold.co/800x1200/cccccc/333333?text=Image+1';">
                                 <div class="card-content p-6 md:p-8">
@@ -93,9 +93,9 @@
                                     <p class="text-base md:text-lg">Every scroll reveals something new.</p>
                                 </div>
                             </div>
-                        </wix-interact-element>
+                        </interact-element>
 
-                        <wix-interact-element data-wix-path="#card-2">
+                        <interact-element data-interact-key="#card-2">
                             <div id="card-2" class="card relative flex flex-col justify-end text-white overflow-hidden">
                                 <img src="https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=2787&auto=format&fit=crop" alt="Smooth, flowing abstract shapes" onerror="this.onerror=null;this.src='https://placehold.co/800x1200/cccccc/333333?text=Image+2';">
                                 <div class="card-content p-6 md:p-8">
@@ -103,9 +103,9 @@
                                     <p class="text-base md:text-lg">Building momentum with each frame.</p>
                                 </div>
                             </div>
-                        </wix-interact-element>
+                        </interact-element>
 
-                        <wix-interact-element data-wix-path="#card-3">
+                        <interact-element data-interact-key="#card-3">
                             <div id="card-3" class="card relative flex flex-col justify-end text-white overflow-hidden">
                                 <img src="https://images.unsplash.com/photo-1579546929662-711aa81148cf?q=80&w=2940&auto=format&fit=crop" alt="Colorful pastel abstract background" onerror="this.onerror=null;this.src='https://placehold.co/800x1200/cccccc/333333?text=Image+3';">
                                 <div class="card-content p-6 md:p-8">
@@ -113,9 +113,9 @@
                                     <p class="text-base md:text-lg">Where design and motion align.</p>
                                 </div>
                             </div>
-                        </wix-interact-element>
+                        </interact-element>
 
-                        <wix-interact-element data-wix-path="#card-4">
+                        <interact-element data-interact-key="#card-4">
                             <div id="card-4" class="card relative flex flex-col justify-end text-white overflow-hidden">
                                     <img src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=2940&auto=format&fit=crop" alt="Vibrant liquid paint mixing" onerror="this.onerror=null;this.src='https://placehold.co/800x1200/cccccc/333333?text=Image+4';">
                                 <div class="card-content p-6 md:p-8">
@@ -123,9 +123,9 @@
                                     <p class="text-base md:text-lg">A dynamic visual experience.</p>
                                 </div>
                             </div>
-                        </wix-interact-element>
+                        </interact-element>
 
-                        <wix-interact-element data-wix-path="#card-5">
+                        <interact-element data-interact-key="#card-5">
                             <div id="card-5" class="card relative flex flex-col justify-end text-white overflow-hidden">
                                 <img src="https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?q=80&w=2854&auto=format&fit=crop" alt="Subtle watercolor texture" onerror="this.onerror=null;this.src='https://placehold.co/800x1200/cccccc/333333?text=Image+5';">
                                 <div class="card-content p-6 md:p-8">
@@ -133,9 +133,9 @@
                                     <p class="text-base md:text-lg">The story becomes clear.</p>
                                 </div>
                             </div>
-                        </wix-interact-element>
+                        </interact-element>
                         
-                        <wix-interact-element data-wix-path="#card-6">
+                        <interact-element data-interact-key="#card-6">
                             <div id="card-6" class="card relative flex flex-col justify-end text-white overflow-hidden">
                                 <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2940&auto=format&fit=crop" alt="Bright blend of abstract colors" onerror="this.onerror=null;this.src='https://placehold.co/800x1200/cccccc/333333?text=Image+6';">
                                 <div class="card-content p-6 md:p-8">
@@ -143,16 +143,16 @@
                                     <p class="text-base md:text-lg">The final view unfolds.</p>
                                 </div>
                             </div>
-                        </wix-interact-element>
+                        </interact-element>
                     </div>
-                </wix-interact-element>
+                </interact-element>
             </div>
 
         </section>
-    </wix-interact-element>
+    </interact-element>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         document.addEventListener('DOMContentLoaded', () => {
 
@@ -197,8 +197,8 @@
                                         { transform: horizontalScrollEnd }
                                     ],
                                 },
-                                rangeStart: { name: 'cover', offset: { type: 'percentage', value: 50 } },
-                                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 90 } },
+                                rangeStart: { name: 'cover', offset: { unit: 'percentage', value: 50 } },
+                                rangeEnd: { name: 'cover', offset: { unit: 'percentage', value: 90 } },
                                 easing: 'linear',
                                 fill: 'both'
                             },
@@ -212,8 +212,8 @@
                                         { transform: 'translateY(0vh)' }
                                     ],
                                 },
-                                rangeStart: { name: 'cover', offset: { type: 'percentage', value: 10 } },
-                                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 40 } },
+                                rangeStart: { name: 'cover', offset: { unit: 'percentage', value: 10 } },
+                                rangeEnd: { name: 'cover', offset: { unit: 'percentage', value: 40 } },
                                 easing: 'linear',
                                 fill: 'both'
                             },
@@ -227,8 +227,8 @@
                                         { transform: 'translateY(0vh)' }
                                     ],
                                 },
-                                rangeStart: { name: 'cover', offset: { type: 'percentage', value: 10 } },
-                                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 50 } },
+                                rangeStart: { name: 'cover', offset: { unit: 'percentage', value: 10 } },
+                                rangeEnd: { name: 'cover', offset: { unit: 'percentage', value: 50 } },
                                 easing: 'linear',
                                 fill: 'both'
                             },
@@ -242,8 +242,8 @@
                                         { transform: 'translateY(0vh)' }
                                     ],
                                 },
-                                rangeStart: { name: 'cover', offset: { type: 'percentage', value: 10 } },
-                                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 60 } },
+                                rangeStart: { name: 'cover', offset: { unit: 'percentage', value: 10 } },
+                                rangeEnd: { name: 'cover', offset: { unit: 'percentage', value: 60 } },
                                 easing: 'linear',
                                 fill: 'both'
                             },
@@ -257,8 +257,8 @@
                                         { transform: 'translateY(0vh)' }
                                     ],
                                 },
-                                rangeStart: { name: 'cover', offset: { type: 'percentage', value: 40 } },
-                                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 70 } },
+                                rangeStart: { name: 'cover', offset: { unit: 'percentage', value: 40 } },
+                                rangeEnd: { name: 'cover', offset: { unit: 'percentage', value: 70 } },
                                 easing: 'linear',
                                 fill: 'both'
                             },
@@ -272,8 +272,8 @@
                                         { transform: 'translateY(0vh)' }
                                     ],
                                 },
-                                rangeStart: { name: 'cover', offset: { type: 'percentage', value: 50 } },
-                                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 80 } },
+                                rangeStart: { name: 'cover', offset: { unit: 'percentage', value: 50 } },
+                                rangeEnd: { name: 'cover', offset: { unit: 'percentage', value: 80 } },
                                 easing: 'linear',
                                 fill: 'both'
                             },
@@ -287,8 +287,8 @@
                                         { transform: 'translateY(0vh)' }
                                     ],
                                 },
-                                rangeStart: { name: 'cover', offset: { type: 'percentage', value: 60 } },
-                                rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 90 } },
+                                rangeStart: { name: 'cover', offset: { unit: 'percentage', value: 60 } },
+                                rangeEnd: { name: 'cover', offset: { unit: 'percentage', value: 90 } },
                                 easing: 'linear',
                                 fill: 'both'
                             }

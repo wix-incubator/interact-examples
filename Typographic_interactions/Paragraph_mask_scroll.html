@@ -112,7 +112,7 @@
 
     <!-- Load Wix Interact -->
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         // Configuration
         const ROWS = 7;
@@ -189,10 +189,11 @@
                 interactions.push({
                     key: key,
                     trigger: 'viewEnter',
-                    params: { type: 'once' },
                     effects: [
                         {
+                            triggerType: 'once',
                             keyframeEffect: {
+                                name: `flicker-${r}-${c}`,
                                 keyframes: [
                                     { offset: 0.0, opacity: 1 },
                                     { offset: 0.1, opacity: 0 },
@@ -239,10 +240,11 @@
         interactions.push({
             key: 'hero-desc',
             trigger: 'viewEnter',
-            params: { type: 'once' },
             effects: [
                 {
+                    triggerType: 'once',
                     keyframeEffect: {
+                        name: 'hero-desc-reveal',
                         keyframes: [
                             { transform: 'translateY(110%)', opacity: 0 },
                             { transform: 'translateY(0%)', opacity: 1 }

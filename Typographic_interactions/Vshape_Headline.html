@@ -84,7 +84,7 @@
 
     <!-- Wix Interact Library -->
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         const text = "INTERACT";
         const container = document.getElementById('title-container');
@@ -121,10 +121,10 @@
                 key: key, 
                 trigger: 'viewEnter',
                 params: { 
-                    type: 'once', 
                     threshold: 0.1
                 },
                 effects: [{
+                    triggerType: 'once',
                     keyframeEffect: {
                         name: `bounce-in-${index}`,
                         keyframes: [
@@ -159,8 +159,8 @@
                     // "contain": The phase where the element (300vh track) covers the viewport.
                     // 0% = Top of track hits top of viewport (Sticky engages).
                     // 100% = Bottom of track hits bottom of viewport (Sticky disengages).
-                    rangeStart: { name: 'contain', offset: { value: 10, type: 'percentage' } },
-                    rangeEnd: { name: 'contain', offset: { value: 90, type: 'percentage' } },
+                    rangeStart: { name: 'contain', offset: { value: 10, unit: 'percentage' } },
+                    rangeEnd: { name: 'contain', offset: { value: 90, unit: 'percentage' } },
                     fill: 'both',
                     composite: 'add' 
                 }]

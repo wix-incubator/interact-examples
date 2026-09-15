@@ -275,7 +275,7 @@
 
   <!-- ── @wix/interact ── -->
   <script type="module">
-    import { Interact } from 'https://esm.sh/@wix/interact';
+    import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
     const exitRange = {
       rangeStart: { name: 'exit', offset: { value: 0, unit: 'percentage' } },
@@ -300,7 +300,6 @@
         {
           key: 'hero-title',
           trigger: 'viewEnter',
-          params: { type: 'once' },
           effects: [{
             keyframeEffect: {
               name: 'hero-title-fade',
@@ -309,6 +308,7 @@
                 { opacity: 1, transform: 'translateY(0)' },
               ],
             },
+            triggerType: 'once',
             duration: 1200,
             ...heroEnter,
           }],
@@ -316,7 +316,6 @@
         {
           key: 'hero-subtitle',
           trigger: 'viewEnter',
-          params: { type: 'once' },
           effects: [{
             keyframeEffect: {
               name: 'hero-sub-fade',
@@ -325,6 +324,7 @@
                 { opacity: 1, transform: 'translateY(0)' },
               ],
             },
+            triggerType: 'once',
             duration: 1000,
             delay: 300,
             ...heroEnter,
@@ -392,7 +392,6 @@
         {
           key: 'card-4',
           trigger: 'viewEnter',
-          params: { type: 'once' },
           conditions: ['full-motion'],
           effects: [{
             keyframeEffect: {
@@ -402,6 +401,7 @@
                 { transform: 'rotate(2.5deg)' },
               ],
             },
+            triggerType: 'once',
             duration: 600,
             easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
             fill: 'forwards',

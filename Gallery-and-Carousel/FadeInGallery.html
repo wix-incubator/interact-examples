@@ -6,9 +6,6 @@
     <title>Living Collage (@wix/interact Version)</title>
     <!-- Import Google Font 'Inter' -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    
-    <!-- Import @wix/interact library -->
-    <script src="https://esm.sh/@wix/interact@1.79.0" type="module"></script>
 
     <style>
         /* Base styles for fullscreen, no margin/padding */
@@ -31,7 +28,7 @@
         }
 
         /* Wrapper for the custom element */
-        wix-interact-element {
+        interact-element {
             display: contents; /* Makes the wrapper layout-neutral */
         }
 
@@ -96,22 +93,26 @@
         <!-- Fragments will be dynamically added here by JavaScript -->
 
         <!-- Static Text Overlay, wrapped for @wix/interact -->
-        <wix-interact-element data-wix-path="#text-overlay">
+        <interact-element data-interact-key="#text-overlay">
             <div class="text-overlay">
                 <h1>Explore the View</h1>
                 <p>Hover to pause and discover more about this moment.</p>
             </div>
-        </wix-interact-element>
-        
+        </interact-element>
+
         <!-- Hover Hotspot, wrapped for @wix/interact -->
-        <wix-interact-element data-wix-path="#hover-hotspot">
+        <interact-element data-interact-key="#hover-hotspot">
             <div id="hover-hotspot"></div>
-        </wix-interact-element>
+        </interact-element>
     </div>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
-        
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
+        import * as presets from 'https://esm.sh/@wix/motion-presets';
+
+        // Must be called before Interact.create() so namedEffect types resolve
+        Interact.registerEffects(presets);
+
         document.addEventListener('DOMContentLoaded', () => {
             // --- 1. @wix/interact Configuration ---
             const interactConfig = {
@@ -126,26 +127,26 @@
                         },
                         duration: 1000,
                         easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
-                        fill: 'backwards' 
+                        fill: 'backwards',
+                        triggerType: 'once'
                     },
                     'text-fade': {
                         namedEffect: { type: 'FadeIn' },
                         duration: 400,
                         easing: 'ease-in-out',
-                        fill: 'both'
+                        fill: 'both',
+                        triggerType: 'alternate'
                     }
                 },
                 interactions: [
                     {
-                        key: '.collage-fragment-wrapper',
+                        key: 'collage-fragment-wrapper',
                         trigger: 'viewEnter',
-                        params: { type: 'once' },
                         effects: [{ effectId: 'fragment-scale-in' }]
                     },
                     {
                         key: '#hover-hotspot',
                         trigger: 'hover',
-                        params: { type: 'alternate' },
                         effects: [{ key: '#text-overlay', effectId: 'text-fade' }]
                     }
                 ]
@@ -163,9 +164,9 @@
             const getRealImageUrl = () => `https://picsum.photos/1200/800?random=${Math.random()}`;
 
             function createFragment(imageUrl) {
-                const wixElement = document.createElement('wix-interact-element');
+                const wixElement = document.createElement('interact-element');
                 wixElement.className = 'collage-fragment-wrapper';
-                wixElement.dataset.wixPath = `fragment-${Date.now()}`;
+                wixElement.setAttribute('data-interact-key', 'collage-fragment-wrapper');
 
                 const fragment = document.createElement('div');
                 fragment.className = 'fragment';

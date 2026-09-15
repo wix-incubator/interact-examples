@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Interact Validator</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Full-bleed viewport (behind the floating panels) -->
+  <div id="viewport">
+    <iframe id="preview" title="preview"></iframe>
+    <pre id="code" hidden></pre>
+    <div id="diff" hidden></div>
+    <div id="markdown" class="md-view" hidden></div>
+    <div id="loopView" hidden>
+      <div class="loop-top">
+        <div id="jobHead" class="loop-head"></div>
+      </div>
+      <div id="jobBody" class="loop-grid"></div>
+      <div id="jobBar" class="loop-feedback" hidden></div>
+    </div>
+    <div id="placeholder"><div class="ic">◈</div><p>Select a file to preview</p></div>
+  </div>
+
+  <!-- Floating tab groups: mode (Preview/Code/Diff) + version (Current/Draft) -->
+  <div id="topbar">
+    <div id="modeTabs" class="glass seg">
+      <button data-mode="preview" class="tab active">Preview</button>
+      <button data-mode="code" class="tab">Code</button>
+      <button data-mode="diff" class="tab">Diff</button>
+    </div>
+    <div id="verTabs" class="glass seg">
+      <button data-ver="current" class="tab active">Current</button>
+      <button data-ver="draft" class="tab">Draft</button>
+    </div>
+    <div id="agentBar" class="glass seg" title="Agent runtime — applies to fix, convert, refine, and playground generate">
+      <select id="modelSelect" class="agent-select">
+        <option value="">CLI default</option>
+        <option value="opus">opus</option>
+        <option value="sonnet">sonnet</option>
+        <option value="haiku">haiku</option>
+      </select>
+      <span id="ctxChip" class="ctx-chip">agent idle</span>
+      <button id="ctxReset" class="icon-btn" title="Reset session token totals">↺</button>
+    </div>
+  </div>
+
+  <!-- Edge toggles to collapse/expand the side panels -->
+  <button id="toggleLeft" class="edge-toggle left glass" title="Toggle file list">‹</button>
+  <button id="toggleRight" class="edge-toggle right glass" title="Toggle fix panel">›</button>
+
+  <!-- Left panel: files -->
+  <aside id="listPane" class="glass">
+    <div class="brand"><span class="logo"></span> Interact Validator</div>
+    <div class="list-actions">
+      <button id="scanBtn" class="btn btn-primary">Scan</button>
+      <button id="selectAllBtn" class="btn">Select all</button>
+    </div>
+    <div id="summary"></div>
+    <div class="list-head">
+      <input id="filter" class="search" type="search" placeholder="Filter files…" autocomplete="off" />
+    </div>
+    <div id="viewTabs" class="view-tabs">
+      <button data-view="examples" class="vt active">Examples</button>
+      <button data-view="prompts" class="vt">Prompts</button>
+    </div>
+    <div id="fileTree"></div>
+  </aside>
+
+  <!-- Right panel: fixes -->
+  <aside id="fixPane" class="glass">
+    <h2 class="panel-title">Fix options</h2>
+    <form id="fixOptions"></form>
+    <textarea id="customPrompt" placeholder="Custom instructions (optional)…"></textarea>
+    <button id="activityBtn" class="btn btn-ghost btn-block">◧ Agent activity</button>
+    <button id="fixBtn" class="btn btn-primary btn-block">Fix selected</button>
+    <button id="convertBtn" class="btn btn-block">Convert to prompt</button>
+    <button id="refineSelBtn" class="btn btn-primary btn-block" hidden>Refine selected (<span id="refineCount">0</span>)</button>
+    <div id="queueWidget"></div>
+    <div id="fixProgress"></div>
+    <div class="divider"></div>
+    <div class="apply-actions">
+      <button id="applyBtn" class="btn">Apply selected</button>
+      <button id="discardBtn" class="btn">Discard selected</button>
+    </div>
+    <div id="applyStatus"></div>
+  </aside>
+
+  <!-- Agent activity / reasoning modal -->
+  <div id="activityModal" class="modal-backdrop" hidden>
+    <div class="modal glass">
+      <div class="modal-head">
+        <span>Agent activity</span>
+        <div class="modal-head-actions">
+          <select id="activityFile" class="mini-select"></select>
+          <button id="activityClose" class="icon-btn" title="Close">✕</button>
+        </div>
+      </div>
+      <pre id="activityBody" class="modal-body"></pre>
+    </div>
+  </div>
+
+  <!-- Prompt diff: original .md vs the working / a round's guideline -->
+  <div id="diffModal" class="modal-backdrop" hidden>
+    <div class="diff-shell glass">
+      <div class="modal-head">
+        <span id="diffTitle">Prompt diff</span>
+        <button id="diffClose" class="icon-btn" title="Close (Esc)">✕</button>
+      </div>
+      <pre id="diffBody" class="modal-body diff-body"></pre>
+    </div>
+  </div>
+
+  <!-- Full-screen preview of a single generated / original section -->
+  <div id="expandModal" class="modal-backdrop" hidden>
+    <div class="expand-shell glass">
+      <div class="modal-head">
+        <span id="expandTitle">Preview</span>
+        <button id="expandClose" class="icon-btn" title="Close (Esc)">✕</button>
+      </div>
+      <iframe id="expandFrame" sandbox="allow-scripts" title="expanded preview"></iframe>
+    </div>
+  </div>
+
+  <!-- Launch refinement sheet -->
+  <div id="launchModal" class="modal-backdrop" hidden>
+    <div class="modal glass" style="height:auto;max-height:70vh">
+      <div class="modal-head"><span>Launch refinement</span>
+        <button id="launchClose" class="icon-btn">✕</button></div>
+      <div class="launch-body">
+        <div id="launchPrompts" class="launch-list"></div>
+        <div class="launch-sub">Sections to test on (1–4):</div>
+        <div id="launchSections" class="loop-sections" style="position:static;border:0;padding:8px 0"></div>
+        <div class="launch-sub">Stop rule: green at score ≥ 8 · max 5 iterations · plateau ×2 → amber</div>
+        <button id="launchGo" class="btn btn-primary btn-block">Start</button>
+        <div id="launchErr" class="launch-err"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

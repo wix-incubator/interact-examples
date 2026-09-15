@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>7-Card Fan Spread</title>
-  <script type="module" src="https://esm.sh/@wix/interact@1.78.0"></script>
+  <script type="module" src="https://esm.sh/@wix/interact@2.5.1/web"></script>
   <style>
     :root {
       --card-w: 280px;
@@ -166,7 +166,7 @@
       text-transform: uppercase;
     }
 
-    wix-interact-element { display: contents; }
+    interact-element { display: contents; }
   </style>
 </head>
 <body>
@@ -177,12 +177,12 @@
     <div class="scroll-hint"></div>
   </section>
 
-  <wix-interact-element data-wix-path="#scroll-wrapper">
+  <interact-element data-interact-key="#scroll-wrapper">
     <div id="scroll-wrapper">
       <div class="sticky-container">
         <div class="deck">
 
-          <wix-interact-element data-wix-path="#card-1">
+          <interact-element data-interact-key="#card-1">
             <div id="card-1" class="card">
               <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80" alt="Alpine peaks">
               <div class="card-label">
@@ -190,9 +190,9 @@
                 <h3>Alpine Peaks</h3>
               </div>
             </div>
-          </wix-interact-element>
+          </interact-element>
 
-          <wix-interact-element data-wix-path="#card-2">
+          <interact-element data-interact-key="#card-2">
             <div id="card-2" class="card">
               <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80" alt="Tropical shore">
               <div class="card-label">
@@ -200,9 +200,9 @@
                 <h3>Tropical Shore</h3>
               </div>
             </div>
-          </wix-interact-element>
+          </interact-element>
 
-          <wix-interact-element data-wix-path="#card-3">
+          <interact-element data-interact-key="#card-3">
             <div id="card-3" class="card">
               <img src="https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=600&q=80" alt="Northern lights">
               <div class="card-label">
@@ -210,9 +210,9 @@
                 <h3>Northern Lights</h3>
               </div>
             </div>
-          </wix-interact-element>
+          </interact-element>
 
-          <wix-interact-element data-wix-path="#card-4">
+          <interact-element data-interact-key="#card-4">
             <div id="card-4" class="card">
               <img src="https://images.unsplash.com/photo-1462275646964-a0e3c11f18a6?w=600&q=80" alt="Cherry blossoms">
               <div class="card-label">
@@ -220,9 +220,9 @@
                 <h3>Cherry Blossoms</h3>
               </div>
             </div>
-          </wix-interact-element>
+          </interact-element>
 
-          <wix-interact-element data-wix-path="#card-5">
+          <interact-element data-interact-key="#card-5">
             <div id="card-5" class="card">
               <img src="https://images.unsplash.com/photo-1488197047962-b48492212cda?w=600&q=80" alt="Sand dunes">
               <div class="card-label">
@@ -230,9 +230,9 @@
                 <h3>Sand Dunes</h3>
               </div>
             </div>
-          </wix-interact-element>
+          </interact-element>
 
-          <wix-interact-element data-wix-path="#card-6">
+          <interact-element data-interact-key="#card-6">
             <div id="card-6" class="card">
               <img src="https://images.unsplash.com/photo-1432405972618-c6b0cfba8428?w=600&q=80" alt="Waterfall">
               <div class="card-label">
@@ -240,9 +240,9 @@
                 <h3>Misty Waterfall</h3>
               </div>
             </div>
-          </wix-interact-element>
+          </interact-element>
 
-          <wix-interact-element data-wix-path="#card-7">
+          <interact-element data-interact-key="#card-7">
             <div id="card-7" class="card">
               <img src="https://images.unsplash.com/photo-1514565131-fce0801e5785?w=600&q=80" alt="City skyline">
               <div class="card-label">
@@ -250,19 +250,19 @@
                 <h3>City Lights</h3>
               </div>
             </div>
-          </wix-interact-element>
+          </interact-element>
 
         </div>
       </div>
     </div>
-  </wix-interact-element>
+  </interact-element>
 
   <section class="outro">
     <p>— fin —</p>
   </section>
 
   <script type="module">
-    import { Interact } from 'https://esm.sh/@wix/interact@1.78.0';
+    import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
     const CARDS = 7;
     const SPREAD = 12;

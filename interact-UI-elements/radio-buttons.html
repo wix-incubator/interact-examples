@@ -176,7 +176,7 @@
   </div>
 
   <script type="module">
-    import { Interact } from 'https://esm.sh/@wix/interact@2.1.2/web?bundle';
+    import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
     const keys = ['radio-1', 'radio-2', 'radio-3', 'radio-4', 'radio-5'];
 
@@ -230,19 +230,17 @@
           {
             key,
             trigger: 'hover',
-            params: { method: 'toggle' },
             effects: [
-              { selector: '.label', effectId: 'hover-label' },
-              { selector: '.ring', effectId: 'hover-ring' },
-              { selector: '.radio-indicator', effectId: 'hover-indicator' }
+              { selector: '.label', effectId: 'hover-label', stateAction: 'toggle' },
+              { selector: '.ring', effectId: 'hover-ring', stateAction: 'toggle' },
+              { selector: '.radio-indicator', effectId: 'hover-indicator', stateAction: 'toggle' }
             ]
           },
           {
             key,
             trigger: 'click',
-            params: { type: 'repeat' },
             effects: [
-              { selector: '.dot', effectId: 'dot-pop' }
+              { selector: '.dot', effectId: 'dot-pop', triggerType: 'repeat' }
             ]
           }
         ])

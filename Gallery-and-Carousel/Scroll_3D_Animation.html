@@ -6,7 +6,7 @@
 <title>Scroll-Driven 3D Centered Panels with @wix/interact</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-<script type="module" src="https://esm.sh/@wix/interact@1.79.0"></script>
+<script type="module" src="https://esm.sh/@wix/interact@2.5.1/web"></script>
 
 <style>
 :root { --panel-gap: 120; }
@@ -64,7 +64,7 @@ body {
   box-shadow: 0 20px 40px rgba(0,0,0,0.5);
 }
 
-wix-interact-element {
+interact-element {
   display: contents;
 }
 
@@ -100,7 +100,7 @@ wix-interact-element {
 
 <body>
 
-<wix-interact-element data-wix-path="intro-section">
+<interact-element data-interact-key="intro-section">
   <section class="intro">
     <div class="text-block">
       <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-2">Title 01</h1>
@@ -109,23 +109,23 @@ wix-interact-element {
       </p>
     </div>
 
-    <wix-interact-element data-wix-path="panel-wrapper">
+    <interact-element data-interact-key="panel-wrapper">
       <div class="panel-wrapper">
-        <wix-interact-element data-wix-path="#panel-0"><div class="panel" id="panel-0"><img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" alt="Landscape 1"></div></wix-interact-element>
-        <wix-interact-element data-wix-path="#panel-1"><div class="panel" id="panel-1"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80" alt="Landscape 2"></div></wix-interact-element>
-        <wix-interact-element data-wix-path="#panel-2"><div class="panel" id="panel-2"><img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&w=800&q=80" alt="Landscape 3"></div></wix-interact-element>
-        <wix-interact-element data-wix-path="#panel-3"><div class="panel" id="panel-3"><img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&w=800&q=80" alt="Landscape 4"></div></wix-interact-element>
-        <wix-interact-element data-wix-path="#panel-4"><div class="panel" id="panel-4"><img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&w=800&q=80" alt="Landscape 5"></div></wix-interact-element>
-        <wix-interact-element data-wix-path="#panel-5"><div class="panel" id="panel-5"><img src="https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?auto=format&w=800&q=80" alt="Landscape 6"></div></wix-interact-element>
-        <wix-interact-element data-wix-path="#panel-6"><div class="panel" id="panel-6"><img src="https://images.unsplash.com/photo-1496483353456-90997957cf99?auto=format&w=800&q=80" alt="Landscape 7"></div></wix-interact-element>
+        <interact-element data-interact-key="#panel-0"><div class="panel" id="panel-0"><img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" alt="Landscape 1"></div></interact-element>
+        <interact-element data-interact-key="#panel-1"><div class="panel" id="panel-1"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80" alt="Landscape 2"></div></interact-element>
+        <interact-element data-interact-key="#panel-2"><div class="panel" id="panel-2"><img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&w=800&q=80" alt="Landscape 3"></div></interact-element>
+        <interact-element data-interact-key="#panel-3"><div class="panel" id="panel-3"><img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&w=800&q=80" alt="Landscape 4"></div></interact-element>
+        <interact-element data-interact-key="#panel-4"><div class="panel" id="panel-4"><img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&w=800&q=80" alt="Landscape 5"></div></interact-element>
+        <interact-element data-interact-key="#panel-5"><div class="panel" id="panel-5"><img src="https://images.unsplash.com/photo-1482192596544-9eb780fc7f66?auto=format&w=800&q=80" alt="Landscape 6"></div></interact-element>
+        <interact-element data-interact-key="#panel-6"><div class="panel" id="panel-6"><img src="https://images.unsplash.com/photo-1496483353456-90997957cf99?auto=format&w=800&q=80" alt="Landscape 7"></div></interact-element>
       </div>
-    </wix-interact-element>
+    </interact-element>
   </section>
-</wix-interact-element>
+</interact-element>
 
 
 <script type="module">
-  import { Interact } from 'https://esm.sh/@wix/interact@1.79.0';
+  import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
   document.addEventListener('DOMContentLoaded', () => {
 
@@ -161,8 +161,8 @@ wix-interact-element {
           ]
         },
         // These effects scrub along the entire scroll range of the 'intro-section'
-        rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 }},
-        rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 100 }},
+        rangeStart: { name: 'cover', offset: { unit: 'percentage', value: 0 }},
+        rangeEnd: { name: 'cover', offset: { unit: 'percentage', value: 100 }},
         easing: 'linear', // Linear easing provides a direct mapping from scroll progress to animation progress
         fill: 'both'
       });
@@ -184,8 +184,8 @@ wix-interact-element {
                 { transform: 'translateY(-50%) rotateY(0deg)' }
               ]
             },
-            rangeStart: { name: 'cover', offset: { type: 'percentage', value: 0 }},
-            rangeEnd: { name: 'cover', offset: { type: 'percentage', value: 50 }},
+            rangeStart: { name: 'cover', offset: { unit: 'percentage', value: 0 }},
+            rangeEnd: { name: 'cover', offset: { unit: 'percentage', value: 50 }},
             easing: 'ease-out',
             fill: 'both'
           },

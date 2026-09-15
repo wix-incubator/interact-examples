@@ -99,7 +99,7 @@
     </div>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         // 1. Setup Content
         const word1 = "RISING";
@@ -170,7 +170,7 @@
                     name: 'entry', 
                     // 100% means "fully entered" (top at top).
                     // We add 'vh' to delay the start relative to the scroll distance.
-                    offset: { value: 100, type: 'percentage' } 
+                    offset: { value: 100, unit: 'percentage' } 
                 },
                 // We actually need to offset the start by the random amount. 
                 // Since `rangeStart` combines logic, we can't just add `vh` to `percentage` easily in one object 
@@ -181,13 +181,13 @@
                 
                 rangeStart: {
                     name: 'entry',
-                    offset: { value: 100 + startDelayVH, type: 'vh' }
+                    offset: { value: 100 + startDelayVH, unit: 'vh' }
                 },
 
                 // End: Start + Duration
                 rangeEnd: { 
                     name: 'entry', 
-                    offset: { value: 100 + startDelayVH + durationVH, type: 'vh' } 
+                    offset: { value: 100 + startDelayVH + durationVH, unit: 'vh' } 
                 },
 
                 keyframeEffect: {

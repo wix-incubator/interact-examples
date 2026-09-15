@@ -75,7 +75,7 @@
     </div>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         // 1. Text Preparation
         const eyebrowContent = "The Philosophy";
@@ -166,8 +166,8 @@
                             // Start: 'entry' 0% -> When the track TOP hits the viewport BOTTOM (starts rising)
                             // End: 'exit' 0% -> When the track BOTTOM hits the viewport BOTTOM (starts unsticking)
                             // This maps the animation exactly to the time the element is entering and sticking.
-                            rangeStart: { name: 'entry', offset: { value: 0, type: 'percentage' } },
-                            rangeEnd: { name: 'exit', offset: { value: 0, type: 'percentage' } }
+                            rangeStart: { name: 'entry', offset: { value: 0, unit: 'percentage' } },
+                            rangeEnd: { name: 'exit', offset: { value: 0, unit: 'percentage' } }
                         }
                     ]
                 }

@@ -211,7 +211,7 @@
 <body>
    <div class="gallery-container" id="gallery-container">
        <div class="gallery-row">
-           <wix-interact-element data-wix-path="#wrapper-1">
+           <interact-element data-interact-key="#wrapper-1">
                <div class="animation-wrapper" id="wrapper-1">
                    <div>
                        <div class="image-container" onclick="openLightbox(this)">
@@ -282,12 +282,12 @@
                        </div>
                    </div>
                </div>
-           </wix-interact-element>
+           </interact-element>
        </div>
 
 
        <div class="gallery-row">
-           <wix-interact-element data-wix-path="#wrapper-2">
+           <interact-element data-interact-key="#wrapper-2">
                <div class="animation-wrapper" id="wrapper-2">
                    <div>
                        <div class="image-container" onclick="openLightbox(this)">
@@ -358,12 +358,12 @@
                        </div>
                    </div>
                </div>
-           </wix-interact-element>
+           </interact-element>
        </div>
 
 
        <div class="gallery-row">
-            <wix-interact-element data-wix-path="#wrapper-3">
+            <interact-element data-interact-key="#wrapper-3">
                <div class="animation-wrapper" id="wrapper-3">
                    <div>
                        <div class="image-container" onclick="openLightbox(this)">
@@ -434,11 +434,11 @@
                        </div>
                    </div>
                </div>
-           </wix-interact-element>
+           </interact-element>
        </div>
       
        <div class="gallery-row">
-           <wix-interact-element data-wix-path="#wrapper-4">
+           <interact-element data-interact-key="#wrapper-4">
                <div class="animation-wrapper" id="wrapper-4">
                    <div>
                        <div class="image-container" onclick="openLightbox(this)">
@@ -509,7 +509,7 @@
                        </div>
                    </div>
                </div>
-           </wix-interact-element>
+           </interact-element>
        </div>
    </div>
   
@@ -529,7 +529,7 @@
    <script type="module">
        import {
            Interact
-       } from 'https://esm.sh/@wix/interact@1.78.0';
+       } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
 
        document.addEventListener('DOMContentLoaded', () => {
@@ -539,21 +539,21 @@
                    {
                        key: '#wrapper-1',
                        trigger: 'viewEnter',
-                       params: { type: 'state' },
                        effects: [{
                            key: '#wrapper-1',
                            keyframeEffect: {
+                               name: 'scroll-right',
                                keyframes: [{ transform: 'translateX(-50%)' }, { transform: 'translateX(0)' }]
                            },
                            duration: 40000,
                            easing: 'linear',
-                           iterations: Infinity
+                           iterations: Infinity,
+                           triggerType: 'state'
                        }]
                    },
                    {
                        key: '#wrapper-2',
                        trigger: 'viewEnter',
-                       params: { type: 'state' },
                        effects: [{
                            key: '#wrapper-2',
                            keyframeEffect: {
@@ -563,12 +563,12 @@
                            duration: 50000,
                            easing: 'linear',
                            iterations: Infinity,
+                           triggerType: 'state'
                        }]
                    },
                    {
                        key: '#wrapper-3',
                        trigger: 'viewEnter',
-                       params: { type: 'state' },
                        effects: [{
                            key: '#wrapper-3',
                            keyframeEffect: {
@@ -578,12 +578,12 @@
                            duration: 45000,
                            easing: 'linear',
                            iterations: Infinity,
+                           triggerType: 'state'
                        }]
                    },
                    {
                        key: '#wrapper-4',
                        trigger: 'viewEnter',
-                       params: { type: 'state' },
                        effects: [{
                            key: '#wrapper-4',
                            keyframeEffect: {
@@ -592,7 +592,8 @@
                            },
                            duration: 55000,
                            easing: 'linear',
-                           iterations: Infinity
+                           iterations: Infinity,
+                           triggerType: 'state'
                        }]
                    }
                ]

@@ -141,7 +141,7 @@
   </interact-element>
 
   <script type="module">
-    import { Interact } from 'https://esm.sh/@wix/interact@2.1.2/web?bundle';
+    import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
     Interact.create({
       effects: {
@@ -236,15 +236,14 @@
         {
           key: 'toggle-btn',
           trigger: 'click',
-          params: { type: 'alternate' },
           effects: [
-            { key: 'slider', effectId: 'slider-move' },
-            { key: 'slider', effectId: 'slider-bg' },
-            { key: 'toggle-btn', effectId: 'track-bg', selector: '.toggle-track' },
-            { key: 'toggle-btn', effectId: 'icon-happy', selector: '.icon-happy' },
-            { key: 'toggle-btn', effectId: 'icon-sad', selector: '.icon-sad' },
-            { key: 'toggle-btn', effectId: 'label-avail', selector: '.label-available' },
-            { key: 'toggle-btn', effectId: 'label-unavail', selector: '.label-unavailable' }
+            { key: 'slider', effectId: 'slider-move', triggerType: 'alternate' },
+            { key: 'slider', effectId: 'slider-bg', triggerType: 'alternate' },
+            { key: 'toggle-btn', effectId: 'track-bg', selector: '.toggle-track', triggerType: 'alternate' },
+            { key: 'toggle-btn', effectId: 'icon-happy', selector: '.icon-happy', triggerType: 'alternate' },
+            { key: 'toggle-btn', effectId: 'icon-sad', selector: '.icon-sad', triggerType: 'alternate' },
+            { key: 'toggle-btn', effectId: 'label-avail', selector: '.label-available', triggerType: 'alternate' },
+            { key: 'toggle-btn', effectId: 'label-unavail', selector: '.label-unavailable', triggerType: 'alternate' }
           ]
         }
       ]

@@ -233,7 +233,7 @@
     </interact-element>
 
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         const isMobile = window.innerWidth < 768;
         const revealWidth = isMobile ? '25px' : '125px';
@@ -246,8 +246,8 @@
         const createEffect = (key, startOffset, endOffset) => ({
             key,
             fill: 'both',
-            rangeStart: { name: 'cover', offset: { value: startOffset, type: 'percentage' } },
-            rangeEnd: { name: 'cover', offset: { value: endOffset, type: 'percentage' } },
+            rangeStart: { name: 'cover', offset: { value: startOffset, unit: 'percentage' } },
+            rangeEnd: { name: 'cover', offset: { value: endOffset, unit: 'percentage' } },
             keyframeEffect: {
                 name: `reveal-${key}`,
                 keyframes: leftRevealKeyframes

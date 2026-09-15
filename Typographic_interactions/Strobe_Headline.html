@@ -112,7 +112,7 @@
 
     <!-- Load Wix Interact -->
     <script type="module">
-        import { Interact } from 'https://esm.sh/@wix/interact@1.86.0';
+        import { Interact } from 'https://esm.sh/@wix/interact@2.5.1/web';
 
         // Configuration
         const ROWS = 7;
@@ -145,7 +145,7 @@
                 span.classList.add('char');
 
                 // For interactions, we need to target specific elements.
-                // We assign a data-interact-id to duplicates so we can target them.
+                // We assign a data-interact-key to duplicates so we can target them.
                 if (!isMiddle) {
                     // Create a unique wrapper for the Interact library to target
                     const wrapper = document.createElement('interact-element');
@@ -189,10 +189,10 @@
                 interactions.push({
                     key: key,
                     trigger: 'viewEnter',
-                    params: { type: 'once' },
                     effects: [
                         {
                             keyframeEffect: {
+                                name: `flicker-${r}-${c}`,
                                 keyframes: [
                                     { offset: 0.0, opacity: 1 },
                                     { offset: 0.1, opacity: 0 },
@@ -204,6 +204,7 @@
                                     { offset: 1.0, opacity: 0 }, 
                                 ],
                             },
+                            triggerType: 'once',
                             duration: animationDuration,
                             delay: delay,
                             easing: 'linear',
@@ -215,21 +216,9 @@
         }
 
         // B. Paragraph Reveal
-        // We target the #hero-desc div. Since it's a standard ID, we can wrap it 
-        // in an interact-element or just pass the element directly if using low-level API.
-        // But to stick to the pattern, let's wrap the p in the DOM or use the specific key we set in HTML.
-        // Wait, standard HTML doesn't have <interact-element> by default without the library processing it.
-        // The library looks for elements with `data-interact-key` OR we can pass elements directly?
-        // The safest way with the `Interact.create` JSON config is to use `data-interact-key`.
-        
-        // Let's add the attribute to the paragraph container dynamically or ensure it's in HTML.
+        // We target the #hero-desc div by wrapping it in an <interact-element>
+        // with a stable data-interact-key that matches the interaction key below.
         const descEl = document.getElementById('hero-desc');
-        // We'll treat this div as our target. We need to register it manually if we don't use the custom element tag.
-        // Actually, the easiest way in vanilla JS with this specific library version is to use the custom element wrapper
-        // OR add the attribute to a standard element and hope the library picks it up, 
-        // BUT the library exposes `interact-element` web component.
-        
-        // Let's replace the outer div with the custom element for consistency.
         const descParent = descEl.parentElement;
         const interactWrapper = document.createElement('interact-element');
         interactWrapper.setAttribute('data-interact-key', 'hero-desc');
@@ -239,15 +228,16 @@
         interactions.push({
             key: 'hero-desc',
             trigger: 'viewEnter',
-            params: { type: 'once' },
             effects: [
                 {
                     keyframeEffect: {
+                        name: 'hero-desc-reveal',
                         keyframes: [
                             { transform: 'translateY(110%)', opacity: 0 },
                             { transform: 'translateY(0%)', opacity: 1 }
                         ]
                     },
+                    triggerType: 'once',
                     duration: 800,
                     delay: paragraphDelay,
                     easing: 'cubic-bezier(0.16, 1, 0.3, 1)', 
